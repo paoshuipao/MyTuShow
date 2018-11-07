@@ -294,12 +294,12 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         return audioTypeK_PathV[(ushort)index];
     }
 
-    public bool SaveAudio(EAudioType index, string path)                       // 保存
+    public bool SaveAudio(EAudioType index, string savePath)                       // 保存
     {
 
-        if (!audioTypeK_PathV[(ushort)index].Contains(path))
+        if (!audioTypeK_PathV[(ushort)index].Contains(savePath))
         {
-            audioTypeK_PathV[(ushort)index].Add(path);
+            audioTypeK_PathV[(ushort)index].Add(savePath);
             return true;
         }
         else
@@ -308,11 +308,11 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         }
     }
 
-    public void DeleteAudioSave(EAudioType index, string path)                 // 删除
+    public void DeleteAudioSave(EAudioType index, string savePath)                 // 删除
     {
-        if (audioTypeK_PathV[(ushort)index].Contains(path))
+        if (audioTypeK_PathV[(ushort)index].Contains(savePath))
         {
-            audioTypeK_PathV[(ushort)index].Remove(path);
+            audioTypeK_PathV[(ushort)index].Remove(savePath);
         }
     }
 

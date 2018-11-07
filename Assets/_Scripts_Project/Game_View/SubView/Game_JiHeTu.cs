@@ -204,6 +204,7 @@ public class Game_JiHeTu : SubUI
         tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
         go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
         AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JiHeTuSize[0].ChangeValue;

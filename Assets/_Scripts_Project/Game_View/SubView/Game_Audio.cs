@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using PSPUtil;
 using PSPUtil.Control;
+using PSPUtil.Extensions;
 using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,43 +20,77 @@ public enum EAudioType
 }
 
 
-public class AudioResultBean
-{
-
-    public AudioClip AudioClip;
-    public FileInfo File;
-
-    public AudioResultBean(AudioClip audioClip, FileInfo file)
-    {
-        AudioClip = audioClip;
-        File = file;
-    }
-
-
-}
-
-
 
 public class Game_Audio : SubUI
 {
 
-
-    public void Show()
+    public IEnumerator DaoRuFromFile(EAudioType type,List<FileInfo> files,bool isSave)
     {
+        foreach (FileInfo file in files)
+        {
+            Ctrl_LoadAudioClip.Instance.StartLoadAudioClip(file, (resBean) =>
+            {
+                E_DaoRu(type, resBean, isSave);
+            });
+            yield return new WaitForEndOfFrame();
+        }
+    }
 
+    public void Show(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                tg_BottomContrl.ChangeToggleOn(ITEM_STR1);
+                break;
+            case 1:
+                tg_BottomContrl.ChangeToggleOn(ITEM_STR2);
+                break;
+            case 2:
+                tg_BottomContrl.ChangeToggleOn(ITEM_STR3);
+                break;
+            case 3:
+                tg_BottomContrl.ChangeToggleOn(ITEM_STR4);
+                break;
+            case 4:
+                tg_BottomContrl.ChangeToggleOn(ITEM_STR5);
+                break;
+        }
+    }
+
+
+
+    public void OnUpdate()
+    {
+        if (null != mCurrentPlayBean)
+        {
+            mCurrentPlayBean.Update(mAudioSource, () =>
+            {
+                int index = l_AudioItemBeans.IndexOf(mCurrentPlayBean);
+                index++;
+                if (index >= l_AudioItemBeans.Count)
+                {
+                    index = 0;
+                }
+                mCurrentPlayBean = l_AudioItemBeans[index];
+                mCurrentPlayBean.Play(mAudioSource);
+
+            });
+        }
     }
 
 
 
     #region 私有
 
-
     private EAudioType mCurrentIndex;
+
+
+
     // 模版
     private GameObject go_MoBan;
     private const string CREATE_FILE_NAME = "AudioFile";        // 模版产生的名
-
-
+    private AudioSource mAudioSource;
 
     // 上方
     private ScrollRect m_SrollView;
@@ -116,14 +151,6 @@ public class Game_Audio : SubUI
 
 
 
-    IEnumerator EachSend(List<FileInfo> fileInfos)
-    {
-        foreach (FileInfo fileInfo in fileInfos)
-        {
-            MyEventCenter.SendEvent(E_GameEvent.DaoRu_Audio, mCurrentIndex, fileInfo, true);
-            yield return new WaitForEndOfFrame();
-        }
-    }
     #endregion
 
 
@@ -132,7 +159,8 @@ public class Game_Audio : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EAudioType, FileInfo,bool>(E_GameEvent.DaoRu_Audio, E_DaoRu);
+        MyEventCenter.AddListener<EAudioType, AudioResBean,bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
+        mAudioSource = Get<AudioSource>();
 
 
         // 内容 
@@ -197,17 +225,23 @@ public class Game_Audio : SubUI
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (MyFilterUtil.IsAudio(fileInfo))
                     {
-                        fileInfos.Add(fileInfo);
+                        if (fileInfo.Extension ==".mp3")
+                        {
+                            MyLog.Red("该导入暂不支持导入 Mp3，去快速导入处导入 Mp3");
+                        }
+                        else
+                        {
+                            fileInfos.Add(fileInfo);
+                        }
                     }
                     else
                     {
                         MyLog.Red("选择了其他的格式文件 —— " + fileInfo.Name);
                     }
                 }
-                Ctrl_Coroutine.Instance.StartCoroutine(EachSend(fileInfos));    //每个 FileInfo 分开来发送信息
+                Ctrl_Coroutine.Instance.StartCoroutine(DaoRuFromFile(mCurrentIndex,fileInfos,true));    //每个 FileInfo 分开来发送信息
             });
     }
-
 
 
 
@@ -215,24 +249,50 @@ public class Game_Audio : SubUI
 
 
 
+    private EachItemBean mCurrentPlayBean;        // 当前播放
+    private readonly List<EachItemBean> l_AudioItemBeans = new List<EachItemBean>();
 
-    private void E_DaoRu(EAudioType type, FileInfo fileInfo, bool isSave)
+    private void E_DaoRu(EAudioType type, AudioResBean resBean,bool isSave)             // 导入事件
     {
 
-        // 保存一下信息
+        // 1.保存一下信息
         if (isSave)
         {
-//            bool isOk = Ctrl_TextureInfo.Instance.SaveAudio(type, fileInfo.FullName);
-//            if (!isOk)
-//            {
-//                return;
-//            }
+            bool isSaveOk = Ctrl_TextureInfo.Instance.SaveAudio(type, resBean.SavePath);
+            MyEventCenter.SendEvent<EGameType,bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
+            if (!isSaveOk)
+            {
+                return;
+            }
         }
-
-        // 1. 创建一个实例
+        // 2.创建一个实例
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(type), CREATE_FILE_NAME);
-        t.Find("TxName").GetComponent<Text>().text = fileInfo.Name;
+        t.Find("Top/TxName").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(resBean.YuanPath);
+        Text tx_ZhongTime = t.Find("Top/TxZhongTime").GetComponent<Text>();
+        tx_ZhongTime.text = resBean.Clip.length.ToTiemStr();
+        Text tx_CurrentTime = t.Find("Bottom/TxCurrentTime").GetComponent<Text>();
+        Button btn_Play = t.Find("Bottom/BtnPlay").GetComponent<Button>();
+        Button btn_Pause = t.Find("Bottom/BtnPause").GetComponent<Button>();
+        Slider slider_Progress = t.Find("Bottom/Slider_Progress").GetComponent<Slider>();
 
+        EachItemBean itemBean = new EachItemBean(resBean.Clip,btn_Play.gameObject,btn_Pause.gameObject, slider_Progress, tx_CurrentTime);
+        l_AudioItemBeans.Add(itemBean);
+
+        btn_Play.onClick.AddListener(() =>
+        {
+            if (null != mCurrentPlayBean)
+            {
+                mCurrentPlayBean.Stop(mAudioSource);
+            }
+            mCurrentPlayBean = itemBean;
+            mCurrentPlayBean.Play(mAudioSource);
+
+        });
+
+        btn_Pause.onClick.AddListener(() =>
+        {
+            mCurrentPlayBean.Pause(mAudioSource);
+        });
 
     }
 
@@ -240,4 +300,92 @@ public class Game_Audio : SubUI
 
 
 
+
+    //———————————————— EachItemBean ————————————————————
+
+
+    public class EachItemBean
+    {
+        private readonly GameObject go_Play;
+        private readonly GameObject go_Pause;
+        private readonly Slider slider_Progress;
+        private readonly Text tx_CurrentTime;
+        private readonly AudioClip mAudioClip;
+
+        private bool isPlaying;
+
+        public EachItemBean(AudioClip clip, GameObject goPlay, GameObject goPause, Slider sliderProgress, Text txCurrentTime)
+        {
+            mAudioClip = clip;
+            go_Play = goPlay;
+            go_Pause = goPause;
+            slider_Progress = sliderProgress;
+            tx_CurrentTime = txCurrentTime;
+
+            slider_Progress.minValue = 0;
+            slider_Progress.maxValue = clip.length;
+            slider_Progress.value = 0;
+        }
+
+
+        public void Play(AudioSource audioSource)
+        {
+            isPlaying = true;
+            go_Play.SetActive(false);
+            go_Pause.SetActive(true);
+            tx_CurrentTime.gameObject.SetActive(true);
+            if (audioSource.clip != mAudioClip)
+            {
+                audioSource.clip = mAudioClip;
+            }
+            audioSource.Play();
+
+        }
+
+        public void Pause(AudioSource audioSource)
+        {
+            go_Play.SetActive(true);
+            go_Pause.SetActive(false);
+            isPlaying = false;
+            audioSource.Pause();
+        }
+
+
+        public void Stop(AudioSource audioSource)
+        {
+            slider_Progress.value = 0;
+            go_Play.SetActive(true);
+            go_Pause.SetActive(false);
+            tx_CurrentTime.gameObject.SetActive(false);
+
+            isPlaying = false;
+            audioSource.Stop();
+        }
+
+        public void Update(AudioSource audioSource,Action onFinsh)
+        {
+            if (isPlaying)
+            {
+                if (audioSource.isPlaying)
+                {
+                    tx_CurrentTime.text = audioSource.time.ToTiemStr();
+                    slider_Progress.value = audioSource.time;
+                }
+                else
+                {
+                    Stop(audioSource);
+                    onFinsh();
+                }
+            }
+  
+
+
+        }
+
+
+    }
 }
+
+
+
+

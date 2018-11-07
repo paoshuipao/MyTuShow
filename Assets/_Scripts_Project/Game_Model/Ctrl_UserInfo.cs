@@ -39,13 +39,15 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     public bool IsCanChangeSize { get; set; }                       // 是否可改大小
 
 
-    public GridSizeBean[] L_JiHeXuLieTuSize { get; set; }             // 集合序列图 Grid大小
+    public GridSizeBean[] L_XuLieTuSize { get; set; }                 // 序列图 Grid 大小
 
-    public GridSizeBean[] L_TaoMingTuSize { get; set; }               // 透明图 Grid大小
+    public GridSizeBean[] L_JiHeXuLieTuSize { get; set; }             // 集合序列图 Grid 大小
 
-    public GridSizeBean[] L_JPGTuSize { get; set; }                   // Jpg图 Grid大小
+    public GridSizeBean[] L_TaoMingTuSize { get; set; }               // 透明图 Grid 大小
 
-    public GridSizeBean[] L_JiHeTuSize { get; set; }                  // 集合图 Grid大小
+    public GridSizeBean[] L_JPGTuSize { get; set; }                   // Jpg图 Grid 大小
+
+    public GridSizeBean[] L_JiHeTuSize { get; set; }                  // 集合图 Grid 大小
 
     
 
@@ -62,6 +64,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     // 大小
     private const string PP_IS_CHANGE_SIZE = "PP_IS_CHANGE_SIZE";
+    private const string PP_XU_LIE_TU_SIZE = "PP_XU_LIE_TU_SIZE";
     private const string PP_JIHE_XLT_SIZES = "PP_JIHE_XLT_SIZES";
     private const string PP_TAO_MING_SIZE = "PP_TAO_MING_SIZE";
     private const string PP_JPG_SIZE = "PP_JPG_SIZE";
@@ -92,6 +95,21 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ShowFirstPath = GetPath(PP_SHOW_FIRST_PATH);
         IsXuLieTuShowTip = ES3.Load(PP_IS_XLT_SHOW_TIP, true);
         IsCanChangeSize = ES3.Load(PP_IS_CHANGE_SIZE, false);
+
+
+        // 序列图
+        if (!ES3.KeyExists(PP_XU_LIE_TU_SIZE))
+        {
+            L_XuLieTuSize = new GridSizeBean[5];
+            L_XuLieTuSize[0] = GetGridSizeBean(64, 64);
+            L_XuLieTuSize[1] = GetGridSizeBean(128, 128);
+            L_XuLieTuSize[2] = GetGridSizeBean(230, 230);
+        }
+        else
+        {
+            L_XuLieTuSize = ES3.Load<GridSizeBean[]>(PP_XU_LIE_TU_SIZE);
+        }
+
 
         // 集合序列图
         if (!ES3.KeyExists(PP_JIHE_XLT_SIZES))
@@ -179,12 +197,12 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ES3.Save<string>(PP_SHOW_FIRST_PATH, ShowFirstPath);
         ES3.Save<bool>(PP_IS_XLT_SHOW_TIP, IsXuLieTuShowTip);
         // 大小
-        ES3.Save<bool>(PP_IS_CHANGE_SIZE, IsCanChangeSize);
+        ES3.Save<bool>(PP_XU_LIE_TU_SIZE, IsCanChangeSize);
+        ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU_SIZE, L_XuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_JIHE_XLT_SIZES, L_JiHeXuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_TAO_MING_SIZE, L_TaoMingTuSize);
         ES3.Save<GridSizeBean[]>(PP_JPG_SIZE, L_JPGTuSize);
         ES3.Save<GridSizeBean[]>(PP_JI_HE_SIZE, L_JiHeTuSize);
-
 
 
     }

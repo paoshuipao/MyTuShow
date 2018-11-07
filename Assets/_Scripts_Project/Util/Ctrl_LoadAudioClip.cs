@@ -10,25 +10,54 @@ using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
+
+public class AudioResBean         
+{
+
+    public bool IsDaoRu { get; set; }             // 是否导入了
+
+    public AudioClip Clip { get; private set; }           // 下载的音频
+    public string YuanPath { get; private set; }          // 原路径
+    public string SavePath { get; private set; }          // 保存路径（不是mp3等于原路径）
+    public FileInfo YuanFileInfo { get; private set; }    // 原路径的文件
+
+    public bool IsMP3 { get; private set; }               // 是否 MP3
+
+
+    public AudioResBean(AudioClip clip, string yuanPath, string savePath, bool isMp3,FileInfo file)
+    {
+        IsDaoRu = false;
+        Clip = clip;
+        YuanPath = yuanPath;
+        SavePath = savePath;
+        IsMP3 = isMp3;
+        YuanFileInfo = file;
+
+    }
+}
+
+
+
+public class Ctrl_LoadAudioClip : Singleton_Mono<Ctrl_LoadAudioClip>
 {
 
 
-    public void StartLoadAudioClip(FileInfo fileInfo, Action<AudioClip> callBack)
+    public void StartLoadAudioClip(FileInfo fileInfo, Action<AudioResBean> callBack)
     {
 
-        foreach (string key in pathK_ClipV.Keys)
+        foreach (AudioResBean bean in l_AudioResBean)
         {
-            if (fileInfo.FullName == key)
+            if (fileInfo.FullName == bean.YuanPath)
             {
-                callBack(pathK_ClipV[key]);
-                return;
+                callBack(bean);
+                return; 
             }
         }
 
+
         if (fileInfo.Extension == ".mp3")
         {
-            AudioResBean resBean = null;
+            MP3ResBean resBean = null;
             for (int i = 0; i < l_HasLoadMp3.Count; i++)
             {
                 if (l_HasLoadMp3[i].YuanPath == fileInfo.FullName)
@@ -39,7 +68,7 @@ public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
             }
             if (null == resBean)
             {
-                resBean = new AudioResBean();
+                resBean = new MP3ResBean();
                 string savePath = dirPath + "/" + Path.GetFileNameWithoutExtension(fileInfo.FullName) + ".wav";
                 new Thread(() =>
                 {
@@ -60,48 +89,57 @@ public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
                     }
                 }).Start();
             }
-            Ctrl_Coroutine.Instance.StartCoroutine(LoadMp3(resBean, callBack));
-        }
-        else if (fileInfo.Extension == ".ogg")
-        {
-            Ctrl_Coroutine.Instance.StartCoroutine(LoadOtherGeShi(fileInfo.FullName, AudioType.OGGVORBIS, callBack));
-        }
-        else if (fileInfo.Extension == ".aiff")
-        {
-            Ctrl_Coroutine.Instance.StartCoroutine(LoadOtherGeShi(fileInfo.FullName, AudioType.AIFF, callBack));
-        }
-        else if (fileInfo.Extension == ".wav")
-        {
-            Ctrl_Coroutine.Instance.StartCoroutine(LoadOtherGeShi(fileInfo.FullName, AudioType.WAV, callBack));
+            Ctrl_Coroutine.Instance.StartCoroutine(LoadMp3(fileInfo,resBean, callBack));
         }
         else
         {
-            MyLog.Red("还有其他格式？");
+            Ctrl_Coroutine.Instance.StartCoroutine(LoadOtherGeShi(fileInfo, callBack));
+
         }
+
+
     }
 
 
     #region 私有
 
 
-
-    class AudioResBean
+    class MP3ResBean
     {
         public string YuanPath; // 原路径
         public string SavePath; // 保存的路径
-        public bool isOk; // 是否转完成
+        public bool isOk;      // 是否转完成
     }
 
     private const string SAVE_FOLDER_NAME = "/Mp3SavePath";
     private string dirPath;
-    private readonly List<AudioResBean> l_HasLoadMp3 = new List<AudioResBean>(); // 已经下载过的 mp3
-    private readonly Dictionary<string, AudioClip> pathK_ClipV = new Dictionary<string, AudioClip>();
+    private readonly List<MP3ResBean> l_HasLoadMp3 = new List<MP3ResBean>();      // 已经下载过的 mp3
+    private readonly List<AudioResBean> l_AudioResBean = new List<AudioResBean>();    // 所有的音频文件返回结果的集合
 
 
 
-    IEnumerator LoadOtherGeShi(string path, AudioType audioType, Action<AudioClip> callBack)
+
+    IEnumerator LoadOtherGeShi(FileInfo file,Action<AudioResBean> callBack)
     {
-        using (UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip("file://" + path, audioType))
+        AudioType type;
+        if (file.Extension == ".ogg")
+        {
+            type = AudioType.OGGVORBIS;
+        }
+        else if (file.Extension == ".aiff")
+        {
+            type = AudioType.AIFF;
+        }
+        else if (file.Extension == ".wav")
+        {
+            type = AudioType.WAV;
+        }
+        else
+        {
+            throw new Exception("还有其他格式？");
+        }
+        string path = file.FullName;
+        using (UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip("file://" + path, type))
         {
             yield return request.SendWebRequest();
             if (request.isHttpError || request.isNetworkError)
@@ -111,15 +149,16 @@ public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
             }
             AudioClip clip = DownloadHandlerAudioClip.GetContent(request);
             clip.name = Path.GetFileNameWithoutExtension(path);
-            pathK_ClipV.Add(path,clip);
+            AudioResBean resBean = new AudioResBean(clip,path,path,false, file);
+            l_AudioResBean.Add(resBean);
             if (null != callBack)
             {
-                callBack(clip);
+                callBack(resBean);
             }
         }
     }
 
-    IEnumerator LoadMp3(AudioResBean res, Action<AudioClip> callBack)
+    IEnumerator LoadMp3(FileInfo fileInfo, MP3ResBean res, Action<AudioResBean> callBack)
     {
         while (!res.isOk)
         {
@@ -135,10 +174,12 @@ public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
             }
             AudioClip clip = DownloadHandlerAudioClip.GetContent(request);
             clip.name = Path.GetFileNameWithoutExtension(res.SavePath);
-            pathK_ClipV.Add(res.YuanPath, clip);
+
+            AudioResBean resBean =new AudioResBean(clip,res.YuanPath,res.SavePath,true, fileInfo);
+            l_AudioResBean.Add(resBean);
             if (null != callBack)
             {
-                callBack(clip);
+                callBack(resBean);
             }
         }
 
@@ -158,10 +199,19 @@ public class LoadAudioClip : Singleton_Mono<LoadAudioClip>
         }
     }
 
+
+
+
     void OnApplicationQuit() // 退出把加载的所有音乐删除
     {
-        DirectoryInfo dir = new DirectoryInfo(dirPath);
-        dir.Delete(true);
+        for (int i = 0; i < l_AudioResBean.Count; i++)
+        {
+            if (l_AudioResBean[i].IsMP3 && !l_AudioResBean[i].IsDaoRu)
+            {
+                File.Delete(l_AudioResBean[i].SavePath);
+            }
+        }
+
     }
 
 

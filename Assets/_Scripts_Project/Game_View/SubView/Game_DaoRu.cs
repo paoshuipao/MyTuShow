@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public class Game_DaoRu : SubUI
+public partial class Game_DaoRu : SubUI
 {
 
     public void Show()

@@ -385,7 +385,7 @@ namespace UnityEditor
                 return;
             }
             string assetPath = AssetDatabase.GUIDToAssetPath(assetPathsId[0]);
-            ChuYinPath = MyAssetUtil.GetFullName(assetPath);
+            ChuYinPath = MyAssetUtil.GetFullPath(assetPath);
 
             Texture2D1 = LoadTextureInLocal(ChuYinPath);
 

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using PSPUtil;
+using PSPUtil.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,14 +70,13 @@ public class Game_MusicInfo : SubUI
             {
                 slider_Progress.value = mAudioSource.time;
             }
-            tx_Time.text = TimeToString(mAudioSource.time) + " / " + mTotalTime;
+            tx_Time.text = mAudioSource.time.ToTiemStr() + " / " + mTotalTime;
         }
     }
 
 
     #region 私有
 
-    private FileInfo mCurrentFile;
     private GameObject go_Wait,go_DaoRu, go_ShowMusic;
     private Text tx_WaitName,tx_InfoName,tx_Time;
     private GameObject go_Play,go_Pause;
@@ -103,6 +103,7 @@ public class Game_MusicInfo : SubUI
     }
 
 
+/*
     private string TimeToString(float time)
     {
         int minutes = (int)(time / 60.0f);
@@ -124,11 +125,12 @@ public class Game_MusicInfo : SubUI
 
         return string.Format("{0}:{1}", strMinutes, strSeconds);
     }
+*/
 
     #endregion
 
 
-    private void Btn_OnClickClose()       // 点击关闭
+    private void Btn_OnClickClose()              // 点击关闭
     {
         MyEventCenter.SendEvent(E_GameEvent.CloseMusicInfo);
     }
@@ -165,7 +167,7 @@ public class Game_MusicInfo : SubUI
 
     private void Btn_OpenFolder()              // 打开文件夹
     {
-        DirectoryInfo dir = mCurrentFile.Directory;
+        DirectoryInfo dir = mCurrentAudioResBean.YuanFileInfo.Directory;
         if (null!=dir)
         {
             Application.OpenURL(dir.FullName);
@@ -174,21 +176,14 @@ public class Game_MusicInfo : SubUI
     }
 
 
-    private void ManyBtn_DaoRu(EAudioType type)              // 导入
-    {
-        MyEventCenter.SendEvent(E_GameEvent.DaoRu_Audio, type, mCurrentFile,true);
-        Btn_OnClickClose();
 
-    }
-
-
-    private void E_OnSliderDrag()              // 开始拖动 Slider 音乐条
+    private void E_OnSliderDrag()                           // 开始拖动 Slider 音乐条
     {
         isOnSliderChange = true;
 
     }
 
-    private void E_OnSliderDragEnd()          // 结束拖动 Slider 音乐条
+    private void E_OnSliderDragEnd()                        // 结束拖动 Slider 音乐条
     {
         if (isOnSliderChange)
         {
@@ -199,7 +194,7 @@ public class Game_MusicInfo : SubUI
     }
 
 
-    private void Slider_OnVolumeChange(float value)       // 拖动音量
+    private void Slider_OnVolumeChange(float value)        // 拖动音量
     {
         mAudioSource.volume = value;
         if (value <= 0)
@@ -221,29 +216,37 @@ public class Game_MusicInfo : SubUI
 
 
 
+    private void ManyBtn_DaoRu(EAudioType type)             // 点击导入
+    {
+        mCurrentAudioResBean.IsDaoRu = true;
+        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_Audio, type, mCurrentAudioResBean,true);
+        Btn_OnClickClose();
+
+    }
 
     //—————————————————— 事件 ——————————————————
 
+    private AudioResBean mCurrentAudioResBean;
 
-    private void Show(FileInfo file,bool isNeedDaoRu)       // 显示事件
+    private void Show(FileInfo file,bool isNeedDaoRu)       // 显示音乐页事件
     {
 
-        mCurrentFile = file;
         mUIGameObject.SetActive(true);
         go_Wait.SetActive(true);
         go_ShowMusic.SetActive(false);
         go_DaoRu.SetActive(false);
         tx_WaitName.text = file.Name;
-        LoadAudioClip.Instance.StartLoadAudioClip(file, (audioClip) =>
+        Ctrl_LoadAudioClip.Instance.StartLoadAudioClip(file, (resBean) =>
         {
+            mCurrentAudioResBean = resBean;
             go_Wait.SetActive(false);
             go_ShowMusic.SetActive(true);
             go_DaoRu.SetActive(isNeedDaoRu);
             tx_InfoName.text = file.Name;
-            mTotalTime = TimeToString(audioClip.length);
-            mAudioSource.clip = audioClip;
+            mTotalTime = resBean.Clip.length.ToTiemStr();
+            mAudioSource.clip = resBean.Clip;
             slider_Progress.minValue = 0;
-            slider_Progress.maxValue = audioClip.length;
+            slider_Progress.maxValue = resBean.Clip.length;
 
             Btn_OnPlay();
         });
@@ -251,11 +254,9 @@ public class Game_MusicInfo : SubUI
     }
 
 
-    private void Close()                 // 关闭事件
+    private void Close()                                   // 关闭音乐页事件
     {
         mUIGameObject.SetActive(false);
-        mCurrentFile = null;
-
         mAudioSource.clip = null;
         mAudioSource.Stop();
     }

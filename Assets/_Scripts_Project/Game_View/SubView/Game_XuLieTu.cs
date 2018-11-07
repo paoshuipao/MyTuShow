@@ -96,8 +96,11 @@ public class Game_XuLieTu : SubUI
 
 
     // 改变大小Slider
+    private bool isShowSize;
     private GameObject go_ChangeSize;
-
+    private UGUI_Grid[] l_Grids;
+    private Slider slider_ChangeSize;
+    private Text tx_GridSize;
 
 
     private void SetTuSize(float width = 0, float height = 0) // 设置图大小
@@ -335,10 +338,23 @@ public class Game_XuLieTu : SubUI
         btn_DaoRu = Get<Button>("Top/Left/DaoRu");
         AddButtOnClick(btn_DaoRu, Btn_OnDaoRu);
         AddButtOnClick("Top/Left/DeleteAll", Btn_DeleteOneLine);
+
+
+        //改变 Grid 大小
+        l_Grids = Gets<UGUI_Grid>("Top/Contant/ScrollView");
+        for (int i = 0; i < l_Grids.Length; i++)
+        {
+            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[i].CurrentSize;
+        }
+        tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
+
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
-        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+        isShowSize = Ctrl_UserInfo.Instance.IsCanChangeSize;
+        go_ChangeSize.SetActive(isShowSize);
 
-
+        slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
+        AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
+        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[0].ChangeValue;
     }
 
 
@@ -430,8 +446,36 @@ public class Game_XuLieTu : SubUI
                 mScrollRect.content = rt_Grid5_Shu;
                 break;
         }
+        if (isShowSize)
+        {
+            if (mCurrentIndex == EXunLieTu.G1Zheng || mCurrentIndex == EXunLieTu.G2Zheng_XiTong || mCurrentIndex == EXunLieTu.G3Zheng_Big)
+            {
+                go_ChangeSize.SetActive(true);
+                slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[(int)mCurrentIndex].ChangeValue;
+                tx_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
+            }
+            else
+            {
+                go_ChangeSize.SetActive(false);
+
+            }
+        }
+
+
     }
 
+    private void Slider_OnGridSizeChange(float value)          // 改变 Grid 大小
+    {
+        int gridIndex = (int)mCurrentIndex;
+        int tmpValue = (int)value;
+        Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].ChangeValue = tmpValue;
+        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].YuanSize;
+        Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
+        l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].CurrentSize;
+        tx_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
+
+
+    }
 
 
 
@@ -597,9 +641,9 @@ public class Game_XuLieTu : SubUI
 
 
 
-
     private void E_IsShowChangeSize(bool isOn)          // 是否显示改变大小的Slider
     {
+        isShowSize = isOn;
         go_ChangeSize.SetActive(isOn);
 
     }

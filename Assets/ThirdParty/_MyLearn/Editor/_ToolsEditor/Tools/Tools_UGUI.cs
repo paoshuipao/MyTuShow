@@ -116,7 +116,7 @@ namespace UnityEditor
                     foreach (Texture2D texture2 in texs)
                     {
                         string assetPath = AssetDatabase.GetAssetPath(texture2);
-                        string fullPath = MyAssetUtil.GetFullName(assetPath);
+                        string fullPath = MyAssetUtil.GetFullPath(assetPath);
                         string fileName = MyAssetUtil.GetFileNameByFullName(fullPath);
                         MyIO.FileRename(fullPath, "EX_" + fileName);
                     }

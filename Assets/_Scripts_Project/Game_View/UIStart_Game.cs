@@ -208,6 +208,8 @@ public class UIStart_Game : BaseUI
     protected override void OnUpdate()
     {
         sub_MusicInfo.OnUpdate();
+        sub_Audio.OnUpdate();
+        
     }
 
 
@@ -506,6 +508,26 @@ public class UIStart_Game : BaseUI
         }
         #endregion
 
+        foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
+        {
+            List<string> paths = Ctrl_TextureInfo.Instance.GetAudioPaths(type);
+            List<FileInfo> tmpFileInfos = new List<FileInfo>();
+            foreach (string path in paths)
+            {
+                FileInfo fileInfo = new FileInfo(path);
+                if (fileInfo.Exists)       // 存在就加载
+                {
+                    tmpFileInfos.Add(fileInfo);
+                }
+                else                       // 不存在删除
+                {
+                    Ctrl_TextureInfo.Instance.DeleteAudioSave(type, path);
+                }
+            }
+
+            yield return sub_Audio.DaoRuFromFile(type, tmpFileInfos,false);
+
+        }
 
         MyLog.Green("加载完成");
 
@@ -740,7 +762,7 @@ public class UIStart_Game : BaseUI
                 go_AudioChoose1.SetActive(true);
                 go_AudioChoose2.SetActive(true);
                 d7_RightContant.Change2Six();
-                sub_Audio.Show();
+                sub_Audio.Show(choose);
                 break;
             case EGameType.DaoRu:
                 go_DaoRuChoose1.SetActive(true);

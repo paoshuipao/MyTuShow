@@ -82,7 +82,7 @@ public enum E_GameEvent                           // 这里写事件
     DaoRu_JiHeTu,                    // 导入 集合图 (EJiHeType 类型, List<FileInfo> 多文件，bool 是否保存)
     ResultDaoRu_JiHeTu,              // （已加载）导入 集合图（EJiHeType 类型 ， List<ResultBean> 结果集合）
 
-    DaoRu_Audio,                       // 导入音频（EAudioType 类型,FileInfo ）
+    ResultDaoRu_Audio,                    // 导入音频（EAudioType 类型,AudioResBean 结果 ）
 
 
 
