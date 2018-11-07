@@ -24,7 +24,7 @@ public enum EAudioType
 public class Game_Audio : SubUI
 {
 
-    public IEnumerator DaoRuFromFile(EAudioType type,List<FileInfo> files,bool isSave)
+    public IEnumerator DaoRuFromFile(EAudioType type, List<FileInfo> files, bool isSave)
     {
         foreach (FileInfo file in files)
         {
@@ -35,6 +35,16 @@ public class Game_Audio : SubUI
             yield return new WaitForEndOfFrame();
         }
     }
+
+    public void ChangeOtherPage()             // 转其他大项 或者 小项
+    {
+        if (null != mCurrentPlayBean)
+        {
+            mCurrentPlayBean.Stop();
+            mCurrentPlayBean = null;
+        }
+    }
+
 
     public void Show(int index)
     {
@@ -64,16 +74,17 @@ public class Game_Audio : SubUI
     {
         if (null != mCurrentPlayBean)
         {
-            mCurrentPlayBean.Update(mAudioSource, () =>
+            mCurrentPlayBean.Update(() =>
             {
-                int index = l_AudioItemBeans.IndexOf(mCurrentPlayBean);
+                List<EachItemBean> list = typeK_BeanListV[mCurrentIndex];
+                int index = list.IndexOf(mCurrentPlayBean);
                 index++;
-                if (index >= l_AudioItemBeans.Count)
+                if (index >= list.Count)
                 {
                     index = 0;
                 }
-                mCurrentPlayBean = l_AudioItemBeans[index];
-                mCurrentPlayBean.Play(mAudioSource);
+                mCurrentPlayBean = list[index];
+                mCurrentPlayBean.Play();
 
             });
         }
@@ -84,7 +95,8 @@ public class Game_Audio : SubUI
     #region 私有
 
     private EAudioType mCurrentIndex;
-
+    private EachItemBean mCurrentPlayBean;        // 当前播放
+    private readonly Dictionary<EAudioType, List<EachItemBean>> typeK_BeanListV = new Dictionary<EAudioType, List<EachItemBean>>();
 
 
     // 模版
@@ -112,10 +124,15 @@ public class Game_Audio : SubUI
     }
 
 
+
+
     public override void OnEnable()
     {
-    }
 
+
+
+
+    }
     public override void OnDisable()
     {
     }
@@ -151,6 +168,16 @@ public class Game_Audio : SubUI
 
 
 
+    private bool isSelect;                  // 是否之前点击了
+
+    private IEnumerator CheckoubleClick()           // 检测是否双击
+    {
+        isSelect = true;
+        yield return new WaitForSeconds(Ctrl_UserInfo.DoubleClickTime);
+        isSelect = false;
+    }
+
+
     #endregion
 
 
@@ -159,7 +186,13 @@ public class Game_Audio : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EAudioType, AudioResBean,bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
+        MyEventCenter.AddListener<EAudioType, AudioResBean, bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
+        foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
+        {
+            typeK_BeanListV.Add(type, new List<EachItemBean>());
+        }
+
+
         mAudioSource = Get<AudioSource>();
 
 
@@ -167,13 +200,20 @@ public class Game_Audio : SubUI
         go_MoBan = GetGameObject("Top/Contant/ScrollView/Item1/MoBan");
         m_SrollView = Get<ScrollRect>("Top/Contant/ScrollView");
         dt5_Contrl = Get<DTToggle5_Fade>("Top/Contant/ScrollView");
-        AddButtOnClick("Top/Left/DaoRu", Btn_OnDaoRu);
 
 
         // 底下
         tg_BottomContrl = Get<UGUI_ToggleGroup>("Bottom/Contant");
         tg_BottomContrl.OnChangeValue += E_OnBottomValueChange;
+
+
+        // 右边
+        AddButtOnClick("Top/Left/DaoRu", Btn_OnDaoRu);
+
+
     }
+
+
 
 
     //————————————————————————————————————
@@ -206,8 +246,8 @@ public class Game_Audio : SubUI
                 break;
         }
 
+        ChangeOtherPage();
         m_SrollView.content = GetParentRT(mCurrentIndex);
-
 
     }
 
@@ -225,7 +265,7 @@ public class Game_Audio : SubUI
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (MyFilterUtil.IsAudio(fileInfo))
                     {
-                        if (fileInfo.Extension ==".mp3")
+                        if (fileInfo.Extension == ".mp3")
                         {
                             MyLog.Red("该导入暂不支持导入 Mp3，去快速导入处导入 Mp3");
                         }
@@ -239,9 +279,12 @@ public class Game_Audio : SubUI
                         MyLog.Red("选择了其他的格式文件 —— " + fileInfo.Name);
                     }
                 }
-                Ctrl_Coroutine.Instance.StartCoroutine(DaoRuFromFile(mCurrentIndex,fileInfos,true));    //每个 FileInfo 分开来发送信息
+                Ctrl_Coroutine.Instance.StartCoroutine(DaoRuFromFile(mCurrentIndex, fileInfos, true));    //每个 FileInfo 分开来发送信息
             });
     }
+
+
+
 
 
 
@@ -249,17 +292,15 @@ public class Game_Audio : SubUI
 
 
 
-    private EachItemBean mCurrentPlayBean;        // 当前播放
-    private readonly List<EachItemBean> l_AudioItemBeans = new List<EachItemBean>();
 
-    private void E_DaoRu(EAudioType type, AudioResBean resBean,bool isSave)             // 导入事件
+    private void E_DaoRu(EAudioType type, AudioResBean resBean, bool isSave)             // 导入事件
     {
 
         // 1.保存一下信息
         if (isSave)
         {
             bool isSaveOk = Ctrl_TextureInfo.Instance.SaveAudio(type, resBean.SavePath);
-            MyEventCenter.SendEvent<EGameType,bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
+            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
             if (!isSaveOk)
             {
                 return;
@@ -269,39 +310,74 @@ public class Game_Audio : SubUI
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(type), CREATE_FILE_NAME);
         t.Find("Top/TxName").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(resBean.YuanPath);
         Text tx_ZhongTime = t.Find("Top/TxZhongTime").GetComponent<Text>();
-        tx_ZhongTime.text = resBean.Clip.length.ToTiemStr();
+
+        if (resBean.Clip.length <= 1)
+        {
+            tx_ZhongTime.text = "极短";
+        }
+        else
+        {
+            tx_ZhongTime.text = resBean.Clip.length.ToTiemStr();
+        }
+
         Text tx_CurrentTime = t.Find("Bottom/TxCurrentTime").GetComponent<Text>();
         Button btn_Play = t.Find("Bottom/BtnPlay").GetComponent<Button>();
         Button btn_Pause = t.Find("Bottom/BtnPause").GetComponent<Button>();
         Slider slider_Progress = t.Find("Bottom/Slider_Progress").GetComponent<Slider>();
 
-        EachItemBean itemBean = new EachItemBean(resBean.Clip,btn_Play.gameObject,btn_Pause.gameObject, slider_Progress, tx_CurrentTime);
-        l_AudioItemBeans.Add(itemBean);
-
+        EachItemBean itemBean = new EachItemBean(mAudioSource, resBean.Clip, btn_Play.gameObject, btn_Pause.gameObject, slider_Progress, tx_CurrentTime);
+        typeK_BeanListV[type].Add(itemBean);
+        // 播放按钮
         btn_Play.onClick.AddListener(() =>
         {
             if (null != mCurrentPlayBean)
             {
-                mCurrentPlayBean.Stop(mAudioSource);
+                mCurrentPlayBean.Stop();
             }
             mCurrentPlayBean = itemBean;
-            mCurrentPlayBean.Play(mAudioSource);
+            mCurrentPlayBean.Play();
 
         });
-
+        // 暂停按钮
         btn_Pause.onClick.AddListener(() =>
         {
-            mCurrentPlayBean.Pause(mAudioSource);
+            mCurrentPlayBean.Pause();
         });
+        // 检测双击
+        t.Find("Bg").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (isSelect)
+            {
+                isSelect = false;
+                ChangeOtherPage();
+                MyEventCenter.SendEvent<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo,null, new FileInfo(resBean.SavePath), false);
+            }
+            else
+            {
+                Ctrl_Coroutine.Instance.StartCoroutine(CheckoubleClick());
+            }
+        });
+        // 删除按钮
+        t.Find("Top/BtnClose").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            if (itemBean == mCurrentPlayBean)
+            {
+                mCurrentPlayBean.Stop();
+                mAudioSource.clip = null;
+                mCurrentPlayBean = null;
+            }
+            typeK_BeanListV[type].Remove(itemBean);
+            UnityEngine.Object.Destroy(t.gameObject);
+            Ctrl_TextureInfo.Instance.DeleteAudioSave(type, resBean.SavePath);
+        });
+
 
     }
 
 
 
 
-
-
-    //———————————————— EachItemBean ————————————————————
+    #region EachItemBean
 
 
     public class EachItemBean
@@ -311,47 +387,79 @@ public class Game_Audio : SubUI
         private readonly Slider slider_Progress;
         private readonly Text tx_CurrentTime;
         private readonly AudioClip mAudioClip;
+        private readonly AudioSource mAudioSource;
 
-        private bool isPlaying;
 
-        public EachItemBean(AudioClip clip, GameObject goPlay, GameObject goPause, Slider sliderProgress, Text txCurrentTime)
+        private bool isPlaying, isOnSliderChange;
+
+        public EachItemBean(AudioSource source, AudioClip clip, GameObject goPlay, GameObject goPause, Slider sliderProgress, Text txCurrentTime)
         {
+            mAudioSource = source;
             mAudioClip = clip;
             go_Play = goPlay;
             go_Pause = goPause;
             slider_Progress = sliderProgress;
             tx_CurrentTime = txCurrentTime;
 
+            SliderEvent sliderEvent = sliderProgress.GetComponent<SliderEvent>();
+            if (null == sliderEvent)
+            {
+                throw new Exception("在 Slider 上添加 SliderEvent！");
+            }
+            sliderEvent.E_OnDrag += E_OnSliderDrag;
+            sliderEvent.E_OnDragEnd += E_OnSliderDragEnd;
+
             slider_Progress.minValue = 0;
             slider_Progress.maxValue = clip.length;
             slider_Progress.value = 0;
         }
 
+        private void E_OnSliderDrag()         // 开始拖动 Slider
+        {
+            if (isPlaying)
+            {
+                isOnSliderChange = true;
+            }
 
-        public void Play(AudioSource audioSource)
+        }
+
+        private void E_OnSliderDragEnd()      // 结束拖动 Slider
+        {
+            if (isOnSliderChange && isPlaying)
+            {
+                isOnSliderChange = false;
+                mAudioSource.time = slider_Progress.value;
+            }
+        }
+
+
+
+        public void Play()
         {
             isPlaying = true;
             go_Play.SetActive(false);
             go_Pause.SetActive(true);
             tx_CurrentTime.gameObject.SetActive(true);
-            if (audioSource.clip != mAudioClip)
+            if (mAudioSource.clip != mAudioClip)
             {
-                audioSource.clip = mAudioClip;
+                mAudioSource.clip = mAudioClip;
+                mAudioSource.time = slider_Progress.value;
+
             }
-            audioSource.Play();
+            mAudioSource.Play();
 
         }
 
-        public void Pause(AudioSource audioSource)
+        public void Pause()
         {
             go_Play.SetActive(true);
             go_Pause.SetActive(false);
             isPlaying = false;
-            audioSource.Pause();
+            mAudioSource.Pause();
         }
 
 
-        public void Stop(AudioSource audioSource)
+        public void Stop()
         {
             slider_Progress.value = 0;
             go_Play.SetActive(true);
@@ -359,31 +467,40 @@ public class Game_Audio : SubUI
             tx_CurrentTime.gameObject.SetActive(false);
 
             isPlaying = false;
-            audioSource.Stop();
+            mAudioSource.Stop();
         }
 
-        public void Update(AudioSource audioSource,Action onFinsh)
+        public void Update(Action onFinsh)
         {
             if (isPlaying)
             {
-                if (audioSource.isPlaying)
+                if (mAudioSource.isPlaying)
                 {
-                    tx_CurrentTime.text = audioSource.time.ToTiemStr();
-                    slider_Progress.value = audioSource.time;
+                    if (!isOnSliderChange)
+                    {
+                        slider_Progress.value = mAudioSource.time;
+                    }
+                    tx_CurrentTime.text = mAudioSource.time.ToTiemStr();
                 }
                 else
                 {
-                    Stop(audioSource);
+                    Stop();
                     onFinsh();
                 }
             }
-  
+
 
 
         }
 
-
     }
+
+
+
+    #endregion
+
+
+
 }
 
 

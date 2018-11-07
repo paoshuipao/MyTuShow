@@ -725,7 +725,7 @@ public class UIStart_Game : BaseUI
                 break;
 
         }
-
+        sub_Audio.ChangeOtherPage();
         switch (type)
         {
             case EGameType.XunLieTu:

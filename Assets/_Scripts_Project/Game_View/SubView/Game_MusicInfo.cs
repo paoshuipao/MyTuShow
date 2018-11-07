@@ -8,7 +8,7 @@ public class Game_MusicInfo : SubUI
 {
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener<FileInfo,bool>(E_GameEvent.ShowMusicInfo, Show);
+        MyEventCenter.AddListener<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo, Show);
         MyEventCenter.AddListener(E_GameEvent.CloseMusicInfo, Close);
         mAudioSource = Get<AudioSource>("ShowMusic/AudioSource");
 
@@ -103,36 +103,16 @@ public class Game_MusicInfo : SubUI
     }
 
 
-/*
-    private string TimeToString(float time)
-    {
-        int minutes = (int)(time / 60.0f);
-        int seconds = (int)(time % 60.0f);
-        string strMinutes = "";
-        string strSeconds = "";
-
-        if (minutes < 10)
-        {
-            strMinutes += "0";
-        }
-        if (seconds < 10)
-        {
-            strSeconds += "0";
-        }
-
-        strMinutes += minutes;
-        strSeconds += seconds;
-
-        return string.Format("{0}:{1}", strMinutes, strSeconds);
-    }
-*/
 
     #endregion
 
 
     private void Btn_OnClickClose()              // 点击关闭
     {
+        Btn_OnStop();
         MyEventCenter.SendEvent(E_GameEvent.CloseMusicInfo);
+
+
     }
 
 
@@ -220,6 +200,13 @@ public class Game_MusicInfo : SubUI
     {
         mCurrentAudioResBean.IsDaoRu = true;
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_Audio, type, mCurrentAudioResBean,true);
+
+        if (null!= tx_Name)
+        {
+            tx_Name.color = Color.green;
+            tx_Name = null;
+        }
+
         Btn_OnClickClose();
 
     }
@@ -227,10 +214,11 @@ public class Game_MusicInfo : SubUI
     //—————————————————— 事件 ——————————————————
 
     private AudioResBean mCurrentAudioResBean;
+    private Text tx_Name;
 
-    private void Show(FileInfo file,bool isNeedDaoRu)       // 显示音乐页事件
+    private void Show(Text txName ,FileInfo file,bool isNeedDaoRu)       // 显示音乐页事件
     {
-
+        tx_Name = txName;
         mUIGameObject.SetActive(true);
         go_Wait.SetActive(true);
         go_ShowMusic.SetActive(false);

@@ -90,7 +90,7 @@ public enum E_GameEvent                           // 这里写事件
     //————————————————————————————————————
 
 
-    ShowMusicInfo,         // 显示音乐信息(FileInfo,bool true:需要导入)
+    ShowMusicInfo,         // 显示音乐信息(Text 用于导入变绿色,FileInfo,bool true:需要导入)
     CloseMusicInfo,        // 关闭音乐信息
 
 

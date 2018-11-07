@@ -1028,7 +1028,7 @@ public partial class Game_DaoRu : SubUI
                             RefreshMiddleContent();      // 刷新
                             break;
                         case MUSIC_NAME:    //音乐文件
-                            MyEventCenter.SendEvent(E_GameEvent.ShowMusicInfo, (FileInfo)fileInfo,true);
+                            MyEventCenter.SendEvent(E_GameEvent.ShowMusicInfo, t.Find("Text").GetComponent<Text>(),(FileInfo)fileInfo,true);
                             break;
                         default:
                             throw new Exception("没有定义 —— "+ go_CurrentSelect.name);

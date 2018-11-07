@@ -296,7 +296,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
 
     public bool SaveAudio(EAudioType index, string savePath)                       // 保存
     {
-
+        savePath = savePath.Replace("\\", "/");
         if (!audioTypeK_PathV[(ushort)index].Contains(savePath))
         {
             audioTypeK_PathV[(ushort)index].Add(savePath);
@@ -310,6 +310,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
 
     public void DeleteAudioSave(EAudioType index, string savePath)                 // 删除
     {
+        savePath = savePath.Replace("\\", "/");
         if (audioTypeK_PathV[(ushort)index].Contains(savePath))
         {
             audioTypeK_PathV[(ushort)index].Remove(savePath);
