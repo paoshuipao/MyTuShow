@@ -200,7 +200,6 @@ public class Game_MusicInfo : SubUI
     {
         mCurrentAudioResBean.IsDaoRu = true;
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_Audio, type, mCurrentAudioResBean,true);
-
         if (null!= tx_Name)
         {
             tx_Name.color = Color.green;

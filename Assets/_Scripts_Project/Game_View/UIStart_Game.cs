@@ -275,6 +275,7 @@ public class UIStart_Game : BaseUI
     private readonly Game_JiHeTu sub_JiHeTu = new Game_JiHeTu();          // 集合图
     private readonly Game_Audio sub_Audio = new Game_Audio();             // 音频
     private readonly Game_DaoRu sub_DaoRu1 = new Game_DaoRu();            // 导入
+    private readonly Game_GaiMing sub_GaiMing = new Game_GaiMing();       // 改名
 
     // 其他子UI
     private readonly Game_MusicInfo sub_MusicInfo = new Game_MusicInfo();    // 音乐信息
@@ -283,7 +284,7 @@ public class UIStart_Game : BaseUI
 
     protected override SubUI[] GetSubUI()
     {
-        return new SubUI[] { sub_XuLieTu1, sub_DaoRu1, sub_TaoMing ,sub_Audio, sub_MusicInfo, sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu };
+        return new SubUI[] { sub_XuLieTu1, sub_DaoRu1, sub_TaoMing ,sub_Audio, sub_MusicInfo, sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu , sub_GaiMing };
     }
 
 

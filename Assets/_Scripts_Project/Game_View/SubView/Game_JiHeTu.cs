@@ -391,7 +391,7 @@ public class Game_JiHeTu : SubUI
 
     //————————————————————————————————————
 
-    private void E_DelteTrue(EGameType type)             // 真的删除
+    private void E_DelteTrue(EGameType type)             // 真的删除一行
     {
         if (type == EGameType.JiHeTu)
         {

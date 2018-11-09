@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using PSPUtil.Attribute;
 using PSPUtil.StaticUtil;
@@ -14,6 +15,8 @@ public class UGUI_ToggleGroup : MonoBehaviour
 
     public Action OnEachClick;                  // 只要点击就调用
 
+
+    public Action OnDoubleClick;                // 双击
 
     [ReadOnly]
     public string CurrentName;
@@ -61,24 +64,46 @@ public class UGUI_ToggleGroup : MonoBehaviour
 
             toggle.onValueChanged.AddListener((isOn) =>
 	        {
-	            if (null!= OnEachClick)
+	            if (isOn)
 	            {
-	                OnEachClick();
-	            }
-	            if (isOn&& CurrentName!= changeName)
-	            {
-	                if (null != OnChangeValue)
+	                if (null != OnEachClick)
 	                {
-                        OnChangeValue(changeName);
+	                    OnEachClick();
+	                }
+	                if (CurrentName != changeName && null != OnChangeValue)
+	                {
+	                    OnChangeValue(changeName);
 	                    CurrentName = changeName;
 	                }
+	                if (null != OnDoubleClick)
+                    {
+	                    if (isSelect)
+	                    {
+	                        isSelect = false;
+	                        OnDoubleClick();
+	                    }
+	                    else
+	                    {
+	                        StartCoroutine(CheckoubleClick());
+	                    }
+                    }
                 }
+
 	        });
 
         }
 
 
 	}
+
+    private bool isSelect;
+    private IEnumerator CheckoubleClick()           // 检测是否双击
+    {
+        isSelect = true;
+        yield return new WaitForSeconds(Ctrl_UserInfo.DoubleClickTime);
+        isSelect = false;
+    }
+
 
 
     [Button("重新 刷新 Toggle")]

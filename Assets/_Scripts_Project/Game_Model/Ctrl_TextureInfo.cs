@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using PSPUtil.Singleton;
-using PSPUtil.StaticUtil;
 
 [Serializable]
 public class XunLieSaveBean
@@ -318,6 +317,11 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     }
 
 
+
+    public void DeleteAudioOneLine(EAudioType index)                           // 删除整行
+    {
+        audioTypeK_PathV[(ushort)index].Clear();
+    }
 
 
     #region 私有

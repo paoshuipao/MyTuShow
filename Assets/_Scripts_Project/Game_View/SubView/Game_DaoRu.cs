@@ -313,6 +313,9 @@ public partial class Game_DaoRu : SubUI
 
     protected override void OnStart(Transform root)
     {
+
+        MyEventCenter.AddListener<EAudioType,AudioResBean,bool> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
+
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
 
@@ -1875,12 +1878,21 @@ public partial class Game_DaoRu : SubUI
 
 
 
+
+
+
     private void JiXuDaoRu()                                       // 继承导入
     {
         go_Result.SetActive(false);
 
     }
 
+
+
+    private void E_DaoRuAudio(EAudioType type, AudioResBean bean,bool isSave)      // 导入音频的事件
+    {
+        mSelectIndex = (int)type;
+    }
 
     #endregion
 

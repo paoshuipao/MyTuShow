@@ -110,12 +110,18 @@ public class Game_Audio : SubUI
 
     // 底下
     private UGUI_ToggleGroup tg_BottomContrl;
+    private Text tx_BottomName1, tx_BottomName2, tx_BottomName3, tx_BottomName4, tx_BottomName5;
     private const string ITEM_STR1 = "GeShiItem1";
     private const string ITEM_STR2 = "GeShiItem2";
     private const string ITEM_STR3 = "GeShiItem3";
     private const string ITEM_STR4 = "GeShiItem4";
     private const string ITEM_STR5 = "GeShiItem5";
 
+
+    // 导入失败界面
+    private GameObject go_DaoRuError;
+    private RectTransform rt_ErrorDRContant;
+    private GameObject moBan_Error,moBan_Ok;
 
 
     public override string GetUIPathForRoot()
@@ -126,13 +132,6 @@ public class Game_Audio : SubUI
 
 
 
-    public override void OnEnable()
-    {
-
-
-
-
-    }
     public override void OnDisable()
     {
     }
@@ -178,6 +177,16 @@ public class Game_Audio : SubUI
     }
 
 
+
+    private void DeleteOneLine(EAudioType type)
+    {
+        RectTransform rt = GetParentRT(type);
+        for (int i = 0; i < rt.childCount; i++)
+        {
+            UnityEngine.Object.Destroy(rt.GetChild(i).gameObject);
+        }
+    }
+
     #endregion
 
 
@@ -187,6 +196,10 @@ public class Game_Audio : SubUI
     {
 
         MyEventCenter.AddListener<EAudioType, AudioResBean, bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
+        MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
+
+
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
         {
             typeK_BeanListV.Add(type, new List<EachItemBean>());
@@ -197,7 +210,7 @@ public class Game_Audio : SubUI
 
 
         // 内容 
-        go_MoBan = GetGameObject("Top/Contant/ScrollView/Item1/MoBan");
+        go_MoBan = GetGameObject("Top/Contant/ScrollView/MoBan");
         m_SrollView = Get<ScrollRect>("Top/Contant/ScrollView");
         dt5_Contrl = Get<DTToggle5_Fade>("Top/Contant/ScrollView");
 
@@ -205,20 +218,50 @@ public class Game_Audio : SubUI
         // 底下
         tg_BottomContrl = Get<UGUI_ToggleGroup>("Bottom/Contant");
         tg_BottomContrl.OnChangeValue += E_OnBottomValueChange;
+        tg_BottomContrl.OnDoubleClick += E_OnBottomDoubleClick;
+
+        tx_BottomName1 = Get<Text>("Bottom/Contant/GeShiItem1/Text");
+        tx_BottomName2 = Get<Text>("Bottom/Contant/GeShiItem2/Text");
+        tx_BottomName3 = Get<Text>("Bottom/Contant/GeShiItem3/Text");
+        tx_BottomName4 = Get<Text>("Bottom/Contant/GeShiItem4/Text");
+        tx_BottomName5 = Get<Text>("Bottom/Contant/GeShiItem5/Text");
+
 
 
         // 右边
         AddButtOnClick("Top/Left/DaoRu", Btn_OnDaoRu);
+        AddButtOnClick("Top/Left/DeleteAll", Btn_DeleteOneLine);
 
-
+        // 导入失败界面
+        go_DaoRuError = GetGameObject("DaoRuError");
+        rt_ErrorDRContant = Get<RectTransform>("DaoRuError/Contant/Error/Contant");
+        moBan_Error = GetGameObject("DaoRuError/Contant/Error/MoBan_Error");
+        moBan_Ok = GetGameObject("DaoRuError/Contant/Error/MoBan_Ok");
+        AddButtOnClick("DaoRuError/Contant/BtnSure", Btn_ErrorUIClickSure);
     }
 
 
 
+    public override void OnEnable()
+    {
+        tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomAudioName[0];
+        tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomAudioName[1];
+        tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomAudioName[2];
+        tx_BottomName4.text = Ctrl_UserInfo.Instance.BottomAudioName[3];
+        tx_BottomName5.text = Ctrl_UserInfo.Instance.BottomAudioName[4];
+
+
+    }
 
     //————————————————————————————————————
 
+    private void E_OnBottomDoubleClick()                                     // 底下 双击 改名
+    {
+        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, Ctrl_UserInfo.Instance.BottomAudioName[(int)mCurrentIndex]);
 
+
+    }
+     
     private void E_OnBottomValueChange(string changeName)                     // 底下的切换
     {
 
@@ -260,6 +303,8 @@ public class Game_Audio : SubUI
             {
 
                 List<FileInfo> fileInfos = new List<FileInfo>(filePaths.Length);
+                bool isError = false;
+
                 foreach (string filePath in filePaths)
                 {
                     FileInfo fileInfo = new FileInfo(filePath);
@@ -267,7 +312,7 @@ public class Game_Audio : SubUI
                     {
                         if (fileInfo.Extension == ".mp3")
                         {
-                            MyLog.Red("该导入暂不支持导入 Mp3，去快速导入处导入 Mp3");
+                            isError = true;
                         }
                         else
                         {
@@ -276,20 +321,69 @@ public class Game_Audio : SubUI
                     }
                     else
                     {
+                        isError = true;
                         MyLog.Red("选择了其他的格式文件 —— " + fileInfo.Name);
                     }
                 }
+                if (isError)
+                {
+                    go_DaoRuError.SetActive(true);
+                    foreach (string path in filePaths)
+                    {
+                        FileInfo fileInfo = new FileInfo(path);
+                        Transform t;
+                        if (MyFilterUtil.IsAudio(fileInfo))
+                        {
+                            if (fileInfo.Extension == ".mp3")
+                            {
+                               t= InstantiateMoBan(moBan_Error, rt_ErrorDRContant);
+                            }
+                            else
+                            {
+                                t = InstantiateMoBan(moBan_Ok, rt_ErrorDRContant);
+                            }
+                        }
+                        else
+                        {
+                            t = InstantiateMoBan(moBan_Error, rt_ErrorDRContant);
+                        }
+                        t.Find("TxName").GetComponent<Text>().text = fileInfo.Name;
+                    }
+                }
+
                 Ctrl_Coroutine.Instance.StartCoroutine(DaoRuFromFile(mCurrentIndex, fileInfos, true));    //每个 FileInfo 分开来发送信息
             });
     }
 
 
+    private void Btn_DeleteOneLine()                                           // 点击右上的删除
+    {
+        string tittle = "删除";
+        switch (mCurrentIndex)
+        {
+            case EAudioType.EasyMusic:
+                tittle += "  放松音乐 所有音频？";
+                break;
+            case EAudioType.BGM:
+                tittle += " BGM 所有音频？";
+                break;
+            case EAudioType.Effect:
+                tittle += " 特效音效 所有音频？";
+                break;
+            case EAudioType.Click:
+                tittle += " 按键音效 所有音频？";
+                break;
+            case EAudioType.Perple:
+                tittle += " 人物动作 所有音频？";
+                break;
+        }
+        MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.Audio, tittle);
 
+    }
 
 
 
     //———————————————————— 事件 ————————————————
-
 
 
 
@@ -372,6 +466,41 @@ public class Game_Audio : SubUI
         });
 
 
+    }
+
+
+
+    private void E_DelteTrue(EGameType type)             // 真的删除一行
+    {
+        if (type == EGameType.Audio)
+        {
+            Ctrl_TextureInfo.Instance.DeleteAudioOneLine(mCurrentIndex);
+            DeleteOneLine(mCurrentIndex);
+        }
+    }
+
+
+    private void E_DeleteAll()                           // 删除所有
+    {
+        ChangeOtherPage();
+        foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
+        {
+            DeleteOneLine(type);
+        }
+
+    }
+
+
+
+
+
+    private void Btn_ErrorUIClickSure()                  // 在导入失败界面点击确定
+    {
+        go_DaoRuError.SetActive(false);
+        for (int i = 0; i < rt_ErrorDRContant.childCount; i++)
+        {
+            UnityEngine.Object.DestroyImmediate(rt_ErrorDRContant.GetChild(i).gameObject);
+        }
     }
 
 

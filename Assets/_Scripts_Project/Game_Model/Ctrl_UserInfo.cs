@@ -49,8 +49,14 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     public GridSizeBean[] L_JiHeTuSize { get; set; }                  // 集合图 Grid 大小
 
-    
 
+    //—————————————————— 底下名称 ——————————————————
+
+    public string[] BottomJiHeXLTName { get; set; }              // 底下集合序列图名称
+    public string[] BottomTaoMingName { get; set; }              // 底下透明图名称
+    public string[] BottomJpgName { get; set; }                  // 底下Jpg名称
+    public string[] BottomJiHeName { get; set; }                 // 底下集合名称
+    public string[] BottomAudioName { get; set; }                // 底下音频名称
 
 
     #region 私有
@@ -69,6 +75,16 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     private const string PP_TAO_MING_SIZE = "PP_TAO_MING_SIZE";
     private const string PP_JPG_SIZE = "PP_JPG_SIZE";
     private const string PP_JI_HE_SIZE = "PP_JI_HE_SIZE";
+
+    // 底下名称
+    private const string PP_BOTTOM_JIHE_XLT_NAME = "PP_BOTTOM_JIHE_XLT_NAME";
+    private const string PP_BOTTOM_TAO_MING_NAME = "PP_BOTTOM_TAO_MING_NAME";
+    private const string PP_BOTTOM_JPG_NAME = "PP_BOTTOM_JPG_NAME";
+    private const string PP_BOTTOM_JI_HE_NAME = "PP_BOTTOM_JI_HE_NAME";
+    private const string PP_BOTTOM_AUDIO_NAME = "PP_BOTTOM_AUDIO_NAME";
+
+
+
 
 
 
@@ -96,7 +112,17 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         IsXuLieTuShowTip = ES3.Load(PP_IS_XLT_SHOW_TIP, true);
         IsCanChangeSize = ES3.Load(PP_IS_CHANGE_SIZE, false);
 
+        InitSize();
+        InitBottomName();
 
+
+    }
+
+
+
+
+    private void InitSize()               // 初始化大小
+    {
         // 序列图
         if (!ES3.KeyExists(PP_XU_LIE_TU_SIZE))
         {
@@ -173,6 +199,20 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         }
     }
 
+
+    private void InitBottomName()        // 初始化底下名称
+    {
+        BottomJiHeXLTName = !ES3.KeyExists(PP_BOTTOM_JIHE_XLT_NAME) ? new[] { "特效（小）", "特效（大）", "集合3", "集合4", "集合5" } : ES3.Load<string[]>(PP_BOTTOM_JIHE_XLT_NAME);
+        BottomTaoMingName = !ES3.KeyExists(PP_BOTTOM_TAO_MING_NAME) ? new[] { "系统", "文字", "武器", "道具", "场景" } : ES3.Load<string[]>(PP_BOTTOM_TAO_MING_NAME);
+        BottomJpgName = !ES3.KeyExists(PP_BOTTOM_JPG_NAME) ? new[] { "jpg1", "jpg2", "jpg3", "jpp4", "jpg5" } : ES3.Load<string[]>(PP_BOTTOM_JPG_NAME);
+        BottomJiHeName = !ES3.KeyExists(PP_BOTTOM_JI_HE_NAME) ? new[] { "集合1", "集合2", "集合3", "集合4", "集合5" } : ES3.Load<string[]>(PP_BOTTOM_JI_HE_NAME);
+        BottomAudioName = !ES3.KeyExists(PP_BOTTOM_AUDIO_NAME) ? new[] { "放松音乐", "BGM", "特效音效", "按键音效", "人物动作" } : ES3.Load<string[]>(PP_BOTTOM_AUDIO_NAME);
+
+
+    }
+
+
+
     private GridSizeBean GetGridSizeBean(float x,float y)
     {
         GridSizeBean bean = new GridSizeBean();
@@ -181,10 +221,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         bean.ChangeValue = 0;
         return bean;
     }
-
-
-
-
 
 
 
@@ -203,6 +239,13 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ES3.Save<GridSizeBean[]>(PP_TAO_MING_SIZE, L_TaoMingTuSize);
         ES3.Save<GridSizeBean[]>(PP_JPG_SIZE, L_JPGTuSize);
         ES3.Save<GridSizeBean[]>(PP_JI_HE_SIZE, L_JiHeTuSize);
+        // 初始化底下名称
+        ES3.Save<string[]>(PP_BOTTOM_JIHE_XLT_NAME, BottomJiHeXLTName);
+        ES3.Save<string[]>(PP_BOTTOM_TAO_MING_NAME, BottomTaoMingName);
+        ES3.Save<string[]>(PP_BOTTOM_JPG_NAME, BottomJpgName);
+        ES3.Save<string[]>(PP_BOTTOM_JI_HE_NAME, BottomJiHeName);
+        ES3.Save<string[]>(PP_BOTTOM_AUDIO_NAME, BottomAudioName);
+
 
 
     }
@@ -214,6 +257,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     //——————————————————  不保存的 ——————————————————
 
 
-    public static float DoubleClickTime = 0.5f;                  // 双击的控制时间（少于这个时间就算是双击）
+    public static float DoubleClickTime = 0.4f;                  // 双击的控制时间（少于这个时间就算是双击）
 
 }
