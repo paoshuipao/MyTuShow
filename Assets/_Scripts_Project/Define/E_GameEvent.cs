@@ -113,7 +113,7 @@ public enum E_GameEvent                           // 这里写事件
 
     ShowChangeSizeSlider,                // 显示能改变大小的Slider
 
-    ShowGeiMingUI,               // 显示改名UI(string 原名)
+    ShowGeiMingUI,               // 显示改名UI(EGameType,string 原名)
     SureGeiMing,                 // 确定改名（EGameType，string 修改后的名称）
 
 

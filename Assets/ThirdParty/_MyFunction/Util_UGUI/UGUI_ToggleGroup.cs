@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using PSPUtil.Attribute;
+using PSPUtil.Control;
 using PSPUtil.StaticUtil;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -75,7 +76,7 @@ public class UGUI_ToggleGroup : MonoBehaviour
 	                    OnChangeValue(changeName);
 	                    CurrentName = changeName;
 	                }
-	                if (null != OnDoubleClick)
+	                if (null != OnDoubleClick && gameObject.activeSelf)
                     {
 	                    if (isSelect)
 	                    {
@@ -84,7 +85,7 @@ public class UGUI_ToggleGroup : MonoBehaviour
 	                    }
 	                    else
 	                    {
-	                        StartCoroutine(CheckoubleClick());
+                            Ctrl_Coroutine.Instance.StartCoroutine(CheckoubleClick());
 	                    }
                     }
                 }

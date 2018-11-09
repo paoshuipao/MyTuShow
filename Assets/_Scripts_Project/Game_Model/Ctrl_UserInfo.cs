@@ -257,6 +257,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     //——————————————————  不保存的 ——————————————————
 
 
-    public static float DoubleClickTime = 0.4f;                  // 双击的控制时间（少于这个时间就算是双击）
+    public static float DoubleClickTime = 0.25f;                  // 双击的控制时间（少于这个时间就算是双击）
 
 }

@@ -61,6 +61,8 @@ public class Game_NormalTu : SubUI
 
     // 底下
     private UGUI_ToggleGroup tg_BottomContrl;
+    private Text tx_BottomName1, tx_BottomName2, tx_BottomName3, tx_BottomName4, tx_BottomName5;
+
     private const string ITEM_STR1 = "GeShiItem1";
     private const string ITEM_STR2 = "GeShiItem2";
     private const string ITEM_STR3 = "GeShiItem3";
@@ -137,14 +139,10 @@ public class Game_NormalTu : SubUI
         return "Right/EachContant/NormalTu";
     }
 
-
-    public override void OnEnable()
-    {
-    }
-
     public override void OnDisable()
     {
     }
+
 
     private void DeleteOneLine(ENormalTuType type)
     {
@@ -168,6 +166,8 @@ public class Game_NormalTu : SubUI
         MyEventCenter.AddListener<EGameType>(E_GameEvent.OnClickNoSaveThis, E_OnClickNoSaveThis);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
         MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
+
 
 
         // 模版
@@ -181,6 +181,14 @@ public class Game_NormalTu : SubUI
         // 底下
         tg_BottomContrl = Get<UGUI_ToggleGroup>("Bottom/Contant");
         tg_BottomContrl.OnChangeValue += E_OnBottomValueChange;
+        tg_BottomContrl.OnDoubleClick += E_OnBottomDoubleClick;
+
+        tx_BottomName1 = Get<Text>("Bottom/Contant/GeShiItem1/Text");
+        tx_BottomName2 = Get<Text>("Bottom/Contant/GeShiItem2/Text");
+        tx_BottomName3 = Get<Text>("Bottom/Contant/GeShiItem3/Text");
+        tx_BottomName4 = Get<Text>("Bottom/Contant/GeShiItem4/Text");
+        tx_BottomName5 = Get<Text>("Bottom/Contant/GeShiItem5/Text");
+
 
 
         // 双击显示信息
@@ -209,9 +217,22 @@ public class Game_NormalTu : SubUI
     }
 
 
-
+    public override void OnEnable()
+    {
+        tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+        tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+        tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+        tx_BottomName4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+        tx_BottomName5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+    }
 
     //————————————————————————————————————
+
+    private void E_OnBottomDoubleClick()                                     // 底下 双击 改名
+    {
+        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.NormalTu, Ctrl_UserInfo.Instance.BottomJpgName[(int)mCurrentIndex]);
+    }
+
 
 
     private void E_OnBottomValueChange(string changeName) // 底下的切换
@@ -454,6 +475,36 @@ public class Game_NormalTu : SubUI
         go_ChangeSize.SetActive(isOn);
 
     }
+
+
+
+
+    private void E_OnSureGaiMing(EGameType type, string changeNamne)           // 确定改名
+    {
+        if (type == EGameType.NormalTu)
+        {
+            switch (mCurrentIndex)
+            {
+                case ENormalTuType.Jpg1:
+                    tx_BottomName1.text = changeNamne;
+                    break;
+                case ENormalTuType.Jpg2:
+                    tx_BottomName2.text = changeNamne;
+                    break;
+                case ENormalTuType.Jpg3:
+                    tx_BottomName3.text = changeNamne;
+                    break;
+                case ENormalTuType.Jpg4:
+                    tx_BottomName4.text = changeNamne;
+                    break;
+                case ENormalTuType.Jpg5:
+                    tx_BottomName5.text = changeNamne;
+                    break;
+            }
+            Ctrl_UserInfo.Instance.BottomJpgName[(int)mCurrentIndex] = changeNamne;
+        }
+    }
+
 
 
 }

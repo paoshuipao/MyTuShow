@@ -191,13 +191,14 @@ public class Game_Audio : SubUI
 
 
 
-
     protected override void OnStart(Transform root)
     {
 
         MyEventCenter.AddListener<EAudioType, AudioResBean, bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
+
 
 
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
@@ -253,11 +254,13 @@ public class Game_Audio : SubUI
 
     }
 
+
+
     //————————————————————————————————————
 
     private void E_OnBottomDoubleClick()                                     // 底下 双击 改名
     {
-        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, Ctrl_UserInfo.Instance.BottomAudioName[(int)mCurrentIndex]);
+        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.Audio, Ctrl_UserInfo.Instance.BottomAudioName[(int)mCurrentIndex]);
 
 
     }
@@ -492,14 +495,40 @@ public class Game_Audio : SubUI
 
 
 
-
-
     private void Btn_ErrorUIClickSure()                  // 在导入失败界面点击确定
     {
         go_DaoRuError.SetActive(false);
         for (int i = 0; i < rt_ErrorDRContant.childCount; i++)
         {
             UnityEngine.Object.DestroyImmediate(rt_ErrorDRContant.GetChild(i).gameObject);
+        }
+    }
+
+
+
+    private void E_OnSureGaiMing(EGameType type,string changeNamne)           // 确定改名
+    {
+        if (type == EGameType.Audio)
+        {
+            switch (mCurrentIndex)
+            {
+                case EAudioType.EasyMusic:
+                    tx_BottomName1.text = changeNamne;
+                    break;
+                case EAudioType.BGM:
+                    tx_BottomName2.text = changeNamne;
+                    break;
+                case EAudioType.Effect:
+                    tx_BottomName3.text = changeNamne;
+                    break;
+                case EAudioType.Click:
+                    tx_BottomName4.text = changeNamne;
+                    break;
+                case EAudioType.Perple:
+                    tx_BottomName5.text = changeNamne;
+                    break;
+            }
+            Ctrl_UserInfo.Instance.BottomAudioName[(int) mCurrentIndex] = changeNamne;
         }
     }
 
