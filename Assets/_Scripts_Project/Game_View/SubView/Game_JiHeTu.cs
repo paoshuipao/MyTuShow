@@ -475,7 +475,7 @@ public class Game_JiHeTu : SubUI
 
     private void E_OnSureGaiMing(EGameType type, string changeNamne)           // 确定改名
     {
-        if (type == EGameType.NormalTu)
+        if (type == EGameType.JiHeTu)
         {
             switch (mCurrentIndex)
             {

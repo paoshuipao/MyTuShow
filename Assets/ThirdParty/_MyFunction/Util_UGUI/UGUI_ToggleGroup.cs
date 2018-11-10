@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using PSPUtil.Attribute;
 using PSPUtil.Control;
 using PSPUtil.StaticUtil;
 using Sirenix.OdinInspector;
@@ -22,11 +20,13 @@ public class UGUI_ToggleGroup : MonoBehaviour
     [ReadOnly]
     public string CurrentName;
 
-
+    public Toggle[] SubToggles;
+    private bool isDoubleCLick;
 
 
     public void ChangeToggleOn(string changeName)
     {
+        isDoubleCLick = false;
         bool isChangeTure = false;
         foreach (Toggle subToggle in SubToggles)
         {
@@ -53,7 +53,6 @@ public class UGUI_ToggleGroup : MonoBehaviour
 
 
 
-    public Toggle[] SubToggles;
 
 
 
@@ -81,7 +80,10 @@ public class UGUI_ToggleGroup : MonoBehaviour
 	                    if (isSelect)
 	                    {
 	                        isSelect = false;
-	                        OnDoubleClick();
+	                        if (isDoubleCLick)
+	                        {
+	                            OnDoubleClick();
+                            }
 	                    }
 	                    else
 	                    {
@@ -103,6 +105,7 @@ public class UGUI_ToggleGroup : MonoBehaviour
         isSelect = true;
         yield return new WaitForSeconds(Ctrl_UserInfo.DoubleClickTime);
         isSelect = false;
+        isDoubleCLick = true;
     }
 
 

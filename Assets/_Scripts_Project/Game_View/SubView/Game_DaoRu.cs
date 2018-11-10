@@ -196,6 +196,13 @@ public partial class Game_DaoRu : SubUI
     //右边
     private Text tx_FileName, tx_HuoZhui,tx_TuSize;
 
+    // 导入 Text
+    private Text tx_DRJHXuLie1, tx_DRJHXuLie2, tx_DRJHXuLie3, tx_DRJHXuLie4, tx_DRJHXuLie5;
+    private Text tx_DRTaoMing1, tx_DRTaoMing2, tx_DRTaoMing3, tx_DRTaoMing4, tx_DRTaoMing5;
+    private Text tx_DRJpg1, tx_DRJpg2, tx_DRJpg3, tx_DRJpg4, tx_DRJpg5;
+    private Text tx_DRJiHe1, tx_DRJiHe2, tx_DRJiHe3, tx_DRJiHe4, tx_DRJiHe5;
+
+
 
     private void SetTuSize(float width = 0, float height = 0)          // 设置图大小
     {
@@ -240,6 +247,13 @@ public partial class Game_DaoRu : SubUI
     private GameObject go_ShowDuoTu;
     private GameObject moBan_DuoTuItem;
     private RectTransform rt_DuoTuContant;
+
+    // 导入 Text
+    private Text tx_DuoJHXuLie1, tx_DuoJHXuLie2, tx_DuoJHXuLie3, tx_DuoJHXuLie4, tx_DuoJHXuLie5;
+    private Text tx_DuoTaoMing1, tx_DuoTaoMing2, tx_DuoTaoMing3, tx_DuoTaoMing4, tx_DuoTaoMing5;
+    private Text tx_DuoJpg1, tx_DuoJpg2, tx_DuoJpg3, tx_DuoJpg4, tx_DuoJpg5;
+    private Text tx_DuoJiHe1, tx_DuoJiHe2, tx_DuoJiHe3, tx_DuoJiHe4, tx_DuoJiHe5;
+
 
     private void ChangeDicIndex(GameObject go, int add)               // 改 Item 上下
     {
@@ -405,7 +419,7 @@ public partial class Game_DaoRu : SubUI
         tx_TopPath5 = Get<Text>("Top/Top/ItemPath5/Text");
 
 
-
+        AddButtOnClick("Top/BtnSuaiXin", Btn_ShuaiXin);
         // 下方的 历史、地址栏
         tx_Path = Get<Text>("Top/Bottom/Middle/AddressPath/Text");
 
@@ -481,6 +495,30 @@ public partial class Game_DaoRu : SubUI
         tx_WidthSize = Get<Text>("ShowTuInfo/Left/Contant/SliderWidth/TxValue");
         slider_Height = Get<Slider>("ShowTuInfo/Left/Contant/SliderHeight/Slider");
         tx_HeightSize = Get<Text>("ShowTuInfo/Left/Contant/SliderHeight/TxValue");
+
+        tx_DRJHXuLie1 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Contant/BtnDR1/TxSingleDR");
+        tx_DRJHXuLie2 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Contant/BtnDR2/TxSingleDR");
+        tx_DRJHXuLie3 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Contant/BtnDR3/TxSingleDR");
+        tx_DRJHXuLie4 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Contant/BtnDR4/TxSingleDR");
+        tx_DRJHXuLie5 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Contant/BtnDR5/TxSingleDR");
+        tx_DRTaoMing1 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Png/Contant/BtnDR1/TxSingleDR");
+        tx_DRTaoMing2 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Png/Contant/BtnDR2/TxSingleDR");
+        tx_DRTaoMing3 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Png/Contant/BtnDR3/TxSingleDR");
+        tx_DRTaoMing4 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Png/Contant/BtnDR4/TxSingleDR");
+        tx_DRTaoMing5 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Png/Contant/BtnDR5/TxSingleDR");
+        tx_DRJpg1 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Jpg/Contant/BtnDR1/TxSingleDR");
+        tx_DRJpg2 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Jpg/Contant/BtnDR2/TxSingleDR");
+        tx_DRJpg3 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Jpg/Contant/BtnDR3/TxSingleDR");
+        tx_DRJpg4 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Jpg/Contant/BtnDR4/TxSingleDR");
+        tx_DRJpg5 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_Jpg/Contant/BtnDR5/TxSingleDR");
+        tx_DRJiHe1 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHe/Contant/BtnDR1/TxSingleDR");
+        tx_DRJiHe2 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHe/Contant/BtnDR2/TxSingleDR");
+        tx_DRJiHe3 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHe/Contant/BtnDR3/TxSingleDR");
+        tx_DRJiHe4 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHe/Contant/BtnDR4/TxSingleDR");
+        tx_DRJiHe5 = Get<Text>("ShowTuInfo/Right/Item/ScrollRect/Contant/Item_JiHe/Contant/BtnDR5/TxSingleDR");
+
+
+
         AddSliderOnValueChanged(slider_Width, (value) =>
         {
             SetTuSize(value);
@@ -740,8 +778,6 @@ public partial class Game_DaoRu : SubUI
         #endregion
 
         #region 导入结果
-
-
         go_Result = GetGameObject("Result");
         tx_GoTo = Get<Text>("Result/Contant/BtnGoTo/Text");
         go_TittleOK = GetGameObject("Result/Contant/OK");
@@ -751,10 +787,31 @@ public partial class Game_DaoRu : SubUI
         go_ErrorInfo = GetGameObject("Result/Contant/ErrorInfo");
 
 
+        tx_DuoJHXuLie1 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHeXuLie/Contant/Btn1/BtnMDR/ItemDaoRu");
+        tx_DuoJHXuLie2 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHeXuLie/Contant/Btn2/BtnMDR/ItemDaoRu");
+        tx_DuoJHXuLie3 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHeXuLie/Contant/Btn3/BtnMDR/ItemDaoRu");
+        tx_DuoJHXuLie4 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHeXuLie/Contant/Btn4/BtnMDR/ItemDaoRu");
+        tx_DuoJHXuLie5 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHeXuLie/Contant/Btn5/BtnMDR/ItemDaoRu");
+        tx_DuoTaoMing1 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Png/Contant/Btn1/BtnMDR/ItemDaoRu");
+        tx_DuoTaoMing2 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Png/Contant/Btn2/BtnMDR/ItemDaoRu");
+        tx_DuoTaoMing3 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Png/Contant/Btn3/BtnMDR/ItemDaoRu");
+        tx_DuoTaoMing4 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Png/Contant/Btn4/BtnMDR/ItemDaoRu");
+        tx_DuoTaoMing5 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Png/Contant/Btn5/BtnMDR/ItemDaoRu");
+        tx_DuoJpg1 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Jpg/Contant/Btn1/BtnMDR/ItemDaoRu");
+        tx_DuoJpg2 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Jpg/Contant/Btn2/BtnMDR/ItemDaoRu");
+        tx_DuoJpg3 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Jpg/Contant/Btn3/BtnMDR/ItemDaoRu");
+        tx_DuoJpg4 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Jpg/Contant/Btn4/BtnMDR/ItemDaoRu");
+        tx_DuoJpg5 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_Jpg/Contant/Btn5/BtnMDR/ItemDaoRu");
+        tx_DuoJiHe1 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn1/BtnMDR/ItemDaoRu");
+        tx_DuoJiHe2 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn2/BtnMDR/ItemDaoRu");
+        tx_DuoJiHe3 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn3/BtnMDR/ItemDaoRu");
+        tx_DuoJiHe4 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn4/BtnMDR/ItemDaoRu");
+        tx_DuoJiHe5 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn5/BtnMDR/ItemDaoRu");
+
+
         AddButtOnClick("Result/Contant/BtnGoTo", GoToDaoRuWhere);
         AddButtOnClick("Result/Contant/BtnFanHui",JiXuDaoRu);
         #endregion
-
 
 
 
@@ -1425,7 +1482,11 @@ public partial class Game_DaoRu : SubUI
     }
 
 
-
+    private void Btn_ShuaiXin()                            // 刷新
+    {
+        mFileBrowser.Refresh();
+        RefreshMiddleContent();
+    }
 
 
     // 下
@@ -1549,8 +1610,7 @@ public partial class Game_DaoRu : SubUI
 
     #region 单张详细信息(单张导入)
 
-
-    private void ShowTuInfo(ResultBean bean)                         // 打开图的详细信息
+    private void ShowTuInfo(ResultBean bean)                    // 打开图的详细信息
     {
         mCurrentFile = bean.File;
         tx_FileName.text = Path.GetFileNameWithoutExtension(mCurrentFile.FullName);
@@ -1564,10 +1624,34 @@ public partial class Game_DaoRu : SubUI
         tx_TuSize.text = yuanLaiWidth + " x " + yuanLaiHidth;
         SetTuSize(yuanLaiWidth, yuanLaiHidth);
 
+        tx_DRJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
+        tx_DRJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
+        tx_DRJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
+        tx_DRJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
+        tx_DRJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
+
+        tx_DRTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
+        tx_DRTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
+        tx_DRTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
+        tx_DRTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
+        tx_DRTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
+
+        tx_DRJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+        tx_DRJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+        tx_DRJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+        tx_DRJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+        tx_DRJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+
+        tx_DRJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+        tx_DRJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+        tx_DRJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+        tx_DRJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+        tx_DRJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+
     }
 
 
-    private void Btn_CloseTuInfo()                    // 关闭详细信息页
+    private void Btn_CloseTuInfo()                             // 关闭详细信息页
     {
         go_ShowTuInfo.SetActive(false);
         Sp_Tu.sprite = null;
@@ -1581,11 +1665,37 @@ public partial class Game_DaoRu : SubUI
 
     #region 多张导入
 
+
     private Dictionary<GameObject,ResultBean> itemSelectK_ResutltV = new Dictionary<GameObject, ResultBean>();     // item每行的作为 Key 结果为Value
 
     private void ShowDuoTu()                                      // 显示 多张图导入
     {
         go_ShowDuoTu.SetActive(true);
+
+        tx_DuoJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
+        tx_DuoJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
+        tx_DuoJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
+        tx_DuoJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
+        tx_DuoJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
+
+        tx_DuoTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
+        tx_DuoTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
+        tx_DuoTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
+        tx_DuoTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
+        tx_DuoTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
+
+        tx_DuoJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+        tx_DuoJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+        tx_DuoJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+        tx_DuoJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+        tx_DuoJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+
+        tx_DuoJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+        tx_DuoJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+        tx_DuoJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+        tx_DuoJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+        tx_DuoJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+
         Ctrl_Coroutine.Instance.StartCoroutine(StartLoadDuoTu());
 
     }

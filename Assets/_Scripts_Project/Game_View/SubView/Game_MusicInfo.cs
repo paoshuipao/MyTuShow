@@ -37,6 +37,12 @@ public class Game_MusicInfo : SubUI
 
         // 导入
         go_DaoRu = GetGameObject("ShowMusic/DaoRu");
+        tx_DR1 = Get<Text>("ShowMusic/DaoRu/Contant/Btn1/TxSingleDR");
+        tx_DR2 = Get<Text>("ShowMusic/DaoRu/Contant/Btn2/TxSingleDR");
+        tx_DR3 = Get<Text>("ShowMusic/DaoRu/Contant/Btn3/TxSingleDR");
+        tx_DR4 = Get<Text>("ShowMusic/DaoRu/Contant/Btn4/TxSingleDR");
+        tx_DR5 = Get<Text>("ShowMusic/DaoRu/Contant/Btn5/TxSingleDR");
+
         AddButtOnClick("ShowMusic/DaoRu/Contant/Btn1", () =>
         {
             ManyBtn_DaoRu(EAudioType.EasyMusic);
@@ -77,15 +83,20 @@ public class Game_MusicInfo : SubUI
 
     #region 私有
 
-    private GameObject go_Wait,go_DaoRu, go_ShowMusic;
+    private GameObject go_Wait, go_ShowMusic;
     private Text tx_WaitName,tx_InfoName,tx_Time;
     private GameObject go_Play,go_Pause;
     private AudioSource mAudioSource;
     private Slider slider_Progress,slider_Volume;
     private DTToggle4_Fade d4_VolumeIcon;
-
     private string mTotalTime;
     private bool isOnSliderChange = false;
+
+
+    private GameObject go_DaoRu;
+    private Text tx_DR1, tx_DR2, tx_DR3, tx_DR4, tx_DR5;
+
+
 
     public override string GetUIPathForRoot()
     {
@@ -234,6 +245,12 @@ public class Game_MusicInfo : SubUI
             mAudioSource.clip = resBean.Clip;
             slider_Progress.minValue = 0;
             slider_Progress.maxValue = resBean.Clip.length;
+
+            tx_DR1.text = Ctrl_UserInfo.Instance.BottomAudioName[0];
+            tx_DR2.text = Ctrl_UserInfo.Instance.BottomAudioName[1];
+            tx_DR3.text = Ctrl_UserInfo.Instance.BottomAudioName[2];
+            tx_DR4.text = Ctrl_UserInfo.Instance.BottomAudioName[3];
+            tx_DR5.text = Ctrl_UserInfo.Instance.BottomAudioName[4];
 
             Btn_OnPlay();
         });

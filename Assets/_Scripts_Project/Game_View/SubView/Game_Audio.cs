@@ -200,7 +200,6 @@ public class Game_Audio : SubUI
         MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
 
 
-
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
         {
             typeK_BeanListV.Add(type, new List<EachItemBean>());
@@ -261,10 +260,8 @@ public class Game_Audio : SubUI
     private void E_OnBottomDoubleClick()                                     // 底下 双击 改名
     {
         MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.Audio, Ctrl_UserInfo.Instance.BottomAudioName[(int)mCurrentIndex]);
-
-
     }
-     
+
     private void E_OnBottomValueChange(string changeName)                     // 底下的切换
     {
 

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 public class Game_GaiMing : SubUI 
 {
 
-
-
     #region 私有
 
     private EGameType mCurrentType;
@@ -45,6 +43,7 @@ public class Game_GaiMing : SubUI
 
 
         AddInputOnValueChanged(input_Name, Input_ValueChange);
+        AddButtOnClick("Contant/Grid/Middle/Arrow", Btn_OnClickArrow);
         AddButtOnClick("Contant/Grid/Bottom/BtnSure",Btn_OnSure);
         AddButtOnClick("Contant/Grid/Bottom/BtnFalse", Btn_OnFalse);
 
@@ -52,7 +51,7 @@ public class Game_GaiMing : SubUI
     }
 
 
-    private void Input_ValueChange(string value)   // 输入发生改变
+    private void Input_ValueChange(string value)         // 输入发生改变
     {
         if (go_ErrorTip.activeSelf)
         {
@@ -62,8 +61,15 @@ public class Game_GaiMing : SubUI
     }
 
 
+    private void Btn_OnClickArrow()                     // 点击箭头
+    {
+        tx_GaiName.text = tx_YuanName.text;
+        input_Name.text = tx_YuanName.text;
+    }
 
-    private void Btn_OnSure()                      // 点击确定
+
+
+    private void Btn_OnSure()                           // 点击确定
     {
         if (string.IsNullOrEmpty(input_Name.text))
         {
@@ -77,7 +83,8 @@ public class Game_GaiMing : SubUI
         }
     }
 
-    private void Btn_OnFalse()                     // 点击取消
+
+    private void Btn_OnFalse()                          // 点击取消
     {
         mUIGameObject.SetActive(false);
     }
@@ -89,6 +96,7 @@ public class Game_GaiMing : SubUI
     {
         mCurrentType = type;
         tx_GaiName.text = "";
+        input_Name.text = "";
         if (go_ErrorTip.activeSelf)
         {
             go_ErrorTip.SetActive(false);

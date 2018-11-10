@@ -202,10 +202,10 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     private void InitBottomName()        // 初始化底下名称
     {
-        BottomJiHeXLTName = !ES3.KeyExists(PP_BOTTOM_JIHE_XLT_NAME) ? new[] { "特效（小）", "特效（大）", "集合3", "集合4", "集合5" } : ES3.Load<string[]>(PP_BOTTOM_JIHE_XLT_NAME);
+        BottomJiHeXLTName = !ES3.KeyExists(PP_BOTTOM_JIHE_XLT_NAME) ? new[] { "特效 小", "特效 大", "序集 3", "序集 4", "序集 5" } : ES3.Load<string[]>(PP_BOTTOM_JIHE_XLT_NAME);
         BottomTaoMingName = !ES3.KeyExists(PP_BOTTOM_TAO_MING_NAME) ? new[] { "系统", "文字", "武器", "道具", "场景" } : ES3.Load<string[]>(PP_BOTTOM_TAO_MING_NAME);
         BottomJpgName = !ES3.KeyExists(PP_BOTTOM_JPG_NAME) ? new[] { "jpg1", "jpg2", "jpg3", "jpp4", "jpg5" } : ES3.Load<string[]>(PP_BOTTOM_JPG_NAME);
-        BottomJiHeName = !ES3.KeyExists(PP_BOTTOM_JI_HE_NAME) ? new[] { "集合1", "集合2", "集合3", "集合4", "集合5" } : ES3.Load<string[]>(PP_BOTTOM_JI_HE_NAME);
+        BottomJiHeName = !ES3.KeyExists(PP_BOTTOM_JI_HE_NAME) ? new[] { "集合 1", "集合 2", "集合 3", "集合 4", "集合 5" } : ES3.Load<string[]>(PP_BOTTOM_JI_HE_NAME);
         BottomAudioName = !ES3.KeyExists(PP_BOTTOM_AUDIO_NAME) ? new[] { "放松音乐", "BGM", "特效音效", "按键音效", "人物动作" } : ES3.Load<string[]>(PP_BOTTOM_AUDIO_NAME);
 
 
