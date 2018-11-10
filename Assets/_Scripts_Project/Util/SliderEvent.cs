@@ -5,9 +5,9 @@ using UnityEngine.EventSystems;
 public class SliderEvent : MonoBehaviour , IInitializePotentialDragHandler, IDragHandler, IEndDragHandler
 {
 
-    public Action E_OnClick;
-    public Action E_OnDrag;
-    public Action E_OnDragEnd;
+    public Action E_OnClick;           // 开始点击
+    public Action E_OnDrag;            // 拖拽
+    public Action E_OnDragEnd;         // 拖拽结束 
 
 
 

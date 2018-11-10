@@ -8,9 +8,13 @@ public class Game_MusicInfo : SubUI
 {
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo, Show);
-        MyEventCenter.AddListener(E_GameEvent.CloseMusicInfo, Close);
-        mAudioSource = Get<AudioSource>("ShowMusic/AudioSource");
+        MyEventCenter.AddListener<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo, E_Show);
+        MyEventCenter.AddListener(E_GameEvent.CloseMusicInfo, E_Close);
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeing, E_OnChangeAudioVolume);
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeEnd, E_OnChangeAudioVolumeEnd);
+
+
+        mAudioSource = mUITransform.parent.Find("AudioSource").GetComponent<AudioSource>();
 
         // 音乐控制
         go_ShowMusic = GetGameObject("ShowMusic/MusicContrl");
@@ -26,11 +30,17 @@ public class Game_MusicInfo : SubUI
         SliderEvent sliderEvent = Get<SliderEvent>("ShowMusic/MusicContrl/Bottom/SliderProgress");
         sliderEvent.E_OnDrag += E_OnSliderDrag;
         sliderEvent.E_OnDragEnd += E_OnSliderDragEnd;
-        d4_VolumeIcon = Get<DTToggle4_Fade>("ShowMusic/MusicContrl/Bottom/Volume/Icon");
+        dt4_Volume = Get<DTToggle4_Fade>("ShowMusic/MusicContrl/Bottom/Volume/Icon");
         slider_Volume = Get<Slider>("ShowMusic/MusicContrl/Bottom/Volume/Slider");
-        slider_Volume.value = mAudioSource.volume;
-        AddSliderOnValueChanged(slider_Volume, Slider_OnVolumeChange);
 
+        AddSliderOnValueChanged(slider_Volume, (value) =>
+        {
+            MyEventCenter.SendEvent(E_GameEvent.ChangeAudioVolumeing, value);
+        });
+        Get<SliderEvent>("ShowMusic/MusicContrl/Bottom/Volume/Slider").E_OnDragEnd += () =>
+        {
+            MyEventCenter.SendEvent(E_GameEvent.ChangeAudioVolumeEnd, slider_Volume.value);
+        };
         // 等待
         go_Wait = GetGameObject("Wait");
         tx_WaitName = Get<Text>("Wait/Middle/TxName");
@@ -88,7 +98,7 @@ public class Game_MusicInfo : SubUI
     private GameObject go_Play,go_Pause;
     private AudioSource mAudioSource;
     private Slider slider_Progress,slider_Volume;
-    private DTToggle4_Fade d4_VolumeIcon;
+    private DTToggle4_Fade dt4_Volume;
     private string mTotalTime;
     private bool isOnSliderChange = false;
 
@@ -100,7 +110,7 @@ public class Game_MusicInfo : SubUI
 
     public override string GetUIPathForRoot()
     {
-        return "MusicInfo";
+        return "Right/MusicInfo";
     }
 
 
@@ -122,8 +132,6 @@ public class Game_MusicInfo : SubUI
     {
         Btn_OnStop();
         MyEventCenter.SendEvent(E_GameEvent.CloseMusicInfo);
-
-
     }
 
 
@@ -185,26 +193,6 @@ public class Game_MusicInfo : SubUI
     }
 
 
-    private void Slider_OnVolumeChange(float value)        // 拖动音量
-    {
-        mAudioSource.volume = value;
-        if (value <= 0)
-        {
-            d4_VolumeIcon.Change2Four();
-        }
-        else if (value<0.3f)
-        {
-            d4_VolumeIcon.Change2Three();
-        }else if (value <0.6f)
-        {
-            d4_VolumeIcon.Change2Two();
-        }
-        else
-        {
-            d4_VolumeIcon.Change2One();
-        }
-    }
-
 
 
     private void ManyBtn_DaoRu(EAudioType type)             // 点击导入
@@ -226,7 +214,7 @@ public class Game_MusicInfo : SubUI
     private AudioResBean mCurrentAudioResBean;
     private Text tx_Name;
 
-    private void Show(Text txName ,FileInfo file,bool isNeedDaoRu)       // 显示音乐页事件
+    private void E_Show(Text txName ,FileInfo file,bool isNeedDaoRu)       // 显示音乐页事件
     {
         tx_Name = txName;
         mUIGameObject.SetActive(true);
@@ -236,6 +224,7 @@ public class Game_MusicInfo : SubUI
         tx_WaitName.text = file.Name;
         Ctrl_LoadAudioClip.Instance.StartLoadAudioClip(file, (resBean) =>
         {
+            mAudioSource.loop = true;
             mCurrentAudioResBean = resBean;
             go_Wait.SetActive(false);
             go_ShowMusic.SetActive(true);
@@ -258,14 +247,45 @@ public class Game_MusicInfo : SubUI
     }
 
 
-    private void Close()                                   // 关闭音乐页事件
+    private void E_Close()                                                   // 关闭音乐页事件
     {
+        mAudioSource.loop = false;
         mUIGameObject.SetActive(false);
         mAudioSource.clip = null;
         mAudioSource.Stop();
     }
 
 
+    private void E_OnChangeAudioVolume(float value)                  // 改变音量大小ing
+    {
+        mAudioSource.volume = value;
+        if (slider_Volume.value != value)
+        {
+            slider_Volume.value = value;
+        }
+    }
+
+    private void E_OnChangeAudioVolumeEnd(float value)             // 改变音量大小 结束
+    {
+        if (value > 0.75f)
+        {
+            dt4_Volume.Change2One();
+        }
+        else if (value > 0.45f)
+        {
+            dt4_Volume.Change2Two();
+        }
+        else if (value > 0)
+        {
+            dt4_Volume.Change2Three();
+        }
+        else
+        {
+            dt4_Volume.Change2Four();
+        }
+
+
+    }
 
 
 

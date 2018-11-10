@@ -36,7 +36,17 @@ public class Game_Audio : SubUI
         }
     }
 
-    public void ChangeOtherPage()             // 转其他大项 或者 小项
+    public void ChangeOtherPage()
+    {
+        if (null != mCurrentPlayBean && !isHuoTai)
+        {
+            mCurrentPlayBean.Stop();
+            mCurrentPlayBean = null;
+        }
+    }
+
+
+    private void StopAudio()             // 转其他大项 或者 小项
     {
         if (null != mCurrentPlayBean)
         {
@@ -94,9 +104,10 @@ public class Game_Audio : SubUI
 
     #region 私有
 
+    private bool isHuoTai;
     private EAudioType mCurrentIndex;
     private EachItemBean mCurrentPlayBean;        // 当前播放
-    private readonly Dictionary<EAudioType, List<EachItemBean>> typeK_BeanListV = new Dictionary<EAudioType, List<EachItemBean>>();
+    private readonly Dictionary<EAudioType, List<EachItemBean>> typeK_BeanListV = new Dictionary<EAudioType, List<EachItemBean>>();  // 每小页为Key，每个音频按钮Bean 为Value
 
 
     // 模版
@@ -107,6 +118,10 @@ public class Game_Audio : SubUI
     // 上方
     private ScrollRect m_SrollView;
     private DTToggle5_Fade dt5_Contrl;
+
+    // 音量
+    private Slider slider_Volume;
+    private DTToggle4_Fade dt4_Volume;
 
     // 底下
     private UGUI_ToggleGroup tg_BottomContrl;
@@ -198,6 +213,9 @@ public class Game_Audio : SubUI
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
         MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeing, E_OnChangeAudioVolume);
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeEnd, E_OnChangeAudioVolumeEnd);
+
 
 
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
@@ -206,7 +224,7 @@ public class Game_Audio : SubUI
         }
 
 
-        mAudioSource = Get<AudioSource>();
+        mAudioSource = mUITransform.parent.parent.Find("AudioSource").GetComponent<AudioSource>();
 
 
         // 内容 
@@ -231,6 +249,19 @@ public class Game_Audio : SubUI
         // 右边
         AddButtOnClick("Top/Left/DaoRu", Btn_OnDaoRu);
         AddButtOnClick("Top/Left/DeleteAll", Btn_DeleteOneLine);
+        AddToggleOnValueChanged("Top/Left/IsHuoTai/Toggle", Toggle_IsHuoTai);
+
+        // 音量
+        dt4_Volume = Get<DTToggle4_Fade>("Top/Left/Volume/Icon");
+        slider_Volume = Get<Slider>("Top/Left/Volume/Slider");
+        AddSliderOnValueChanged(slider_Volume, (value) =>
+        {
+            MyEventCenter.SendEvent(E_GameEvent.ChangeAudioVolumeing, value);
+        });
+        Get<SliderEvent>("Top/Left/Volume/Slider").E_OnDragEnd += () =>
+        {
+            MyEventCenter.SendEvent(E_GameEvent.ChangeAudioVolumeEnd, slider_Volume.value);
+        };
 
         // 导入失败界面
         go_DaoRuError = GetGameObject("DaoRuError");
@@ -289,11 +320,10 @@ public class Game_Audio : SubUI
                 break;
         }
 
-        ChangeOtherPage();
+        StopAudio();
         m_SrollView.content = GetParentRT(mCurrentIndex);
 
     }
-
 
 
     private void Btn_OnDaoRu()                                                // 点击导入
@@ -382,6 +412,16 @@ public class Game_Audio : SubUI
     }
 
 
+    private void Toggle_IsHuoTai(bool value)                                  // 切换是否后台
+    {
+        isHuoTai = value;
+    }
+
+
+
+
+
+
 
     //———————————————————— 事件 ————————————————
 
@@ -443,7 +483,7 @@ public class Game_Audio : SubUI
             if (isSelect)
             {
                 isSelect = false;
-                ChangeOtherPage();
+                StopAudio();
                 MyEventCenter.SendEvent<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo,null, new FileInfo(resBean.SavePath), false);
             }
             else
@@ -482,7 +522,7 @@ public class Game_Audio : SubUI
 
     private void E_DeleteAll()                           // 删除所有
     {
-        ChangeOtherPage();
+        StopAudio();
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
         {
             DeleteOneLine(type);
@@ -530,6 +570,35 @@ public class Game_Audio : SubUI
     }
 
 
+
+    private void E_OnChangeAudioVolume(float value)                  // 改变音量大小ing
+    {
+        mAudioSource.volume = value;
+        if (slider_Volume.value !=value)
+        {
+            slider_Volume.value = value;
+        }
+    }
+
+    private void E_OnChangeAudioVolumeEnd(float value)             // 改变音量大小 结束
+    {
+        if (value>0.75f)
+        {
+            dt4_Volume.Change2One();
+        }else if (value >0.45f)
+        {
+            dt4_Volume.Change2Two();
+        }else if (value >0)
+        {
+            dt4_Volume.Change2Three();
+        }
+        else
+        {
+            dt4_Volume.Change2Four();
+        }
+
+
+    }
 
 
     #region EachItemBean

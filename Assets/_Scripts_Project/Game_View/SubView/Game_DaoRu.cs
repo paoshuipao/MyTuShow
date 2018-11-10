@@ -47,8 +47,6 @@ public partial class Game_DaoRu : SubUI
     private readonly Color LBColor = MyColor.GetColor(MyEnumColor.LightBlue);
 
 
-
-
     enum MiddleButtonType // 中间点击按钮的类型
     {
         File,        // 文件

@@ -107,7 +107,6 @@ public class UIStart_Game : BaseUI
         // 底下的等待UI
         go_WaitBrowser = GetGameObject("OpenBrowser");
         tx_Wait = Get<Text>("OpenBrowser/Text");
-        go_WaitProgress = GetGameObject("WithProgress");
 
 
         // 确定是否界面
@@ -181,10 +180,7 @@ public class UIStart_Game : BaseUI
         MyEventCenter.AddListener(E_GameEvent.OpenFileContrl, OnShowGameWaitUI_File);
         MyEventCenter.AddListener(E_GameEvent.OpenFolderContrl, OnShowGameWaitUI_Folder);
         MyEventCenter.AddListener(E_GameEvent.CloseFileOrFolderContrl, OnHideGameWaitUI_Browser);
-        MyEventCenter.AddListener(E_GameEvent.OpenProgressWait,OpenProgressWaitUI);
-        MyEventCenter.AddListener(E_GameEvent.CloseProgressWait, CloseProgressWaitUI);
         MyEventCenter.AddListener<EGameType, int>(E_GameEvent.ChangGameToggleType, E_OnToggleChange);
-
         MyEventCenter.AddListener<EGameType,string>(E_GameEvent.ShowIsSure, E_ShowIsSure);
         MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseNormalTuInfo, E_CloseNormalTuInfo);
@@ -195,8 +191,6 @@ public class UIStart_Game : BaseUI
         MyEventCenter.RemoveListener(E_GameEvent.OpenFileContrl, OnShowGameWaitUI_File);
         MyEventCenter.RemoveListener(E_GameEvent.OpenFolderContrl, OnShowGameWaitUI_Folder);
         MyEventCenter.RemoveListener(E_GameEvent.CloseFileOrFolderContrl, OnHideGameWaitUI_Browser);
-        MyEventCenter.RemoveListener(E_GameEvent.OpenProgressWait, OpenProgressWaitUI);
-        MyEventCenter.RemoveListener(E_GameEvent.CloseProgressWait, CloseProgressWaitUI);
         MyEventCenter.RemoveListener<EGameType, int>(E_GameEvent.ChangGameToggleType, E_OnToggleChange);
         MyEventCenter.RemoveListener<EGameType,string>(E_GameEvent.ShowIsSure, E_ShowIsSure);
         MyEventCenter.RemoveListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
@@ -222,7 +216,7 @@ public class UIStart_Game : BaseUI
 
 
     // 底下的等待UI
-    private GameObject go_WaitBrowser,go_WaitProgress;
+    private GameObject go_WaitBrowser;
     private Text tx_Wait;
     private const string WAIT_FILE = "等待,选择文件中...";
     private const string WAIT_FOLDER = "等待,选择文件夹中...";
@@ -801,19 +795,6 @@ public class UIStart_Game : BaseUI
     private void OnHideGameWaitUI_Browser()         // 接收 取消等待浏览器的界面 事件
     {
         go_WaitBrowser.SetActive(false);
-    }
-
-
-
-    private void OpenProgressWaitUI()              // 打开带进度条的等待UI
-    {
-        go_WaitProgress.SetActive(true);
-    }
-
-
-    private void CloseProgressWaitUI()             // 关闭带进度条的等待UI
-    {
-        go_WaitProgress.SetActive(false);
     }
 
 

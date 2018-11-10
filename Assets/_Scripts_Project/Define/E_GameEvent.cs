@@ -36,8 +36,6 @@ public enum E_GameEvent                           // 这里写事件
 
 
 
-    OpenProgressWait,              // 打开带进度条的等等界面
-    CloseProgressWait,             // 关闭
 
 
     //————————————————————————————————————
@@ -115,6 +113,13 @@ public enum E_GameEvent                           // 这里写事件
 
     ShowGeiMingUI,               // 显示改名UI(EGameType,string 原名)
     SureGeiMing,                 // 确定改名（EGameType，string 修改后的名称）
+
+
+    ChangeAudioVolumeing,                   // 改变音量大小ing(float 大小)
+    ChangeAudioVolumeEnd,                   // 结束改变音量大小(float 大小)
+
+
+
 
 
 }
