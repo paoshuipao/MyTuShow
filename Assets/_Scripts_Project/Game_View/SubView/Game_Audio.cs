@@ -209,7 +209,13 @@ public class Game_Audio : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EAudioType, AudioResBean, bool>(E_GameEvent.ResultDaoRu_Audio, E_DaoRu);
+        MyEventCenter.AddListener<EAudioType, AudioResBean>(E_GameEvent.ResultDaoRu_Audio, (type, resBean) =>
+        {
+            bool isSaveOk = E_DaoRu(type,resBean,true);
+            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
+
+
+        });
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
         MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
@@ -427,17 +433,16 @@ public class Game_Audio : SubUI
 
 
 
-    private void E_DaoRu(EAudioType type, AudioResBean resBean, bool isSave)             // 导入事件
+    private bool E_DaoRu(EAudioType type, AudioResBean resBean, bool isSave)             // 导入事件 true 是保存成功 false 保存失败
     {
 
         // 1.保存一下信息
         if (isSave)
         {
             bool isSaveOk = Ctrl_TextureInfo.Instance.SaveAudio(type, resBean.SavePath);
-            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
             if (!isSaveOk)
             {
-                return;
+                return false;
             }
         }
         // 2.创建一个实例
@@ -504,7 +509,7 @@ public class Game_Audio : SubUI
             UnityEngine.Object.Destroy(t.gameObject);
             Ctrl_TextureInfo.Instance.DeleteAudioSave(type, resBean.SavePath);
         });
-
+        return true;
 
     }
 
@@ -614,6 +619,7 @@ public class Game_Audio : SubUI
         private readonly AudioSource mAudioSource;
 
 
+
         private bool isPlaying, isOnSliderChange;
 
         public EachItemBean(AudioSource source, AudioClip clip, GameObject goPlay, GameObject goPause, Slider sliderProgress, Text txCurrentTime)
@@ -663,6 +669,7 @@ public class Game_Audio : SubUI
             isPlaying = true;
             go_Play.SetActive(false);
             go_Pause.SetActive(true);
+            slider_Progress.gameObject.SetActive(true);
             tx_CurrentTime.gameObject.SetActive(true);
             if (mAudioSource.clip != mAudioClip)
             {
@@ -686,6 +693,7 @@ public class Game_Audio : SubUI
         public void Stop()
         {
             slider_Progress.value = 0;
+            slider_Progress.gameObject.SetActive(false);
             go_Play.SetActive(true);
             go_Pause.SetActive(false);
             tx_CurrentTime.gameObject.SetActive(false);
@@ -712,8 +720,6 @@ public class Game_Audio : SubUI
                     onFinsh();
                 }
             }
-
-
 
         }
 

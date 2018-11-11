@@ -18,7 +18,6 @@ public class UI_Pause : BaseUI_Mono
         AddButtOnClick("Contant/QuickPage/Left/AnimBtn_Close", Btn_OnQuitEsc);
 
 
-        AddButtOnClick("Contant/QuickPage/Right/AnimBtn_NG", Btn_OnYiJian);
 
 
 
@@ -135,15 +134,6 @@ public class UI_Pause : BaseUI_Mono
     {
        MyEventCenter.SendEvent<float>(E_GameEvent.OnQuitGame,0.4f);
     }
-
-
-    private void Btn_OnYiJian()                   // 点击了 一键签到
-    {
-        MyLog.Red("点击了一键签到");
-    }
-
-
-
 
 
 

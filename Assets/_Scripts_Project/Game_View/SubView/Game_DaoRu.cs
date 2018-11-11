@@ -14,6 +14,8 @@ using Object = UnityEngine.Object;
 public partial class Game_DaoRu : SubUI
 {
 
+
+
     public void Show()
     {
         if (isFirstShow)    // 第一次显示
@@ -42,6 +44,7 @@ public partial class Game_DaoRu : SubUI
     #region 私有
 
     private bool isFirstShow = true;      // 是否第一次Show
+    private bool isShow;
     private FileBrowser mFileBrowser;     // 核心功能
     private RectTransform rt_Right;       // 总的右边
     private readonly Color LBColor = MyColor.GetColor(MyEnumColor.LightBlue);
@@ -293,20 +296,16 @@ public partial class Game_DaoRu : SubUI
 
 
 
-
-
     #region 私有
 
 
     public override void OnEnable()
     {
-        MyEventCenter.AddListener<EGameType, bool,List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
 
     }
 
     public override void OnDisable()
     {
-        MyEventCenter.RemoveListener<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
 
     }
 
@@ -326,7 +325,9 @@ public partial class Game_DaoRu : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EAudioType,AudioResBean,bool> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
+        MyEventCenter.AddListener<EAudioType,AudioResBean> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
+        MyEventCenter.AddListener<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
+
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
@@ -818,7 +819,7 @@ public partial class Game_DaoRu : SubUI
 
     //—————————————————— 中间——————————————————
 
-    private readonly Dictionary<GameObject, ResultBean> allGoK_ResultBeanV = new Dictionary<GameObject, ResultBean>();
+    private readonly Dictionary<GameObject, ResultBean> allGoK_ResultBeanV = new Dictionary<GameObject, ResultBean>();  // 以 中间每个 Item 为Key，以图片结果为 Value
 
 
     private void RefreshMiddleContent()                                                        // 刷新中间的内容
@@ -1702,7 +1703,24 @@ public partial class Game_DaoRu : SubUI
 
     IEnumerator StartLoadDuoTu()                                // 用线程 多张图的每个 Item
     {
-        foreach (GameObject go in chooseGOK_BgV.Keys)
+        // 排序
+        List<GameObject> sortList = new List<GameObject>(chooseGOK_BgV.Keys);
+        for (int i = 0; i < sortList.Count-1; i++)
+        {
+            for (int j = i+1; j < sortList.Count; j++)
+            {
+                string current = allGoK_ResultBeanV[sortList[i]].SP.name;
+                string duiBi = allGoK_ResultBeanV[sortList[j]].SP.name;
+                if (String.CompareOrdinal(current, duiBi)>0)
+                {
+                    GameObject tmpGo = sortList[i];
+                    sortList[i] = sortList[j];
+                    sortList[j] = tmpGo;
+                }
+            }
+        }
+
+        foreach (GameObject go in sortList)
         {
             ResultBean bean = allGoK_ResultBeanV[go];
             Transform t = InstantiateMoBan(moBan_DuoTuItem, rt_DuoTuContant);
@@ -1997,7 +2015,7 @@ public partial class Game_DaoRu : SubUI
 
 
 
-    private void E_DaoRuAudio(EAudioType type, AudioResBean bean,bool isSave)      // 导入音频的事件
+    private void E_DaoRuAudio(EAudioType type, AudioResBean bean)      // 导入音频的事件
     {
         mSelectIndex = (int)type;
     }
