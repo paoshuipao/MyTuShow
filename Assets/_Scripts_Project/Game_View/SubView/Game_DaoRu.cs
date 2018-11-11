@@ -11,9 +11,8 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-public partial class Game_DaoRu : SubUI
+public class Game_DaoRu : SubUI
 {
-
 
 
     public void Show()
@@ -167,10 +166,11 @@ public partial class Game_DaoRu : SubUI
 
     #endregion
 
-    #region 导入
+    #region 导入 && 改名
 
     private Text tx_TipZhang;
-    private Button btnDaoRu;
+    private Button btnDaoRu,btnGeiMing;
+    private InputField input_GeiMing;
 
     #endregion
 
@@ -327,7 +327,7 @@ public partial class Game_DaoRu : SubUI
 
         MyEventCenter.AddListener<EAudioType,AudioResBean> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
         MyEventCenter.AddListener<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
-
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_SureGeiMing);
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
@@ -441,12 +441,16 @@ public partial class Game_DaoRu : SubUI
 
         #endregion
 
-        #region 导入
-
+        #region 导入 && 改名
 
         tx_TipZhang = Get<Text>("Right/BtnDaoRu/Tip/Num");
         btnDaoRu = Get<Button>("Right/BtnDaoRu");
         AddButtOnClick(btnDaoRu, Btn_OnDaoRuClick);
+
+        btnGeiMing = Get<Button>("Right/Contant/GeiMing/BtnSure");
+        input_GeiMing = Get<InputField>("Right/Contant/GeiMing/InputField");
+        AddButtOnClick(btnGeiMing, Btn_GeiMing);
+
 
         #endregion
 
@@ -773,7 +777,8 @@ public partial class Game_DaoRu : SubUI
         {
             ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe5);
         });
-
+        
+    
         #endregion
 
         #region 导入结果
@@ -826,6 +831,8 @@ public partial class Game_DaoRu : SubUI
     {
         //——————————————————  1. 先清除原来的   ——————————————————
         btnDaoRu.interactable = false;                  // 不能导入
+        btnGeiMing.interactable = false;
+        input_GeiMing.text = "";
         ClearAllChooseZhong();                          // 清除所有选中的
         Ctrl_Coroutine.Instance.StopAllCoroutines();    // 关闭所有协程
         for (int i = 0; i < l_MiddleItems.Count; i++)   // 删除原来生成的
@@ -973,6 +980,7 @@ public partial class Game_DaoRu : SubUI
 
 
 
+
     #region 中间
 
 
@@ -1024,6 +1032,20 @@ public partial class Game_DaoRu : SubUI
     }
 
 
+
+    private string GetShortName(string str,int longLeght =8)
+    {
+        if (str.Length> longLeght)
+        {
+            return str.Substring(0, longLeght)+"...";
+        }
+        else
+        {
+            return str;
+        }
+    }
+
+
     private Transform AddMiddleButton(FileSystemInfo fileInfo, MiddleButtonType type)       // 按分类添加中间按钮
     {
         Transform t;
@@ -1031,13 +1053,15 @@ public partial class Game_DaoRu : SubUI
         {
             case MiddleButtonType.File:       // 文件
                 t = InstantiateMoBan(moBan_File, t_MiddleGrid, FILE_NAME,true);
-                t.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+//                t.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                t.Find("Text").GetComponent<Text>().text = GetShortName(Path.GetFileNameWithoutExtension(fileInfo.FullName));
                 t.Find("GeiShi/Text").GetComponent<Text>().text = fileInfo.Extension.Substring(1);
 
                 break;
             case MiddleButtonType.Folder:    // 文件夹
                 t = InstantiateMoBan(moBan_Folder, t_MiddleGrid, FLODER_NAME, true);
-                t.Find("Text").GetComponent<Text>().text = fileInfo.Name;
+//                t.Find("Text").GetComponent<Text>().text = fileInfo.Name;
+                t.Find("Text").GetComponent<Text>().text = GetShortName(fileInfo.Name);
                 break;
             case MiddleButtonType.Drive:     // 磁盘
                 t = InstantiateMoBan(moBan_YinPan, t_MiddleGrid, YINPAN_NAME, true);
@@ -1055,7 +1079,7 @@ public partial class Game_DaoRu : SubUI
                 break;
             case MiddleButtonType.Music:    // 音频文件
                 t = InstantiateMoBan(moBan_Music, t_MiddleGrid, MUSIC_NAME, true);
-                t.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                t.Find("Text").GetComponent<Text>().text = GetShortName(Path.GetFileNameWithoutExtension(fileInfo.FullName));
                 t.Find("GeiShi/Text").GetComponent<Text>().text = fileInfo.Extension.Substring(1);
                 break;
             default:
@@ -1168,6 +1192,8 @@ public partial class Game_DaoRu : SubUI
 
                     tx_TipZhang.text = chooseGOK_BgV.Count.ToString();
                     btnDaoRu.interactable = true;
+                    btnGeiMing.interactable = true;
+                    input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name;
                     Ctrl_Coroutine.Instance.StartCoroutine(CheckoubleClick());
                 }
             });
@@ -1404,7 +1430,78 @@ public partial class Game_DaoRu : SubUI
 
     #endregion
 
+    #region 改名
 
+
+
+    private void Btn_GeiMing()                     // 确定改名
+    {
+        if (chooseGOK_BgV.Count > 1)               // 选择了 多张
+        {
+            MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.DaoRu, string.Format("多个文件改名成 {0} ?",  input_GeiMing.text));
+        }
+        else if (chooseGOK_BgV.Count == 1)       // 选择了 1 张
+        {
+            foreach (GameObject go in chooseGOK_BgV.Keys)
+            {
+                FileInfo file = allGoK_ResultBeanV[go].File;
+                MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.DaoRu, string.Format("{0} 改名成 {1} ?", file.Name, input_GeiMing.text+file.Exists));
+                break;
+            }
+        }
+        
+    }
+
+
+    private void E_SureGeiMing(EGameType type)
+    {
+        if (type == EGameType.DaoRu)
+        {
+            if (chooseGOK_BgV.Count > 1)               // 选择了 多张
+            {
+
+                List<GameObject> sortList = GetSortChoose();
+
+                for (int i = 1; i < sortList.Count+1; i++)
+                {
+                    FileInfo fileInfo = allGoK_ResultBeanV[sortList[i-1]].File;
+                    string path = fileInfo.FullName.Replace(@"\", "/");
+                    int tmpCount = path.LastIndexOf("/", StringComparison.Ordinal);
+                    string newFolderPath = path.Substring(0, tmpCount + 1);    // 前路径
+
+
+                    string newPath = newFolderPath + input_GeiMing.text;
+                    string tmpPath = newPath+"_"+i.ToString("D2");
+                    int index = i;
+                    while (File.Exists(tmpPath + fileInfo.Extension))
+                    {
+                        index++;
+                        tmpPath = newPath + "_" + index.ToString("D2");
+                    }
+                    fileInfo.MoveTo(tmpPath + fileInfo.Extension);
+                }
+            }
+            else if (chooseGOK_BgV.Count == 1)       // 选择了 1 张
+            {
+                foreach (GameObject go in chooseGOK_BgV.Keys)
+                {
+                    MyIO.FileRename(allGoK_ResultBeanV[go].File, input_GeiMing.text);
+                    break;
+                }
+            }
+            else
+            {
+                MyLog.Red("不可能吧");
+            }
+
+            Btn_ShuaiXin();
+
+        }
+    }
+
+
+
+    #endregion
 
     #region  头部栏
 
@@ -1564,6 +1661,8 @@ public partial class Game_DaoRu : SubUI
 
     private void ClearAllChooseZhong()              // 清除所有选中的
     {
+        rt_Kuang.sizeDelta = Vector2.one;
+
         if (chooseGOK_BgV.Count > 0)
         {
             foreach (GameObject bgGo in chooseGOK_BgV.Values)
@@ -1573,6 +1672,8 @@ public partial class Game_DaoRu : SubUI
             chooseGOK_BgV.Clear();
             tx_TipZhang.text = "0";
             btnDaoRu.interactable = false;
+            btnGeiMing.interactable = false;
+            input_GeiMing.text = "";
         }
     }
 
@@ -1596,9 +1697,19 @@ public partial class Game_DaoRu : SubUI
         rt_Kuang.sizeDelta = Vector2.zero;
         mKuangXuan.OnClickUp();
         tx_TipZhang.text = chooseGOK_BgV.Count.ToString();
+
         if (chooseGOK_BgV.Count > 0)
         {
             btnDaoRu.interactable = true;
+            btnGeiMing.interactable = true;
+            GameObject go =null;
+            foreach (GameObject tmpGo in chooseGOK_BgV.Keys)
+            {
+                go = tmpGo;
+                break;
+            }
+            input_GeiMing.text = allGoK_ResultBeanV[go].SP.name;
+
         }
 
     }
@@ -1704,21 +1815,7 @@ public partial class Game_DaoRu : SubUI
     IEnumerator StartLoadDuoTu()                                // 用线程 多张图的每个 Item
     {
         // 排序
-        List<GameObject> sortList = new List<GameObject>(chooseGOK_BgV.Keys);
-        for (int i = 0; i < sortList.Count-1; i++)
-        {
-            for (int j = i+1; j < sortList.Count; j++)
-            {
-                string current = allGoK_ResultBeanV[sortList[i]].SP.name;
-                string duiBi = allGoK_ResultBeanV[sortList[j]].SP.name;
-                if (String.CompareOrdinal(current, duiBi)>0)
-                {
-                    GameObject tmpGo = sortList[i];
-                    sortList[i] = sortList[j];
-                    sortList[j] = tmpGo;
-                }
-            }
-        }
+        List<GameObject> sortList = GetSortChoose();
 
         foreach (GameObject go in sortList)
         {
@@ -1842,10 +1939,30 @@ public partial class Game_DaoRu : SubUI
     #endregion
 
 
+    private List<GameObject> GetSortChoose()   // 排序
+    {
+        List<GameObject> sortList = new List<GameObject>(chooseGOK_BgV.Keys);
+        for (int i = 0; i < sortList.Count - 1; i++)
+        {
+            for (int j = i + 1; j < sortList.Count; j++)
+            {
+                string current = allGoK_ResultBeanV[sortList[i]].SP.name;
+                string duiBi = allGoK_ResultBeanV[sortList[j]].SP.name;
+                if (String.CompareOrdinal(current, duiBi) > 0)
+                {
+                    GameObject tmpGo = sortList[i];
+                    sortList[i] = sortList[j];
+                    sortList[j] = tmpGo;
+                }
+            }
+        }
+        return sortList;
+    }
+
 
 
     // 导入按钮
-    private void ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType type)            // 点击导入 集合序列图
+    private void ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType type)           // 点击导入 集合序列图
     {
 
         List<ResultBean> list = new List<ResultBean>(chooseGOK_BgV.Count);
@@ -1887,7 +2004,7 @@ public partial class Game_DaoRu : SubUI
         ClearAllChooseZhong();
     }
 
-    private void ManyBtn_DaoRuJpgTu(ENormalTuType type)                 // 点击导入 Jpg
+    private void ManyBtn_DaoRuJpgTu(ENormalTuType type)                  // 点击导入 Jpg
     {
         List<ResultBean> list = new List<ResultBean>(chooseGOK_BgV.Count);
         // 1. 把底下的文字改成 绿色
@@ -1908,7 +2025,7 @@ public partial class Game_DaoRu : SubUI
     }
 
 
-    private void ManyBtn_DaoRuJiHeTu(EJiHeType type)                 // 点击导入 集合
+    private void ManyBtn_DaoRuJiHeTu(EJiHeType type)                     // 点击导入 集合
     {
         List<ResultBean> list = new List<ResultBean>(chooseGOK_BgV.Count);
         // 1. 把底下的文字改成 绿色
@@ -1927,6 +2044,9 @@ public partial class Game_DaoRu : SubUI
         // 清空选择
         ClearAllChooseZhong();
     }
+
+
+
 
 
     #region 导入结果
