@@ -57,6 +57,11 @@ namespace UnityEditor
             {
                 SetTheSame(EType.YuMa4);
             }
+            tempLabel = mWindowSettings.sidebarIsExpanded.faded < 0.6f ? "" : (type == EType.YuMa5 ? " 转 UGUI 坐标".AddBlue() : " 转 UGUI 坐标");
+            if (QUI.Button(tempLabel, EZStyles.GetStyle(EZStyles.General.SideButtonBlue), mWindowSettings.SidebarCurrentWidth, mWindowSettings.sidebarButtonHeight))
+            {
+                SetTheSame(EType.YuMa5);
+            }
 
             AddSpace();
 
@@ -78,13 +83,14 @@ namespace UnityEditor
         {
             switch (type)
             {
-                case EType.ZhongJie:    DrawRightPage1(DrawDaGang);     break;
-                case EType.YuMa1:       DrawRightPage3(DrawLook);       break;
-                case EType.YuMa2:       DrawRightPage4(DrawEquit);      break;
-                case EType.YuMa3:       DrawRightPage5(DrawGong);       break;
-                case EType.YuMa4:       DrawRightPage8(DrawYunFu);      break;
-                case EType.Normal:      DrawRightPage6(DrawNormal);     break;
-                case EType.Error:       DrawRightPage7(DrawError);      break;
+                case EType.ZhongJie:    DrawRightPage1(DrawDaGang);       break;
+                case EType.YuMa1:       DrawRightPage3(DrawLook);         break;
+                case EType.YuMa2:       DrawRightPage4(DrawEquit);        break;
+                case EType.YuMa3:       DrawRightPage5(DrawGong);         break;
+                case EType.YuMa4:       DrawRightPage8(DrawYunFu);        break;
+                case EType.YuMa5:       DrawRightPage8(DrawUGUIPosition); break;
+                case EType.Normal:      DrawRightPage6(DrawNormal);       break;
+                case EType.Error:       DrawRightPage7(DrawError);         break;
             }
         }
 
@@ -106,7 +112,7 @@ namespace UnityEditor
         private enum EType
         {
             ZhongJie,
-            YuMa, YuMa1, YuMa2, YuMa3, YuMa4,
+            YuMa, YuMa1, YuMa2, YuMa3, YuMa4,YuMa5,
             Normal,
             Error,
 
@@ -238,6 +244,20 @@ namespace UnityEditor
 
             });
 
+        }
+
+
+
+        private void DrawUGUIPosition()                         // 转UGUI坐标
+        {
+            m_Tools.BiaoTi_B("鼠标坐标转成 UGUI 的坐标");
+            MyCreate.Box_Hei(() =>
+            {
+                m_Tools.Text_H("Vector2 pos;");
+                m_Tools.Text_H("RectTransformUtility.ScreenPointToLocalPointInRectangle(父RectTransform,Input.mousePosition, 相机, out pos)");
+                m_Tools.TextText_HG("rt.anchoredPosition = pos", "// 不是 Postion 哦");
+
+            });
         }
 
 

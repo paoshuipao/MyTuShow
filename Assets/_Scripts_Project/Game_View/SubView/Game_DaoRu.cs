@@ -43,7 +43,6 @@ public class Game_DaoRu : SubUI
     #region 私有
 
     private bool isFirstShow = true;      // 是否第一次Show
-    private bool isShow;
     private FileBrowser mFileBrowser;     // 核心功能
     private RectTransform rt_Right;       // 总的右边
     private readonly Color LBColor = MyColor.GetColor(MyEnumColor.LightBlue);
@@ -62,7 +61,7 @@ public class Game_DaoRu : SubUI
 
 
     private GameObject go_CurrentSelect;    // 当前选择的按钮
-
+    private FileSystemInfo m_CurrentSelectFile; // 当前选择的文件或者文件夹
 
 
     // 中间
@@ -295,6 +294,12 @@ public class Game_DaoRu : SubUI
     #endregion
 
 
+    #region 鼠标右键
+
+    private GameObject go_MouseLeftClick;
+
+
+    #endregion
 
     #region 私有
 
@@ -328,6 +333,7 @@ public class Game_DaoRu : SubUI
         MyEventCenter.AddListener<EAudioType,AudioResBean> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
         MyEventCenter.AddListener<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_SureGeiMing);
+        MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftDown, E_OnMouseLeftClick);
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
@@ -471,7 +477,13 @@ public class Game_DaoRu : SubUI
         MyEventCenter.AddListener(E_GameEvent.OnClickDown_Ctrl, E_OnCtrlClick);
         MyEventCenter.AddListener(E_GameEvent.OnClickUp_Ctrl, E_OnCtrlUp);
 
-
+        AddScrollbarValueChange("Bottom/Scrollbar", (position) =>
+        {
+            if (isShowLeftTip)
+            {
+                go_MouseLeftClick.SetActive(false);
+            }
+        });
 
         #endregion
 
@@ -485,6 +497,32 @@ public class Game_DaoRu : SubUI
         kuangXuan.E_OnDarg += E_OnKuangDarg;
         kuangXuan.E_OnClickUp += E_OnClickKuangUp;
         #endregion
+
+        #region 鼠标右键
+
+        go_MouseLeftClick = GetGameObject("MouseLeftClick");
+        AddButtOnClick("MouseLeftClick/BtnBlue", () =>
+        {
+            Btn_ChooseColor(MyEnumColor.Blue);
+        });
+        AddButtOnClick("MouseLeftClick/BtnYellow", () =>
+        {
+            Btn_ChooseColor(MyEnumColor.Yellow);
+        });
+        AddButtOnClick("MouseLeftClick/BtnWhite", () =>
+        {
+            Btn_ChooseColor(MyEnumColor.White);
+        });
+        AddButtOnClick("MouseLeftClick/BtnGreen", () =>
+        {
+            Btn_ChooseColor(MyEnumColor.Green);
+        });
+        AddButtOnClick("MouseLeftClick/BtnNull", () =>
+        {
+            Btn_ChooseColor(MyEnumColor.Hui,true);
+        });
+        #endregion
+
 
         #region 单张信息
 
@@ -832,6 +870,7 @@ public class Game_DaoRu : SubUI
         //——————————————————  1. 先清除原来的   ——————————————————
         btnDaoRu.interactable = false;                  // 不能导入
         btnGeiMing.interactable = false;
+        go_CurrentSelect = null;
         input_GeiMing.text = "";
         ClearAllChooseZhong();                          // 清除所有选中的
         Ctrl_Coroutine.Instance.StopAllCoroutines();    // 关闭所有协程
@@ -1033,7 +1072,7 @@ public class Game_DaoRu : SubUI
 
 
 
-    private string GetShortName(string str,int longLeght =8)
+    private string GetShortName(string str,int longLeght =8)                               // 获得短名
     {
         if (str.Length> longLeght)
         {
@@ -1046,22 +1085,29 @@ public class Game_DaoRu : SubUI
     }
 
 
-    private Transform AddMiddleButton(FileSystemInfo fileInfo, MiddleButtonType type)       // 按分类添加中间按钮
+    private Transform AddMiddleButton(FileSystemInfo fileInfo, MiddleButtonType type)     // 按分类添加中间按钮
     {
         Transform t;
         switch (type)
         {
             case MiddleButtonType.File:       // 文件
                 t = InstantiateMoBan(moBan_File, t_MiddleGrid, FILE_NAME,true);
-//                t.Find("Text").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(fileInfo.FullName);
                 t.Find("Text").GetComponent<Text>().text = GetShortName(Path.GetFileNameWithoutExtension(fileInfo.FullName));
                 t.Find("GeiShi/Text").GetComponent<Text>().text = fileInfo.Extension.Substring(1);
-
                 break;
             case MiddleButtonType.Folder:    // 文件夹
                 t = InstantiateMoBan(moBan_Folder, t_MiddleGrid, FLODER_NAME, true);
-//                t.Find("Text").GetComponent<Text>().text = fileInfo.Name;
                 t.Find("Text").GetComponent<Text>().text = GetShortName(fileInfo.Name);
+
+                MyEnumColor biaoJiColor = MyEnumColor.Hui;
+                bool isBiaoJi = Ctrl_UserInfo.Instance.GetIsBiaoJi(fileInfo.FullName, ref biaoJiColor);
+                if (isBiaoJi)
+                {
+                    GameObject biaoJi = t.Find("BiaoJi").gameObject;
+                    biaoJi.SetActive(true);
+                    biaoJi.GetComponent<Image>().color = MyColor.GetColor(biaoJiColor);
+                }
+
                 break;
             case MiddleButtonType.Drive:     // 磁盘
                 t = InstantiateMoBan(moBan_YinPan, t_MiddleGrid, YINPAN_NAME, true);
@@ -1120,7 +1166,13 @@ public class Game_DaoRu : SubUI
                 }
                 else
                 {
+                    if (isShowLeftTip)
+                    {
+                        isShowLeftTip = false;
+                        go_MouseLeftClick.SetActive(false);
+                    }
                     go_CurrentSelect = go;
+                    m_CurrentSelectFile = fileInfo;
                     Ctrl_Coroutine.Instance.StartCoroutine(CheckoubleClick());
                 }
             });
@@ -1148,7 +1200,7 @@ public class Game_DaoRu : SubUI
                 else                                                              // 单击
                 {
                     go_CurrentSelect = t.gameObject;
-
+                    m_CurrentSelectFile = fileInfo;
                     if (isNormalClick && !isShift)
                     {
                         if (chooseGOK_BgV.Count > 0)
@@ -1200,6 +1252,11 @@ public class Game_DaoRu : SubUI
 
         });
     }
+
+
+
+
+
 
 
     #endregion
@@ -1438,7 +1495,7 @@ public class Game_DaoRu : SubUI
     {
         if (chooseGOK_BgV.Count > 1)               // 选择了 多张
         {
-            MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.DaoRu, string.Format("多个文件改名成 {0} ?",  input_GeiMing.text));
+            MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.DaoRu, string.Format("{0} 个文件改名成 {1} ?", chooseGOK_BgV.Count, input_GeiMing.text));
         }
         else if (chooseGOK_BgV.Count == 1)       // 选择了 1 张
         {
@@ -1457,46 +1514,59 @@ public class Game_DaoRu : SubUI
     {
         if (type == EGameType.DaoRu)
         {
-            if (chooseGOK_BgV.Count > 1)               // 选择了 多张
+            bool isWhile2Do = true;
+            while (isWhile2Do)
             {
-
-                List<GameObject> sortList = GetSortChoose();
-
-                for (int i = 1; i < sortList.Count+1; i++)
+                try
                 {
-                    FileInfo fileInfo = allGoK_ResultBeanV[sortList[i-1]].File;
-                    string path = fileInfo.FullName.Replace(@"\", "/");
-                    int tmpCount = path.LastIndexOf("/", StringComparison.Ordinal);
-                    string newFolderPath = path.Substring(0, tmpCount + 1);    // 前路径
-
-
-                    string newPath = newFolderPath + input_GeiMing.text;
-                    string tmpPath = newPath+"_"+i.ToString("D2");
-                    int index = i;
-                    while (File.Exists(tmpPath + fileInfo.Extension))
-                    {
-                        index++;
-                        tmpPath = newPath + "_" + index.ToString("D2");
-                    }
-                    fileInfo.MoveTo(tmpPath + fileInfo.Extension);
+                    Foreach2Do();
+                    isWhile2Do = false;
+                }
+                catch
+                {
+                    isWhile2Do = true;
                 }
             }
-            else if (chooseGOK_BgV.Count == 1)       // 选择了 1 张
-            {
-                foreach (GameObject go in chooseGOK_BgV.Keys)
-                {
-                    MyIO.FileRename(allGoK_ResultBeanV[go].File, input_GeiMing.text);
-                    break;
-                }
-            }
-            else
-            {
-                MyLog.Red("不可能吧");
-            }
-
             Btn_ShuaiXin();
 
         }
+    }
+
+    private void Foreach2Do()
+    {
+        if (chooseGOK_BgV.Count > 1)               // 选择了 多张
+        {
+
+            List<GameObject> sortList = GetSortChoose();
+
+            for (int i = 1; i < sortList.Count + 1; i++)
+            {
+                FileInfo fileInfo = allGoK_ResultBeanV[sortList[i - 1]].File;
+                string path = fileInfo.FullName.Replace(@"\", "/");
+                int tmpCount = path.LastIndexOf("/", StringComparison.Ordinal);
+                string newFolderPath = path.Substring(0, tmpCount + 1);    // 前路径
+
+
+                string newPath = newFolderPath + input_GeiMing.text;
+                string tmpPath = newPath + "_" + i.ToString("D2");
+                int index = i;
+                while (File.Exists(tmpPath + fileInfo.Extension))
+                {
+                    index++;
+                    tmpPath = newPath + "_" + index.ToString("D2");
+                }
+                fileInfo.MoveTo(tmpPath + fileInfo.Extension);
+            }
+        }
+        else if (chooseGOK_BgV.Count == 1)       // 选择了 1 张
+        {
+            foreach (GameObject go in chooseGOK_BgV.Keys)
+            {
+                MyIO.FileRename(allGoK_ResultBeanV[go].File, input_GeiMing.text);
+                break;
+            }
+        }
+
     }
 
 
@@ -1672,6 +1742,8 @@ public class Game_DaoRu : SubUI
             chooseGOK_BgV.Clear();
             tx_TipZhang.text = "0";
             btnDaoRu.interactable = false;
+            go_CurrentSelect = null;
+            m_CurrentSelectFile = null;
             btnGeiMing.interactable = false;
             input_GeiMing.text = "";
         }
@@ -1702,13 +1774,12 @@ public class Game_DaoRu : SubUI
         {
             btnDaoRu.interactable = true;
             btnGeiMing.interactable = true;
-            GameObject go =null;
             foreach (GameObject tmpGo in chooseGOK_BgV.Keys)
             {
-                go = tmpGo;
+                go_CurrentSelect = tmpGo;
                 break;
             }
-            input_GeiMing.text = allGoK_ResultBeanV[go].SP.name;
+            input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name;
 
         }
 
@@ -1716,6 +1787,61 @@ public class Game_DaoRu : SubUI
 
 
     #endregion
+
+
+    #region 鼠标右键 文件夹
+
+    private bool isShowLeftTip =false;
+
+
+
+    private void E_OnMouseLeftClick()                   // 点击了鼠标右键
+    {
+        if (isShowLeftTip)
+        {
+            go_MouseLeftClick.SetActive(false);
+        }
+        if (null!=go_CurrentSelect && !isShowLeftTip && go_CurrentSelect.name == FLODER_NAME)
+        {
+            isShowLeftTip = true;
+            go_MouseLeftClick.transform.position = go_CurrentSelect.transform.position;
+            go_MouseLeftClick.SetActive(true);
+
+        }
+
+    }
+
+
+    private void Btn_ChooseColor(MyEnumColor colorEnum,bool isNull =false)
+    {
+        if (isShowLeftTip)
+        {
+            isShowLeftTip = false;
+            go_MouseLeftClick.SetActive(false);
+
+            switch (go_CurrentSelect.name)
+            {
+                case FLODER_NAME:         // 文件夹
+                    GameObject biaoJi = go_CurrentSelect.transform.Find("BiaoJi").gameObject;
+                    biaoJi.SetActive(!isNull);
+                    if (!isNull)
+                    {
+                        biaoJi.GetComponent<Image>().color = MyColor.GetColor(colorEnum);
+                        Ctrl_UserInfo.Instance.AddBiaoJi(m_CurrentSelectFile.FullName,colorEnum);
+                    }
+                    else
+                    {
+                        Ctrl_UserInfo.Instance.RemoveBiaoJi(m_CurrentSelectFile.FullName);
+                    }
+                    break;
+            }
+
+
+        }
+    }
+
+    #endregion
+
 
 
     #region 单张详细信息(单张导入)

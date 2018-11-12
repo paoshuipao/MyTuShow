@@ -47,11 +47,12 @@ public class MyGameManager : Manager
         if (Input.GetKeyUp(KeyCode.LeftControl) && !isLogo)
         {
             MyEventCenter.SendEvent(E_GameEvent.OnClickUp_Ctrl);
-
         }
 
-
-
+        if (Input.GetMouseButtonDown(1))
+        {
+            MyEventCenter.SendEvent(E_GameEvent.OnClickMouseLeftDown);
+        }
 
 
         if (Input.GetKeyDown(KeyCode.Escape) && !isLogo)

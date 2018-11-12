@@ -20,6 +20,8 @@ public enum E_GameEvent                           // 这里写事件
     OnClickDown_Ctrl,              // 按下 Ctrl
     OnClickUp_Ctrl,                // 松开 Ctrl
 
+    OnClickMouseLeftDown,          // 按下鼠标右键
+
 
     ChangGameToggleType,            // 切换左边总的选项 （EGameType,int）
     DaoRuResult,                    // 返回导入结果（EGameType 导入那一个, bool 是否成功,List<FileInfo> 错误集合）

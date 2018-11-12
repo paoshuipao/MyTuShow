@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using PSPUtil.Singleton;
+using PSPUtil.StaticUtil;
 using UnityEngine;
 
 
@@ -39,25 +40,69 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     public bool IsCanChangeSize { get; set; }                       // 是否可改大小
 
 
-    public GridSizeBean[] L_XuLieTuSize { get; set; }                 // 序列图 Grid 大小
+    public GridSizeBean[] L_XuLieTuSize { get; private set; }                 // 序列图 Grid 大小
 
-    public GridSizeBean[] L_JiHeXuLieTuSize { get; set; }             // 集合序列图 Grid 大小
+    public GridSizeBean[] L_JiHeXuLieTuSize { get; private set; }             // 集合序列图 Grid 大小
 
-    public GridSizeBean[] L_TaoMingTuSize { get; set; }               // 透明图 Grid 大小
+    public GridSizeBean[] L_TaoMingTuSize { get; private set; }               // 透明图 Grid 大小
 
-    public GridSizeBean[] L_JPGTuSize { get; set; }                   // Jpg图 Grid 大小
+    public GridSizeBean[] L_JPGTuSize { get; private set; }                   // Jpg图 Grid 大小
 
-    public GridSizeBean[] L_JiHeTuSize { get; set; }                  // 集合图 Grid 大小
+    public GridSizeBean[] L_JiHeTuSize { get; private set; }                  // 集合图 Grid 大小
 
 
     //—————————————————— 底下名称 ——————————————————
 
-    public string[] BottomJiHeXLTName { get; set; }              // 底下集合序列图名称
-    public string[] BottomTaoMingName { get; set; }              // 底下透明图名称
-    public string[] BottomJpgName { get; set; }                  // 底下Jpg名称
-    public string[] BottomJiHeName { get; set; }                 // 底下集合名称
-    public string[] BottomAudioName { get; set; }                // 底下音频名称
+    public string[] BottomJiHeXLTName { get; private set; }              // 底下集合序列图名称
+    public string[] BottomTaoMingName { get; private set; }              // 底下透明图名称
+    public string[] BottomJpgName { get; private set; }                  // 底下Jpg名称
+    public string[] BottomJiHeName { get; private set; }                 // 底下集合名称
+    public string[] BottomAudioName { get; private set; }                // 底下音频名称
 
+
+
+
+    //—————————————————— 标记 ——————————————————
+
+
+    public bool GetIsBiaoJi(string path ,ref MyEnumColor color)
+    {
+        foreach (string key in pathK_ColorV.Keys)
+        {
+            if (key == path)
+            {
+                color = (MyEnumColor)pathK_ColorV[key];
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public void AddBiaoJi(string path,MyEnumColor color)         // 添加标记
+    {
+        if (pathK_ColorV.ContainsKey(path))
+        {
+            pathK_ColorV[path] = (ushort)color;
+        }
+        else
+        {
+            pathK_ColorV.Add(path,(ushort)color);
+        }
+    }
+
+    public void RemoveBiaoJi(string path)                      // 移除标记
+    {
+        if (pathK_ColorV.ContainsKey(path))
+        {
+            pathK_ColorV.Remove(path);
+        }
+        
+    }
+
+
+
+    private Dictionary<string, ushort> pathK_ColorV;
 
     #region 私有
 
@@ -83,8 +128,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     private const string PP_BOTTOM_JI_HE_NAME = "PP_BOTTOM_JI_HE_NAME";
     private const string PP_BOTTOM_AUDIO_NAME = "PP_BOTTOM_AUDIO_NAME";
 
-
-
+    // 标记
+    private const string PP_BIAO_JI_PATH = "PP_BIAO_JI_PATH";
 
 
 
@@ -115,6 +160,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         InitSize();
         InitBottomName();
 
+
+        pathK_ColorV = ES3.Load(PP_BIAO_JI_PATH, new Dictionary<string, ushort>());
 
     }
 
@@ -246,7 +293,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ES3.Save<string[]>(PP_BOTTOM_JI_HE_NAME, BottomJiHeName);
         ES3.Save<string[]>(PP_BOTTOM_AUDIO_NAME, BottomAudioName);
 
-
+        // 标记
+        ES3.Save<Dictionary<string, ushort>>(PP_BIAO_JI_PATH, pathK_ColorV);
 
     }
 
