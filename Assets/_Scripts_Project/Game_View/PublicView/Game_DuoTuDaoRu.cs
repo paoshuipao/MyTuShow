@@ -13,9 +13,58 @@ public class Game_DuoTuDaoRu : SubUI
 
         MyEventCenter.AddListener<ResultBean[],string>(E_GameEvent.ShowDuoTuDaoRu, E_Show);
 
-
-        rt_Contant = Get<RectTransform>("Top/ScrollView/Contant");
+        // 上方
+        dt2_TopContant = Get<DTToggle2_Fade>("Top/ScrollView");
+        mScrollRect = Get<ScrollRect>("Top/ScrollView");
+        rt_GridContant = Get<RectTransform>("Top/ScrollView/Contant");
+        rt_TuContant = Get<RectTransform>("Top/ScrollView/TuContant");
         moBan_Item = GetGameObject("Top/ScrollView/MoBan");
+
+        // 切换成大图显示
+        rtAnimTu = Get<RectTransform>("Top/ScrollView/TuContant/Tu/AnimTu");
+        anim_Tu = Get<UGUI_SpriteAnim>("Top/ScrollView/TuContant/Tu/AnimTu/Anim");
+        slider_Width = Get<Slider>("Top/ScrollView/TuContant/Right/SliderWidth/Slider");
+        slider_Height = Get<Slider>("Top/ScrollView/TuContant/Right/SliderHeight/Slider");
+        tx_WidthSize = Get<Text>("Top/ScrollView/TuContant/Right/SliderWidth/TxValue");
+        tx_HeightSize = Get<Text>("Top/ScrollView/TuContant/Right/SliderHeight/TxValue");
+        AddSliderOnValueChanged(slider_Width, (value) =>
+        {
+            SetTuSize(value);
+        });
+        AddSliderOnValueChanged(slider_Height, (value) =>
+        {
+            SetTuSize(0, value);
+        });
+        AddButtOnClick("Top/ScrollView/TuContant/Right/BtnSize/BtnFirst", () =>
+        {
+            SetTuSize(yuanLaiWidth, yuanLaiHidth);
+        });
+        AddButtOnClick("Top/ScrollView/TuContant/Right/BtnSize/BtnPlusHalf", () =>
+        {
+            SetTuSize(yuanLaiWidth * 0.5f, yuanLaiHidth * 0.5f);
+        });
+        AddButtOnClick("Top/ScrollView/TuContant/Right/BtnSize/BtnAddHalf", () =>
+        {
+            SetTuSize(yuanLaiWidth * 1.5f, yuanLaiHidth * 1.5f);
+        });
+        AddButtOnClick("Top/ScrollView/TuContant/Right/BtnSize/BtnAddTwo", () =>
+        {
+            SetTuSize(yuanLaiWidth * 2f, yuanLaiHidth * 2f);
+        });
+
+
+
+        // 中间
+        tx_ChangeText = Get<Text>("Middle/Left/BtnQieHuan/Text");
+        AddButtOnClick("Middle/Left/BtnOpenFolder", Btn_OnOpenFolder);
+        AddButtOnClick("Middle/Left/BtnQieHuan", Btn_OnChangeBiTu);
+
+        AddSliderOnValueChanged("Middle/Left/Speed/Slider", Sldier_OnSpeedChange);
+
+
+
+
+        #region 下方
 
         Get<Text>("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item1/Btn/ItemDaoRu").text = Ctrl_UserInfo.BottomXuLieTuName[0];
         Get<Text>("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item2/Btn/ItemDaoRu").text = Ctrl_UserInfo.BottomXuLieTuName[1];
@@ -78,6 +127,31 @@ public class Game_DuoTuDaoRu : SubUI
         {
             ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Shu, 4);
         });
+
+        // 序列图222
+        AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn1/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_1);
+        });
+        AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn2/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_2);
+        });
+        AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn3/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_3);
+        });
+        AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn4/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_4);
+        });
+        AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn5/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_5);
+        });
+
+
+
 
         // 集合序列图
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn1/BtnMDR", () =>
@@ -171,7 +245,9 @@ public class Game_DuoTuDaoRu : SubUI
         });
 
 
-        AddButtOnClick("Middle/BtnOpenFolder", Btn_OnOpenFolder);
+        #endregion
+
+
 
     }
 
@@ -179,10 +255,35 @@ public class Game_DuoTuDaoRu : SubUI
 
     #region 私有
 
+
+    private Dictionary<GameObject, ResultBean> itemSelectK_ResutltV = new Dictionary<GameObject, ResultBean>();     // item每行的作为 Key 结果为Value
+
+
     private GameObject mCuurentChooseBg;
     private GameObject moBan_Item;
-    private RectTransform rt_Contant;
+    private RectTransform rt_GridContant, rt_TuContant;
     private string mCurrentFolderPath;
+
+
+    // 上
+    private DTToggle2_Fade dt2_TopContant;
+    private ScrollRect mScrollRect;
+
+    private RectTransform rtAnimTu;
+    private UGUI_SpriteAnim anim_Tu;
+    private Slider slider_Width, slider_Height;
+    private Text tx_WidthSize, tx_HeightSize;
+    private Vector2 TuSize = new Vector2(512, 512);
+    private float yuanLaiWidth, yuanLaiHidth;
+
+
+
+    // 中
+    private bool isShowBigTu = false;
+    private Text tx_ChangeText;
+    private const string ITEM_STR = "切换到大图";
+    private const string BIGT_U_STR = "还原到栏目";
+
 
     // 导入 Text
     private Text tx_DuoXLT222_1, tx_DuoXLT222_2, tx_DuoXLT222_3, tx_DuoXLT222_4, tx_DuoXLT222_5;
@@ -234,14 +335,54 @@ public class Game_DuoTuDaoRu : SubUI
     }
 
 
+
+    private void Change2YuanLai()
+    {
+        isShowBigTu = false;
+        dt2_TopContant.Change2One();
+        mScrollRect.content = rt_GridContant;
+        tx_ChangeText.text = ITEM_STR;
+
+    }
+
     #endregion
 
 
+    private void SetTuSize(float width = 0, float height = 0)         // 设置图大小
+    {
+        if (width > 0)
+        {
+            if (width < 8)
+            {
+                width = 8;
+            }
+            if (width > 512)
+            {
+                width = 512;
+            }
+            TuSize.x = width;
+            slider_Width.value = width;
+            tx_WidthSize.text = width.ToString();
+        }
+        if (height > 0)
+        {
+            if (height < 8)
+            {
+                height = 8;
+            }
+            if (height > 512)
+            {
+                height = 512;
+            }
+            TuSize.y = height;
+            slider_Height.value = height;
+            tx_HeightSize.text = height.ToString();
+        }
+        rtAnimTu.sizeDelta = TuSize;
+    }
 
-    private Dictionary<GameObject, ResultBean> itemSelectK_ResutltV = new Dictionary<GameObject, ResultBean>();     // item每行的作为 Key 结果为Value
 
 
-    // UI事件
     private void Btn_OnCloseThis()                                   // 点击关闭
     {
         mUIGameObject.SetActive(false);
@@ -256,10 +397,50 @@ public class Game_DuoTuDaoRu : SubUI
         }
     }
 
+
     private void Btn_OnOpenFolder()                                  // 打开文件夹
     {
         Application.OpenURL(mCurrentFolderPath);
     }
+
+
+    private void Btn_OnChangeBiTu()                                  // 点击切换成大图
+    {
+        if (isShowBigTu)
+        {
+            Change2YuanLai();
+        }
+        else
+        {
+            isShowBigTu = true;
+            dt2_TopContant.Change2Two();
+            mScrollRect.content = rt_TuContant;
+            tx_ChangeText.text = BIGT_U_STR;
+
+            // 设置图
+            List<Sprite> sps = new List<Sprite>(itemSelectK_ResutltV.Count);
+
+            foreach (ResultBean bean in itemSelectK_ResutltV.Values)
+            {
+                sps.Add(bean.SP);
+                yuanLaiWidth = bean.Width;
+                yuanLaiHidth = bean.Height;
+            }
+
+            anim_Tu.ChangeAnim(sps.ToArray());
+            SetTuSize(yuanLaiWidth, yuanLaiHidth);
+
+        }
+
+    }
+
+
+
+    private void Sldier_OnSpeedChange(float value)                  // 拖动滑动条改变速度
+    {
+        anim_Tu.FPS = 0.5f /value;
+    }
+
 
 
     //—————————————————— 每个 Item ——————————————————
@@ -287,31 +468,38 @@ public class Game_DuoTuDaoRu : SubUI
 
 
 
-
-
     //—————————————————— 导入按钮 ——————————————————
 
-    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)           // 点击了序列图的导入
+    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)      // 点击了序列图的导入
     {
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
 
         // 1. 发送导入的事件
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu, tuType, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDuoTuDaoRu, resultBeans, index);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, index);
 
         // 2.关闭多选信息
         Btn_OnCloseThis();
 
     }
 
+    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                 // 点击导入 集合序列图
+    {
+        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
+        // 1. 发送导入的事件
+        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu222, type, resultBeans);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
+        // 2.关闭多选信息
+        Btn_OnCloseThis();
+    }
 
-    // 导入按钮
+
     private void ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType type)           // 点击导入 集合序列图
     {
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
         // 1. 发送导入的事件
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_JiHeXuLieTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDuoTuDaoRu, resultBeans, (int)type);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
         // 2.关闭多选信息
         Btn_OnCloseThis();
     }
@@ -322,7 +510,7 @@ public class Game_DuoTuDaoRu : SubUI
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
         // 1. 发送导入的事件
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_TaoMingTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDuoTuDaoRu, resultBeans, (int)type);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
         // 2.关闭多选信息
         Btn_OnCloseThis();
     }
@@ -333,7 +521,7 @@ public class Game_DuoTuDaoRu : SubUI
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
         // 1. 发送导入的事件
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_NormalTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDuoTuDaoRu, resultBeans, (int)type);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
         // 2.关闭多选信息
         Btn_OnCloseThis();
 
@@ -346,7 +534,7 @@ public class Game_DuoTuDaoRu : SubUI
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
         // 1. 发送导入的事件
         MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_JiHeTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDuoTuDaoRu, resultBeans, (int)type);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
         // 2.关闭多选信息
         Btn_OnCloseThis();
 
@@ -357,10 +545,16 @@ public class Game_DuoTuDaoRu : SubUI
 
     //—————————————————— 事件 ——————————————————
 
-    private void E_Show(ResultBean[] resultBeans,string folderPath)
+    private void E_Show(ResultBean[] resultBeans,string folderPath)                     // 显示
     {
         mCurrentFolderPath = folderPath;
         mUIGameObject.SetActive(true);
+        if (isShowBigTu)
+        {
+            Change2YuanLai();
+        }
+
+
 
         tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
         tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
@@ -404,7 +598,7 @@ public class Game_DuoTuDaoRu : SubUI
 
         foreach (ResultBean bean in resultBeans)
         {
-            Transform t = InstantiateMoBan(moBan_Item, rt_Contant);
+            Transform t = InstantiateMoBan(moBan_Item, rt_GridContant);
             itemSelectK_ResutltV.Add(t.gameObject, bean);
 
             // 图标

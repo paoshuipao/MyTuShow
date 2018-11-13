@@ -166,6 +166,7 @@ public class UIStart_Game : BaseUI
 
 
     #region 私有
+
     private bool isBig =false;  // 是否最大化
     private EGameType mCurrentGameType;
     private bool isClickZhongZhi;
@@ -181,6 +182,7 @@ public class UIStart_Game : BaseUI
     private DTExpansion_Contrl anim_LeftContrl;
     private static readonly Vector2 FirstOffsetMin = new Vector2(272, 0);
     private static readonly Vector2 ToOffsetMin = new Vector2(84, 0);
+
     private GameObject go_XuLieChoose1, go_XuLieChoose2;
     private GameObject go_XuLie222Choose1, go_XuLie222Choose2;
     private GameObject go_JiHeXuLieTuChoose1, go_JiHeXuLieTuChoose2;
@@ -223,10 +225,10 @@ public class UIStart_Game : BaseUI
     // 其他子UI
     private readonly Game_MusicInfo sub_MusicInfo = new Game_MusicInfo();    // 音乐信息
     private readonly Game_GaiMing sub_GaiMing = new Game_GaiMing();          // 改名
-    private readonly Game_SingleTuInfo sub_SingleTuInfo = new Game_SingleTuInfo(); // 单张图片信息
-    private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();          // 多张图片信息
-    private readonly Game_DuoTuDaoRu sub_DuoTuDaoRu = new Game_DuoTuDaoRu();       // 多张图片 导入
-
+    private readonly Game_SingleTuInfo sub_SingleTuInfo = new Game_SingleTuInfo();   // 单张图片信息
+    private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();            // 多张图片信息
+    private readonly Game_DuoTuDaoRu sub_DuoTuDaoRu = new Game_DuoTuDaoRu();         // 多张图片 导入
+    private readonly Game_SingleTuDaoRu sub_SingleTuDaoRu = new Game_SingleTuDaoRu();// 单张图片 导入
 
 
     protected override SubUI[] GetSubUI()
@@ -234,7 +236,7 @@ public class UIStart_Game : BaseUI
         return new SubUI[] 
         {
             sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio,sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu ,
-            sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu };
+            sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu,sub_SingleTuDaoRu };
     }
 
 
@@ -308,7 +310,7 @@ public class UIStart_Game : BaseUI
                 if (isChuZai) // 存在就导入进来
                 {
                     MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu, type, fileInfos, false);
-                    yield return new WaitForSeconds(0.1f);
+                    yield return 0;
                 }
                 else // 不存在就删除存储的
                 {
@@ -318,7 +320,7 @@ public class UIStart_Game : BaseUI
             yield return 0;
         }
         #endregion
-
+        Get<Button>("Left/Contant/Group/XuLieTu").interactable = true;
         yield return 0;
 
 
@@ -346,7 +348,7 @@ public class UIStart_Game : BaseUI
                 if (isChuZai) // 存在就导入进来
                 {
                     MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu222, type, fileInfos, false);
-                    yield return new WaitForSeconds(0.1f);
+                    yield return 0;
                 }
                 else // 不存在就删除存储的
                 {
@@ -356,7 +358,7 @@ public class UIStart_Game : BaseUI
             yield return 0;
         }
         #endregion
-
+        Get<Button>("Left/Contant/Group/XuLieTu222").interactable = true;
         yield return 0;
 
 
@@ -380,14 +382,14 @@ public class UIStart_Game : BaseUI
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeXuLieTu, type, tmpFileInfos, false);
-            yield return new WaitForSeconds(0.1f);
+            yield return 0;
 
         }
         #endregion
-
+        Get<Button>("Left/Contant/Group/JiHeXuLieTu").interactable = true;
         yield return 0;
 
-
+        
         #region 透明图
 
         foreach (ETaoMingType type in Enum.GetValues(typeof(ETaoMingType)))
@@ -408,12 +410,12 @@ public class UIStart_Game : BaseUI
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_TaoMingTu, type, tmpFileInfos, false);
-            yield return new WaitForSeconds(0.1f);
+            yield return 0;
         }
         #endregion
-
-
+        Get<Button>("Left/Contant/Group/TaoMingTu").interactable = true;
         yield return 0;
+
 
         #region Jpg
 
@@ -436,12 +438,12 @@ public class UIStart_Game : BaseUI
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_NormalTu, type, tmpFileInfos, false);
-            yield return new WaitForSeconds(0.1f);
+            yield return 0;
         }
         #endregion
-
-
+        Get<Button>("Left/Contant/Group/NormalTu").interactable = true;
         yield return 0;
+
 
         #region 集合
 
@@ -462,10 +464,10 @@ public class UIStart_Game : BaseUI
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeTu, type, tmpFileInfos, false);
-            yield return new WaitForSeconds(0.1f);
+            yield return 0;
         }
         #endregion
-
+        Get<Button>("Left/Contant/Group/JiHeTu").interactable = true;
         yield return 0;
 
 
@@ -494,9 +496,14 @@ public class UIStart_Game : BaseUI
 
 
         #endregion
+        Get<Button>("Left/Contant/Group/Audio").interactable = true;
+        yield return 0;
 
 
+        Get<Button>("Left/Contant/Group/DaoRu").interactable = true;
         go_Loading.SetActive(false);
+
+
 
     }
 

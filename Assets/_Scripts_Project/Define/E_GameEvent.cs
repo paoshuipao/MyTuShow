@@ -118,7 +118,9 @@ public enum E_GameEvent                           // 这里写事件
 
 
     ShowDuoTuDaoRu,         // 显示多图导入(ResultBean[] 结果集合,string 文件夹路径)
-    OnClickDuoTuDaoRu,      // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
+    ShowSingleTuDaoRu,      // 显示单张图片导入（ResultBean 结果）
+    OnClickDaoRu,          // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
+
 
 
     DelteAll,               // 所有重置

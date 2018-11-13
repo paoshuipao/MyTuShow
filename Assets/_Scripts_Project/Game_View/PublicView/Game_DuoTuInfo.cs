@@ -77,13 +77,13 @@ public class Game_DuoTuInfo : SubUI
     private UGUI_SpriteAnim anim_Tu;
     private Slider slider_Width, slider_Height;
     private Text tx_WidthSize, tx_HeightSize;
+    private Vector2 TuSize = new Vector2(512, 512);
 
 
     // 双击显示信息右边
     private Text tx_InfoName, tx_InfoNum;
     private GameObject go_ItemMoBan;
     private RectTransform rt_ItemContant;
-    private Vector2 TuSize = new Vector2(512, 512);
 
 
     public override string GetUIPathForRoot()
@@ -102,6 +102,23 @@ public class Game_DuoTuInfo : SubUI
     {
 
     }
+
+
+
+
+    private Sprite[] GetSpriteList(ResultBean[] beans)
+    {
+        Sprite[] sps = new Sprite[beans.Length];
+        for (int i = 0; i < beans.Length; i++)
+        {
+            sps[i] = beans[i].SP;
+        }
+        return sps;
+    }
+
+
+    #endregion
+
 
     private void SetTuSize(float width = 0, float height = 0) // 设置图大小
     {
@@ -135,36 +152,6 @@ public class Game_DuoTuInfo : SubUI
         }
         rtAnimTu.sizeDelta = TuSize;
     }
-
-
-    IEnumerator LoadInfoItem(ResultBean[] resultBeans)
-    {
-        foreach (ResultBean bean in resultBeans)
-        {
-            Transform t = InstantiateMoBan(go_ItemMoBan, rt_ItemContant);
-            t.Find("Icon").GetComponent<Image>().sprite = bean.SP;
-            t.Find("TextName").GetComponent<Text>().text = bean.SP.name;
-            t.Find("TextSize").GetComponent<Text>().text = bean.Width + " x " + bean.Height;
-            l_InfoItems.Add(t.gameObject);
-            yield return 0;
-        }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(rt_ItemContant);
-    }
-
-
-
-    private Sprite[] GetSpriteList(ResultBean[] beans)
-    {
-        Sprite[] sps = new Sprite[beans.Length];
-        for (int i = 0; i < beans.Length; i++)
-        {
-            sps[i] = beans[i].SP;
-        }
-        return sps;
-    }
-
-
-    #endregion
 
 
 
@@ -223,13 +210,34 @@ public class Game_DuoTuInfo : SubUI
         mUIGameObject.SetActive(true);
         tx_InfoName.text = resultBeans[0].SP.name;
         tx_InfoNum.text = resultBeans.Length.ToString();
+
+        // 设置图
         anim_Tu.ChangeAnim(GetSpriteList(resultBeans));
         yuanLaiWidth = resultBeans[0].Width;
         yuanLaiHidth = resultBeans[0].Height;
         SetTuSize(yuanLaiWidth, yuanLaiHidth);
+
+
         Ctrl_Coroutine.Instance.StartCoroutine(LoadInfoItem(resultBeans));
 
     }
+
+
+
+    IEnumerator LoadInfoItem(ResultBean[] resultBeans)
+    {
+        foreach (ResultBean bean in resultBeans)
+        {
+            Transform t = InstantiateMoBan(go_ItemMoBan, rt_ItemContant);
+            t.Find("Icon").GetComponent<Image>().sprite = bean.SP;
+            t.Find("TextName").GetComponent<Text>().text = bean.SP.name;
+            t.Find("TextSize").GetComponent<Text>().text = bean.Width + " x " + bean.Height;
+            l_InfoItems.Add(t.gameObject);
+            yield return 0;
+        }
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rt_ItemContant);
+    }
+
 
 
 }
