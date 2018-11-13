@@ -42,6 +42,9 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     public GridSizeBean[] L_XuLieTuSize { get; private set; }                 // 序列图 Grid 大小
 
+    public GridSizeBean[] L_XuLieTu222Size { get; private set; }               // 序列图222 Grid 大小
+
+
     public GridSizeBean[] L_JiHeXuLieTuSize { get; private set; }             // 集合序列图 Grid 大小
 
     public GridSizeBean[] L_TaoMingTuSize { get; private set; }               // 透明图 Grid 大小
@@ -52,8 +55,11 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
     //—————————————————— 底下名称 ——————————————————
+    public string[] BottomXuLeTu222Name { get; private set; }            // 底下序列图222名称
+
 
     public string[] BottomJiHeXLTName { get; private set; }              // 底下集合序列图名称
+
     public string[] BottomTaoMingName { get; private set; }              // 底下透明图名称
     public string[] BottomJpgName { get; private set; }                  // 底下Jpg名称
     public string[] BottomJiHeName { get; private set; }                 // 底下集合名称
@@ -116,12 +122,14 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     // 大小
     private const string PP_IS_CHANGE_SIZE = "PP_IS_CHANGE_SIZE";
     private const string PP_XU_LIE_TU_SIZE = "PP_XU_LIE_TU_SIZE";
+    private const string PP_XU_LIE_TU222_SIZE = "PP_XU_LIE_TU222_SIZE";
     private const string PP_JIHE_XLT_SIZES = "PP_JIHE_XLT_SIZES";
     private const string PP_TAO_MING_SIZE = "PP_TAO_MING_SIZE";
     private const string PP_JPG_SIZE = "PP_JPG_SIZE";
     private const string PP_JI_HE_SIZE = "PP_JI_HE_SIZE";
 
     // 底下名称
+    private const string PP_BOTTOM_XU_LIE_TU222_NAME = "PP_BOTTOM_XU_LIE_TU222_NAME";
     private const string PP_BOTTOM_JIHE_XLT_NAME = "PP_BOTTOM_JIHE_XLT_NAME";
     private const string PP_BOTTOM_TAO_MING_NAME = "PP_BOTTOM_TAO_MING_NAME";
     private const string PP_BOTTOM_JPG_NAME = "PP_BOTTOM_JPG_NAME";
@@ -176,11 +184,28 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
             L_XuLieTuSize = new GridSizeBean[5];
             L_XuLieTuSize[0] = GetGridSizeBean(64, 64);
             L_XuLieTuSize[1] = GetGridSizeBean(128, 128);
-            L_XuLieTuSize[2] = GetGridSizeBean(230, 230);
+            L_XuLieTuSize[2] = GetGridSizeBean(192, 192);
         }
         else
         {
             L_XuLieTuSize = ES3.Load<GridSizeBean[]>(PP_XU_LIE_TU_SIZE);
+        }
+
+
+
+        // 序列图222
+        if (!ES3.KeyExists(PP_XU_LIE_TU222_SIZE))
+        {
+            L_XuLieTu222Size = new GridSizeBean[5];
+            L_XuLieTu222Size[0] = GetGridSizeBean(150, 150);
+            L_XuLieTu222Size[1] = GetGridSizeBean(150, 150);
+            L_XuLieTu222Size[2] = GetGridSizeBean(150, 150);
+            L_XuLieTu222Size[3] = GetGridSizeBean(150, 150);
+            L_XuLieTu222Size[4] = GetGridSizeBean(150, 150);
+        }
+        else
+        {
+            L_XuLieTu222Size = ES3.Load<GridSizeBean[]>(PP_XU_LIE_TU222_SIZE);
         }
 
 
@@ -249,6 +274,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     private void InitBottomName()        // 初始化底下名称
     {
+        BottomXuLeTu222Name = !ES3.KeyExists(PP_BOTTOM_XU_LIE_TU222_NAME) ? new[] { "序列 1", "序列 2", "序列 3", "序列 4", "序列 5" } : ES3.Load<string[]>(PP_BOTTOM_XU_LIE_TU222_NAME);
         BottomJiHeXLTName = !ES3.KeyExists(PP_BOTTOM_JIHE_XLT_NAME) ? new[] { "特效 小", "特效 大", "序集 3", "序集 4", "序集 5" } : ES3.Load<string[]>(PP_BOTTOM_JIHE_XLT_NAME);
         BottomTaoMingName = !ES3.KeyExists(PP_BOTTOM_TAO_MING_NAME) ? new[] { "系统", "文字", "武器", "道具", "场景" } : ES3.Load<string[]>(PP_BOTTOM_TAO_MING_NAME);
         BottomJpgName = !ES3.KeyExists(PP_BOTTOM_JPG_NAME) ? new[] { "jpg1", "jpg2", "jpg3", "jpp4", "jpg5" } : ES3.Load<string[]>(PP_BOTTOM_JPG_NAME);
@@ -282,11 +308,13 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         // 大小
         ES3.Save<bool>(PP_XU_LIE_TU_SIZE, IsCanChangeSize);
         ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU_SIZE, L_XuLieTuSize);
+        ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU222_SIZE, L_XuLieTu222Size);
         ES3.Save<GridSizeBean[]>(PP_JIHE_XLT_SIZES, L_JiHeXuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_TAO_MING_SIZE, L_TaoMingTuSize);
         ES3.Save<GridSizeBean[]>(PP_JPG_SIZE, L_JPGTuSize);
         ES3.Save<GridSizeBean[]>(PP_JI_HE_SIZE, L_JiHeTuSize);
         // 初始化底下名称
+        ES3.Save<string[]>(PP_BOTTOM_XU_LIE_TU222_NAME, BottomXuLeTu222Name);
         ES3.Save<string[]>(PP_BOTTOM_JIHE_XLT_NAME, BottomJiHeXLTName);
         ES3.Save<string[]>(PP_BOTTOM_TAO_MING_NAME, BottomTaoMingName);
         ES3.Save<string[]>(PP_BOTTOM_JPG_NAME, BottomJpgName);

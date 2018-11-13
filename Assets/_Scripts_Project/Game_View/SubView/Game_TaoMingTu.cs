@@ -162,8 +162,8 @@ public class Game_TaoMingTu : SubUI
         MyEventCenter.AddListener<ETaoMingType, List<FileInfo>, bool>(E_GameEvent.DaoRu_TaoMingTu, E_OnDaoRu);
         MyEventCenter.AddListener<ETaoMingType, List<ResultBean>>(E_GameEvent.ResultDaoRu_TaoMingTu, E_ResultDaoRu);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
-        MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseNormalTuInfo, E_CloseNormalTuInfo);
+        MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowSingleTuInfo, E_ShowNormalTuInfo);
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseSingleTuInfo, E_CloseNormalTuInfo);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.OnClickNoSaveThis, E_OnClickNoSaveThis);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
         MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);
@@ -342,7 +342,7 @@ public class Game_TaoMingTu : SubUI
     private void Btn_OnDoubleItemClick(ResultBean resultBean) // 双击显示信息
     {
         mCurrentSelectFile = resultBean.File;
-        MyEventCenter.SendEvent(E_GameEvent.ShowNormalTuInfo, EGameType.TaoMingTu, resultBean);
+        MyEventCenter.SendEvent(E_GameEvent.ShowSingleTuInfo, EGameType.TaoMingTu, resultBean);
     }
 
 

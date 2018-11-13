@@ -5,14 +5,13 @@ using System.IO;
 using DG.Tweening;
 using PSPUtil;
 using PSPUtil.Control;
-using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.UI;
-
 
 public enum EGameType
 {
     XunLieTu,
+    XunLieTu222,
     JiHeXuLieTu,
     TaoMingTu,
     NormalTu,
@@ -30,11 +29,14 @@ public class UIStart_Game : BaseUI
 
         #region 左边
 
+        go_Loading = GetGameObject("Left/Loading");
         anim_LeftContrl = Get<DTExpansion_Contrl>("Left");
         AddButtOnClick("Left/BtnBig", Btn_OnBig);
 
         go_XuLieChoose1 = GetGameObject("Left/Contant/Group/XuLieTu/Choose1");
         go_XuLieChoose2 = GetGameObject("Left/Contant/Group/XuLieTu/Kuang/Choose2");
+        go_XuLie222Choose1 = GetGameObject("Left/Contant/Group/XuLieTu222/Choose1");
+        go_XuLie222Choose2 = GetGameObject("Left/Contant/Group/XuLieTu222/Kuang/Choose2");
         go_TaoMingChoose1 = GetGameObject("Left/Contant/Group/TaoMingTu/Choose1");
         go_TaoMingChoose2 = GetGameObject("Left/Contant/Group/TaoMingTu/Kuang/Choose2");
         go_NormalChoose1 = GetGameObject("Left/Contant/Group/NormalTu/Choose1");
@@ -51,6 +53,10 @@ public class UIStart_Game : BaseUI
         AddButtOnClick("Left/Contant/Group/XuLieTu", () =>
         {
             Btn_OnLeftClick(EGameType.XunLieTu);
+        });
+        AddButtOnClick("Left/Contant/Group/XuLieTu222", () =>
+        {
+            Btn_OnLeftClick(EGameType.XunLieTu222);
         });
         AddButtOnClick("Left/Contant/Group/JiHeXuLieTu", () =>
         {
@@ -101,7 +107,7 @@ public class UIStart_Game : BaseUI
 
         // 右边
         rt_Right = Get<RectTransform>("Right");
-        d7_RightContant = Get<DTToggle7_Fade>("Right/EachContant");
+        d8_RightContant = Get<DTToggle8_Fade>("Right/EachContant");
 
 
         // 底下的等待UI
@@ -118,52 +124,6 @@ public class UIStart_Game : BaseUI
 
 
 
-        #region 图片信息
-
-
-        go_TuInfo = GetGameObject("Right/ShowTuInfo");
-        tx_InfoName = Get<Text>("Right/ShowTuInfo/Right/InfoName/Name");
-        tx_HuoZhui = Get<Text>("Right/ShowTuInfo/Right/InfoHuoZhui/TxNum");
-        tx_Size = Get<Text>("Right/ShowTuInfo/Right/InfoSize/TxNum");
-        sp_Image = Get<Image>("Right/ShowTuInfo/Left/Contant/Tu/TuSize/Image");
-        slider_Width = Get<Slider>("Right/ShowTuInfo/Left/Contant/SliderWidth/Slider");
-        slider_Height = Get<Slider>("Right/ShowTuInfo/Left/Contant/SliderHeight/Slider");
-        tx_WidthSize = Get<Text>("Right/ShowTuInfo/Left/Contant/SliderWidth/TxValue");
-        tx_HeightSize = Get<Text>("Right/ShowTuInfo/Left/Contant/SliderHeight/TxValue");
-        rtAnimTu = Get<RectTransform>("Right/ShowTuInfo/Left/Contant/Tu/TuSize");
-
-        AddSliderOnValueChanged(slider_Width, (value) =>
-        {
-            SetTuSize(value);
-        });
-        AddSliderOnValueChanged(slider_Height, (value) =>
-        {
-            SetTuSize(0, value);
-        });
-
-        AddButtOnClick("Right/ShowTuInfo/Left/Contant/BtnSize/BtnPlusHalf", () =>
-        {
-            SetTuSize(yuanLaiWidth * 0.5f, yuanLaiHidth * 0.5f);
-        });
-        AddButtOnClick("Right/ShowTuInfo/Left/Contant/BtnSize/BtnFirst", () =>
-        {
-            SetTuSize(yuanLaiWidth, yuanLaiHidth);
-        });
-        AddButtOnClick("Right/ShowTuInfo/Left/Contant/BtnSize/BtnAddHalf", () =>
-        {
-            SetTuSize(yuanLaiWidth * 1.5f, yuanLaiHidth * 1.5f);
-        });
-        AddButtOnClick("Right/ShowTuInfo/Left/Contant/BtnSize/BtnAddTwo", () =>
-        {
-            SetTuSize(yuanLaiWidth * 2f, yuanLaiHidth * 2f);
-        });
-
-        AddButtOnClick("Right/ShowTuInfo/Right/BtnOpenFolder/BtnOpenFolder", Btn_OpenFolder);
-        AddButtOnClick("Right/ShowTuInfo/Right/BtnOpenFolder/BtnOpenFile", Btn_OpenFile);
-        AddButtOnClick("Right/ShowTuInfo/Right/BtnDlelte/Btn", Btn_OnDelete);
-        AddButtOnClick("Right/ShowTuInfo/BtnClose", Btn_OnCloseInfo);
-        #endregion
-
 
         // 一开始把之前所有的都加载进来
         Ctrl_Coroutine.Instance.StartCoroutine(StartFirst());
@@ -172,7 +132,7 @@ public class UIStart_Game : BaseUI
     protected override void OnEnable()
     {
         E_OnToggleChange(EGameType.XunLieTu,0);
-
+        go_Loading.SetActive(true);
     }
 
     protected override void OnAddListener()
@@ -182,8 +142,7 @@ public class UIStart_Game : BaseUI
         MyEventCenter.AddListener(E_GameEvent.CloseFileOrFolderContrl, OnHideGameWaitUI_Browser);
         MyEventCenter.AddListener<EGameType, int>(E_GameEvent.ChangGameToggleType, E_OnToggleChange);
         MyEventCenter.AddListener<EGameType,string>(E_GameEvent.ShowIsSure, E_ShowIsSure);
-        MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseNormalTuInfo, E_CloseNormalTuInfo);
+
     }
 
     protected override void OnRemoveListener()
@@ -193,8 +152,6 @@ public class UIStart_Game : BaseUI
         MyEventCenter.RemoveListener(E_GameEvent.CloseFileOrFolderContrl, OnHideGameWaitUI_Browser);
         MyEventCenter.RemoveListener<EGameType, int>(E_GameEvent.ChangGameToggleType, E_OnToggleChange);
         MyEventCenter.RemoveListener<EGameType,string>(E_GameEvent.ShowIsSure, E_ShowIsSure);
-        MyEventCenter.RemoveListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
-        MyEventCenter.RemoveListener<EGameType>(E_GameEvent.CloseNormalTuInfo, E_CloseNormalTuInfo);
 
 
     }
@@ -211,9 +168,7 @@ public class UIStart_Game : BaseUI
     #region 私有
     private bool isBig =false;  // 是否最大化
     private EGameType mCurrentGameType;
-    private FileInfo mCurrentFile;
-
-
+    private bool isClickZhongZhi;
 
     // 底下的等待UI
     private GameObject go_WaitBrowser;
@@ -227,6 +182,7 @@ public class UIStart_Game : BaseUI
     private static readonly Vector2 FirstOffsetMin = new Vector2(272, 0);
     private static readonly Vector2 ToOffsetMin = new Vector2(84, 0);
     private GameObject go_XuLieChoose1, go_XuLieChoose2;
+    private GameObject go_XuLie222Choose1, go_XuLie222Choose2;
     private GameObject go_JiHeXuLieTuChoose1, go_JiHeXuLieTuChoose2;
     private GameObject go_TaoMingChoose1, go_TaoMingChoose2;
     private GameObject go_NormalChoose1, go_NormalChoose2;
@@ -235,13 +191,16 @@ public class UIStart_Game : BaseUI
     private GameObject go_DaoRuChoose1,go_DaoRuChoose2;
     private EGameType mCurrentType;
 
+    private GameObject go_Loading;
+
+
     // 左下设置 
     private DTToggle2_Fade dt2_Setting;
 
 
 
     // 右边
-    private DTToggle7_Fade d7_RightContant;
+    private DTToggle8_Fade d8_RightContant;
     private RectTransform rt_Right;
     private GameObject go_IsSure;
     private Text tx_IsSureTittle;
@@ -249,36 +208,27 @@ public class UIStart_Game : BaseUI
 
 
 
-    // 单图信息
-    private GameObject go_TuInfo; // 双击弹出信息
-    private Text tx_InfoName, tx_HuoZhui, tx_Size;
-    private float yuanLaiWidth, yuanLaiHidth;
-    private Slider slider_Width, slider_Height;
-    private Text tx_WidthSize, tx_HeightSize;
-    private RectTransform rtAnimTu;
-    private Image sp_Image;
-    private Vector2 TuSize = new Vector2(512, 512);
-
-
-
     // 右边的子UI
-    private readonly Game_XuLieTu sub_XuLieTu1 = new Game_XuLieTu();     // 序列图
+    private readonly Game_XuLieTu sub_XuLieTu1 = new Game_XuLieTu();            // 序列图
+    private readonly Game_XuLieTu222 sub_XuLieTu222 = new Game_XuLieTu222();    // 序列图222
     private readonly Game_JiHeXuLieTu sub_JiHeXuLieTu = new Game_JiHeXuLieTu(); // 集合序列图
-    private readonly Game_TaoMingTu sub_TaoMing = new Game_TaoMingTu();   // 透明图
-    private readonly Game_NormalTu sub_Jpg = new Game_NormalTu();         // Jpg
-    private readonly Game_JiHeTu sub_JiHeTu = new Game_JiHeTu();          // 集合图
-    private readonly Game_Audio sub_Audio = new Game_Audio();             // 音频
-    private readonly Game_DaoRu sub_DaoRu1 = new Game_DaoRu();            // 导入
-    private readonly Game_GaiMing sub_GaiMing = new Game_GaiMing();       // 改名
+    private readonly Game_TaoMingTu sub_TaoMing = new Game_TaoMingTu();         // 透明图
+    private readonly Game_NormalTu sub_Jpg = new Game_NormalTu();               // Jpg
+    private readonly Game_JiHeTu sub_JiHeTu = new Game_JiHeTu();                // 集合图
+    private readonly Game_Audio sub_Audio = new Game_Audio();                   // 音频
+    private readonly Game_DaoRu sub_DaoRu1 = new Game_DaoRu();                  // 导入
+
+
 
     // 其他子UI
     private readonly Game_MusicInfo sub_MusicInfo = new Game_MusicInfo();    // 音乐信息
-
-
+    private readonly Game_GaiMing sub_GaiMing = new Game_GaiMing();          // 改名
+    private readonly Game_SingleTuInfo sub_SingleTuInfo = new Game_SingleTuInfo(); // 单张图片信息
+    private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();          // 多疑图片信息
 
     protected override SubUI[] GetSubUI()
     {
-        return new SubUI[] { sub_XuLieTu1, sub_DaoRu1, sub_TaoMing ,sub_Audio, sub_MusicInfo, sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu , sub_GaiMing };
+        return new SubUI[] { sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio, sub_MusicInfo, sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu , sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo };
     }
 
 
@@ -312,38 +262,6 @@ public class UIStart_Game : BaseUI
 
 
 
-    private void SetTuSize(float width = 0, float height = 0) // 设置图大小
-    {
-        if (width > 0)
-        {
-            if (width < 8)
-            {
-                width = 8;
-            }
-            if (width > 512)
-            {
-                width = 512;
-            }
-            TuSize.x = width;
-            slider_Width.value = width;
-            tx_WidthSize.text = width.ToString();
-        }
-        if (height > 0)
-        {
-            if (height < 8)
-            {
-                height = 8;
-            }
-            if (height > 512)
-            {
-                height = 512;
-            }
-            TuSize.y = height;
-            slider_Height.value = height;
-            tx_HeightSize.text = height.ToString();
-        }
-        rtAnimTu.sizeDelta = TuSize;
-    }
 
 
     #endregion
@@ -389,6 +307,44 @@ public class UIStart_Game : BaseUI
                 else // 不存在就删除存储的
                 {
                     Ctrl_TextureInfo.Instance.DeleteXuLieTuSave(type, tmpLists);
+                }
+            }
+            yield return 0;
+        }
+        #endregion
+
+        yield return 0;
+
+
+
+        #region 序列图222
+
+        foreach (EXuLieTu222 type in Enum.GetValues(typeof(EXuLieTu222)))
+        {
+            List<string[]> list = Ctrl_TextureInfo.Instance.GetXunLieTu222Paths(type); // 获得这一页的所有数据
+            for (int i = 0; i < list.Count; i++) // 加载每一个
+            {
+                string[] tmpLists = list[i];
+                List<FileInfo> fileInfos = new List<FileInfo>(tmpLists.Length);
+                bool isChuZai = true; // 这些路径是否存在
+                for (int j = 0; j < tmpLists.Length; j++)
+                {
+                    FileInfo fileInfo = new FileInfo(tmpLists[j]);
+                    if (!fileInfo.Exists)
+                    {
+                        isChuZai = false;
+                        break;
+                    }
+                    fileInfos.Add(fileInfo);
+                }
+                if (isChuZai) // 存在就导入进来
+                {
+                    MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu222, type, fileInfos, false);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                else // 不存在就删除存储的
+                {
+                    Ctrl_TextureInfo.Instance.DeleteXuLieTu222Save(type, tmpLists);
                 }
             }
             yield return 0;
@@ -524,7 +480,7 @@ public class UIStart_Game : BaseUI
 
         }
 
-        MyLog.Green("加载完成");
+        go_Loading.SetActive(false);
 
     }
 
@@ -566,28 +522,26 @@ public class UIStart_Game : BaseUI
 
     //——————————————————底下设置——————————————————
 
-    private void Btn_OnSetting()                           // 点击了设置
+    private void Btn_OnSetting()                                  // 点击了设置
     {
         dt2_Setting.Change2Two();
     }
 
 
-    private bool isClickZhongZhi;
-
-    private void Btn_OnClickZhongZhi()                       // 点击了重置
+    private void Btn_OnClickZhongZhi()                           // 点击了重置
     {
         isClickZhongZhi = true;
         go_IsSureTip.SetActive(true);
         tx_IsSureTittle.text = "<color=red>      是否删除全部？</color>";
         go_IsSure.SetActive(true);
     }
-    private void E_OnMouseExitSetting()                     // 鼠标离开设置选项
+    private void E_OnMouseExitSetting()                          // 鼠标离开设置选项
     {
         dt2_Setting.Change2One();
 
     }
 
-    private void Toggle_IsShowTip(bool isOn)               // 是否显示提示
+    private void Toggle_IsShowTip(bool isOn)                     // 是否显示提示
     {
         Ctrl_UserInfo.Instance.IsXuLieTuShowTip = isOn;
     }
@@ -637,50 +591,6 @@ public class UIStart_Game : BaseUI
     }
 
 
-    //——————————————————单图信息——————————————————
-
-    private void Btn_OnDelete() // 不保存这个
-    {
-        MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThis,mCurrentGameType);
-        go_TuInfo.SetActive(false);
-
-
-    }
-
-
-
-    private void Btn_OnCloseInfo() // 关闭信息
-    {
-        MyEventCenter.SendEvent(E_GameEvent.CloseNormalTuInfo,mCurrentGameType);
-    }
-
-
-    private void Btn_OpenFile() // 打开文件
-    {
-        if (null == mCurrentFile)
-        {
-            MyLog.Red("为空？");
-            return;
-        }
-        Application.OpenURL(mCurrentFile.FullName);
-
-    }
-
-
-    private void Btn_OpenFolder() // 打开文件夹
-    {
-        if (null == mCurrentFile)
-        {
-            MyLog.Red("为空？");
-            return;
-        }
-        DirectoryInfo dir = mCurrentFile.Directory;
-        if (null != dir)
-        {
-            Application.OpenURL(dir.FullName);
-        }
-    }
-
 
 
 
@@ -693,6 +603,10 @@ public class UIStart_Game : BaseUI
             case EGameType.XunLieTu:
                 go_XuLieChoose1.SetActive(false);
                 go_XuLieChoose2.SetActive(false);
+                break;
+            case EGameType.XunLieTu222:
+                go_XuLie222Choose1.SetActive(false);
+                go_XuLie222Choose2.SetActive(false);
                 break;
             case EGameType.JiHeXuLieTu:
                 go_JiHeXuLieTuChoose1.SetActive(false);
@@ -727,43 +641,49 @@ public class UIStart_Game : BaseUI
                 go_XuLieChoose1.SetActive(true);
                 go_XuLieChoose2.SetActive(true);
                 sub_XuLieTu1.Show(choose);
-                d7_RightContant.Change2One();
+                d8_RightContant.Change2One();
+                break;
+            case EGameType.XunLieTu222:
+                go_XuLie222Choose1.SetActive(true);
+                go_XuLie222Choose2.SetActive(true);
+                sub_XuLieTu222.Show(choose);
+                d8_RightContant.Change2Two();
                 break;
             case EGameType.JiHeXuLieTu:
                 go_JiHeXuLieTuChoose1.SetActive(true);
                 go_JiHeXuLieTuChoose2.SetActive(true);
                 sub_JiHeXuLieTu.Show(choose);
-                d7_RightContant.Change2Two();
+                d8_RightContant.Change2Three();
                 break;
             case EGameType.TaoMingTu:
                 go_TaoMingChoose1.SetActive(true);
                 go_TaoMingChoose2.SetActive(true);
                 sub_TaoMing.Show(choose);
-                d7_RightContant.Change2Three();
+                d8_RightContant.Change2Four();
                 break;
             case EGameType.NormalTu:
                 go_NormalChoose1.SetActive(true);
                 go_NormalChoose2.SetActive(true);
                 sub_Jpg.Show(choose);
-                d7_RightContant.Change2Four();
+                d8_RightContant.Change2Five();
                 break;
             case EGameType.JiHeTu:
                 go_JiHeChoose1.SetActive(true);
                 go_JiHeChoose2.SetActive(true);
                 sub_JiHeTu.Show(choose);
-                d7_RightContant.Change2Five();
+                d8_RightContant.Change2Six();
                 break;
             case EGameType.Audio:
                 go_AudioChoose1.SetActive(true);
                 go_AudioChoose2.SetActive(true);
-                d7_RightContant.Change2Six();
                 sub_Audio.Show(choose);
+                d8_RightContant.Change2Seven();
                 break;
             case EGameType.DaoRu:
                 go_DaoRuChoose1.SetActive(true);
                 go_DaoRuChoose2.SetActive(true);
                 sub_DaoRu1.Show();
-                d7_RightContant.Change2Seven();
+                d8_RightContant.Change2Eight();
                 break;
 
         }
@@ -800,7 +720,6 @@ public class UIStart_Game : BaseUI
 
 
 
-
     private void E_ShowIsSure(EGameType type,string tittle)     // 显示 确定是否界面
     {
         mCurrentGameType = type;
@@ -810,27 +729,5 @@ public class UIStart_Game : BaseUI
 
 
 
-    private void E_ShowNormalTuInfo(EGameType type, ResultBean resultBean)  // 显示单图信息
-    {
-        mCurrentGameType = type;
-        mCurrentFile = resultBean.File;
-        go_TuInfo.SetActive(true);
-        tx_InfoName.text = resultBean.SP.name;
-        sp_Image.sprite = resultBean.SP;
-        tx_HuoZhui.text = resultBean.File.Extension;
-        tx_Size.text = resultBean.Width + " x " + resultBean.Height;
-        yuanLaiWidth = resultBean.Width;
-        yuanLaiHidth = resultBean.Height;
-        SetTuSize(yuanLaiWidth, yuanLaiHidth);
-
-
-    }
-
-
-    private void E_CloseNormalTuInfo(EGameType type)                  // 关闭单图信息
-    {
-        go_TuInfo.SetActive(false);
-        mCurrentFile = null;
-    }
 
 }

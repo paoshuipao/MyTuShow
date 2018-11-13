@@ -821,7 +821,7 @@ public class Game_DaoRu : SubUI
 
         #region 导入结果
         go_Result = GetGameObject("Result");
-        tx_GoTo = Get<Text>("Result/Contant/BtnGoTo/Text");
+        tx_GoTo = Get<Text>("Result/Contant/BottomBtn/BtnGoTo/Text");
         go_TittleOK = GetGameObject("Result/Contant/OK");
         go_TittleError = GetGameObject("Result/Contant/Error");
         rt_ErrorContant = Get<RectTransform>("Result/Contant/Error/Contant");
@@ -851,8 +851,12 @@ public class Game_DaoRu : SubUI
         tx_DuoJiHe5 = Get<Text>("ShowDuoTu/BottomContrl/Contant/Item_JiHe/Contant/Btn5/BtnMDR/ItemDaoRu");
 
 
-        AddButtOnClick("Result/Contant/BtnGoTo", GoToDaoRuWhere);
-        AddButtOnClick("Result/Contant/BtnFanHui",JiXuDaoRu);
+        AddButtOnClick("Result/Contant/BottomBtn/BtnGoTo", Btn_GoToDaoRuWhere);
+        AddButtOnClick("Result/Contant/BottomBtn/BtnFanHui", Btn_JiXuDaoRu);
+        AddButtOnClick("Result/Contant/BottomBtn/BtnNext", Btn_OnNextFolder);
+
+
+
         #endregion
 
 
@@ -2180,6 +2184,7 @@ public class Game_DaoRu : SubUI
     private EGameType mSelectType;
     private int mSelectIndex = 0;
     private readonly List<GameObject> errorList = new List<GameObject>();
+
     private void ShowResult(EGameType gameType, bool isOk,List<FileInfo> errorInfos)            // 显示导入结果
     {
         if (errorList.Count>0)
@@ -2200,6 +2205,9 @@ public class Game_DaoRu : SubUI
         {
             case EGameType.JiHeXuLieTu:
                 str = "去集合序列图页";
+                break;
+            case EGameType.XunLieTu222:
+                str = "去序列图2页";
                 break;
             case EGameType.XunLieTu:
                 str = "去序列图页";
@@ -2241,8 +2249,7 @@ public class Game_DaoRu : SubUI
     }
 
 
-
-    private void GoToDaoRuWhere()                                   // 去到刚刚导入的地方
+    private void Btn_GoToDaoRuWhere()                                  // 点击 去到刚刚导入的地方
     {
         go_Result.SetActive(false);
         MyEventCenter.SendEvent<EGameType,int>(E_GameEvent.ChangGameToggleType, mSelectType, mSelectIndex);
@@ -2250,12 +2257,31 @@ public class Game_DaoRu : SubUI
 
 
 
-
-
-
-    private void JiXuDaoRu()                                       // 继承导入
+    private void Btn_JiXuDaoRu()                                       // 点击 继续导入
     {
         go_Result.SetActive(false);
+
+    }
+
+
+
+
+
+    private void Btn_OnNextFolder()                                    // 点击 到下个文件夹
+    {
+        go_Result.SetActive(false);
+
+        string nextPath = mFileBrowser.GetNextFolderPath();
+        if (string.IsNullOrEmpty(nextPath))
+        {
+            MyLog.Red("没有下个文件夹了");
+        }
+        else
+        {
+            mFileBrowser.Relocate(nextPath);
+            RefreshMiddleContent(); 
+        }
+
 
     }
 

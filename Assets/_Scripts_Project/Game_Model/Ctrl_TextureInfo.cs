@@ -20,11 +20,14 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     public void DeleteAlll()                      // 删除所有
     {
         l_XunLieTuBean.Clear();
+        l_XunLieTu222Bean.Clear();
+
 
         foreach (EJiHeXuLieTuType type in Enum.GetValues(typeof(EJiHeXuLieTuType)))
         {
             DeleteJiHeXuLieOneLine(type);
         }
+
 
         foreach (ETaoMingType type in Enum.GetValues(typeof(ETaoMingType)))
         {
@@ -47,8 +50,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
 
 
 
-
-    //—————————————————— 序列图 ——————————————————
+    #region 序列图
 
     public List<string[]> GetXunLieTuPaths(EXunLieTu index)                // 获取
     {
@@ -115,7 +117,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
 
 
 
-    public void DeleteXuLieTuOneLine(EXunLieTu index)                                     // 删除一行
+    public void DeleteXuLieTuOneLine(EXunLieTu index)                      // 删除一行
     {
         for (int i = 0; i < l_XunLieTuBean.Count; i++)
         {
@@ -125,6 +127,89 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
             }
         }
     }
+
+    #endregion
+
+
+    #region 序列图222
+
+    public List<string[]> GetXunLieTu222Paths(EXuLieTu222 index)                // 获取
+    {
+        List<string[]> paths = new List<string[]>();
+        foreach (XunLieSaveBean bean in l_XunLieTu222Bean)
+        {
+            if (bean.TuType == (ushort)index)
+            {
+                paths.Add(bean.Paths);
+            }
+        }
+        return paths;
+
+    }
+
+
+    /// <summary>
+    /// 保存序列图
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="paths"></param>
+    /// <returns>true： 保存成功   false:之前已有，保存失败</returns>
+    public bool SaveXunLieTu222(EXuLieTu222 index, string[] paths)               // 保存
+    {
+
+        string kName = Path.GetFileNameWithoutExtension(paths[0]);
+        if (!string.IsNullOrEmpty(kName))
+        {
+            kName = kName.Trim();
+        }
+        for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
+        {
+            if (l_XunLieTu222Bean[i].KName == kName)
+            {
+                return false;
+            }
+        }
+        XunLieSaveBean newBean = new XunLieSaveBean();
+        newBean.TuType = (ushort)index;
+        newBean.KName = kName;
+        newBean.Paths = paths;
+        l_XunLieTu222Bean.Add(newBean);
+        return true;
+    }
+
+
+    public void DeleteXuLieTu222Save(EXuLieTu222 index, string[] paths)         // 删除
+    {
+        string kName = Path.GetFileNameWithoutExtension(paths[0]);
+        if (!string.IsNullOrEmpty(kName))
+        {
+            kName = kName.Trim();
+        }
+        for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
+        {
+            XunLieSaveBean bean = l_XunLieTu222Bean[i];
+            if (bean.KName == kName && bean.TuType == (ushort)index)
+            {
+                l_XunLieTu222Bean.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+
+
+    public void DeleteXuLieTu222OneLine(EXuLieTu222 index)                      // 删除一行
+    {
+        for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
+        {
+            if (l_XunLieTu222Bean[i].TuType == (ushort)index)
+            {
+                l_XunLieTu222Bean.RemoveAt(i);
+            }
+        }
+    }
+
+    #endregion
 
 
     #region 集合序列图 
@@ -206,6 +291,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     }
 
     #endregion
+
 
     #region Jpg
 
@@ -317,7 +403,6 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     }
 
 
-
     public void DeleteAudioOneLine(EAudioType index)                           // 删除整行
     {
         audioTypeK_PathV[(ushort)index].Clear();
@@ -327,34 +412,41 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     #region 私有
 
     // 序列图
-    private List<XunLieSaveBean> l_XunLieTuBean;
+    private List<XunLieSaveBean> l_XunLieTuBean { get; set; }
     private const string PP_XUN_LIE_TU = "PP_XUN_LIE_TU";
     private const string XunLieTuFile = "XunLieTu.es3";
 
+
+    // 序列图222
+    private List<XunLieSaveBean> l_XunLieTu222Bean { get; set; }
+    private const string PP_XUN_LIE_TU222 = "PP_XUN_LIE_TU222";
+    private const string XunLieTuFile222 = "XunLieTu222.es3";
+
+
     // 集合序列图
-    private Dictionary<ushort, List<string>> jiHeXuLieTypeK_PathV;
+    private Dictionary<ushort, List<string>> jiHeXuLieTypeK_PathV { get; set; }
     private const string PP_JIHE_XULIE_TU = "PP_JIHE_XULIE_TU";
     private const string JiHeXuLieTuFile = "JiHeXuLieTu.es3";
 
     // 透明图
-    private Dictionary<ushort,List<string>>  taoMingTypeK_PathV;
+    private Dictionary<ushort,List<string>> taoMingTypeK_PathV { get; set; }
     private const string PP_TAO_MING_TU = "PP_TAO_MING_TU";
     private const string TaoMingTuFile = "TaoMingTu.es3";
 
     // Jpg
-    private Dictionary<ushort, List<string>> normalTypeK_PathV;
+    private Dictionary<ushort, List<string>> normalTypeK_PathV { get; set; }
     private const string PP_JPG_TU = "PP_JPG_TU";
     private const string JpgTuFile = "JpgTu.es3";
 
     // 集合图
-    private Dictionary<ushort, List<string>> jiHeTypeK_PathV;
+    private Dictionary<ushort, List<string>> jiHeTypeK_PathV { get; set; }
     private const string PP_JI_HE_TU = "PP_JI_HE_TU";
     private const string JiHeTuFile = "JiHeTu.es3";
 
 
 
     // 音频
-    private Dictionary<ushort, List<string>> audioTypeK_PathV;
+    private Dictionary<ushort, List<string>> audioTypeK_PathV { get; set; }
     private const string PP_AUDIO = "PP_AUDIO";
     private const string AudioFile = "AudioFile.es3";
 
@@ -369,6 +461,10 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     {
         // 序列图
         l_XunLieTuBean = ES3.Load(PP_XUN_LIE_TU, XunLieTuFile, new List<XunLieSaveBean>());
+
+        // 序列图222
+        l_XunLieTu222Bean = ES3.Load(PP_XUN_LIE_TU222, XunLieTuFile222, new List<XunLieSaveBean>());
+
 
         #region 集合序列图
 
@@ -460,6 +556,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     {
         // 退出时保存
         ES3.Save<List<XunLieSaveBean>>(PP_XUN_LIE_TU, l_XunLieTuBean, XunLieTuFile);
+        ES3.Save<List<XunLieSaveBean>>(PP_XUN_LIE_TU222, l_XunLieTu222Bean, XunLieTuFile222);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_JIHE_XULIE_TU, jiHeXuLieTypeK_PathV, JiHeXuLieTuFile);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_TAO_MING_TU, taoMingTypeK_PathV, TaoMingTuFile);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_JPG_TU, normalTypeK_PathV, JpgTuFile);

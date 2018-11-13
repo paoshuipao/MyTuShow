@@ -11,7 +11,7 @@ public class FileBrowser
 
 
     //—————————————————— 访问器 ——————————————————
-    public DirectoryInfo GetCurrentDirectory()
+    public DirectoryInfo GetCurrentDirectory()               // 当前文件夹路径
     {
         return m_pCurrentDirectory;
     }
@@ -21,12 +21,12 @@ public class FileBrowser
         return m_pParentDirectory;
     }
 
-    public DirectoryInfo[] GetChildDirectories()
+    public DirectoryInfo[] GetChildDirectories()             // 获得当前路径的所有文件夹
     {
         return m_pChildDirectories.ToArray();
     }
 
-    public FileInfo[] GetFiles()
+    public FileInfo[] GetFiles()                             // 获得当前路径的所有文件
     {
         return m_pFiles.ToArray();
     }
@@ -59,18 +59,6 @@ public class FileBrowser
         return null;
     }
 
-    public bool IsSearchComplete()
-    {
-        if (m_bSearchCompleted)
-        {
-            m_bSearchCompleted = false;
-            return true;
-        }
-
-        return false;
-    }
-
-
 
 
     public FileInfo GetFileInfoByFileName(string fileName)      // 获得文件实例
@@ -86,53 +74,10 @@ public class FileBrowser
         throw new Exception("没找到这个文件名的 文件实例 —— " + fileName);
     }
 
-    //———————————————— 修饰符 ————————————————————
-
-    public void SetHistoryLength(int iLength)
-    {
-        iLength = Mathf.Max(iLength, 0);
-        m_iHistoryLength = iLength;
-    }
-
-    public void SetFilters(string[] filters)
-    {
-        m_pFilters = filters;
-        RetrieveFiles(m_pCurrentDirectory, false);
-    }
-
-    public void SetSortMode(SortingMode mode)
-    {
-        _SortMode = mode;
-        Refresh();
-    }
 
 
     //—————————————————— 主要的导航功能 ——————————————————
 
-
-    public void GoToRoot(bool bHistory)
-    {
-        CancelCurrentSearch();
-
-        // Write to history if needed
-        if (bHistory)
-            AddToHistory(null);
-
-        // Empty everything
-        m_pCurrentDirectory = null;
-        m_pParentDirectory = null;
-        m_pFiles.Clear();
-
-        // Set directory entries for the currently active logical drives
-
-        string[] drives = Directory.GetLogicalDrives();
-        m_pChildDirectories.Clear();
-
-        for (int i = 0; i < drives.Length; i++)
-        {
-            m_pChildDirectories.Add(new DirectoryInfo(drives[i]));
-        }
-    }
 
 
     public void Relocate(string path)                                 // 换目录（简单版）  -> 实际调用  RetrieveFiles 
@@ -197,12 +142,58 @@ public class FileBrowser
         CleanDirs(ref m_pChildDirectories);
 
         Sort();
+
+
+        //————————————————————————————————————
+        parentFolderPaths.Clear();
+
+        DirectoryInfo[] parentDirs = m_pParentDirectory.GetDirectories();
+
+        for (int i = 0; i < parentDirs.Length; i++)
+        {
+            if (!Directory.Exists(parentDirs[i].FullName))
+            {
+                continue;
+            }
+            FileAttributes attributes = File.GetAttributes(parentDirs[i].FullName);
+            if ((attributes & FileAttributes.System) == FileAttributes.System|| (attributes & FileAttributes.Hidden) == FileAttributes.Hidden || (attributes & FileAttributes.Archive) == FileAttributes.Archive)
+            {
+                continue;
+            }
+            parentFolderPaths.Add(parentDirs[i].FullName);
+        }
     }
 
 
     //————————————————— 直接层次结构 ———————————————————
-    public void GoInParent()
+
+    public void GoToRoot(bool bHistory)                               // 去根目录（c盘、d盘、e盘那里）
     {
+        CancelCurrentSearch();
+
+        // Write to history if needed
+        if (bHistory)
+            AddToHistory(null);
+
+        // Empty everything
+        m_pCurrentDirectory = null;
+        m_pParentDirectory = null;
+        m_pFiles.Clear();
+
+        // Set directory entries for the currently active logical drives
+
+        string[] drives = Directory.GetLogicalDrives();
+        m_pChildDirectories.Clear();
+
+        for (int i = 0; i < drives.Length; i++)
+        {
+            m_pChildDirectories.Add(new DirectoryInfo(drives[i]));
+        }
+    }
+
+
+    public void GoInParent()                                          // 去上一级别的文件夹（或磁盘）
+    { 
         // If there is no parent, you ara at the computer root
         if (m_pParentDirectory == null)
         {
@@ -215,7 +206,7 @@ public class FileBrowser
         }
     }
 
-    public void GoInSubDirectory(string name)
+    public void GoInSubDirectory(string name)                        // 双击这个文件夹，进入
     {
         // Look trhough the current subdirectories and open the one maching the given name
         for (int i = 0; i < m_pChildDirectories.Count; i++)
@@ -228,6 +219,11 @@ public class FileBrowser
     }
 
 
+
+    #region 其他方法
+
+
+
     //————————————————— 排序 ———————————————————
 
     public void Sort()
@@ -235,26 +231,25 @@ public class FileBrowser
         switch (_SortMode)
         {
             case SortingMode.Name:
-            {
-                m_pFiles.Sort(CompareFileByName);
-                m_pChildDirectories.Sort(CompareFolderByName);
-                break;
-            }
+                {
+                    m_pFiles.Sort(CompareFileByName);
+                    m_pChildDirectories.Sort(CompareFolderByName);
+                    break;
+                }
             case SortingMode.Date:
-            {
-                m_pFiles.Sort(CompareFileByDate);
-                m_pChildDirectories.Sort(CompareFolderByDate);
-                break;
-            }
+                {
+                    m_pFiles.Sort(CompareFileByDate);
+                    m_pChildDirectories.Sort(CompareFolderByDate);
+                    break;
+                }
             case SortingMode.Type:
-            {
-                m_pFiles.Sort(CompareFileByType);
-                m_pChildDirectories.Sort(CompareFolderByName);
-                break;
-            }
+                {
+                    m_pFiles.Sort(CompareFileByType);
+                    m_pChildDirectories.Sort(CompareFolderByName);
+                    break;
+                }
         }
     }
-
 
 
     //—————————————————— 历史 ——————————————————
@@ -262,12 +257,12 @@ public class FileBrowser
 
     public bool GetIsHasHistoryPre       // 是否有历史
     {
-        get { return m_iCursor -1 >= 0; }
+        get { return m_iCursor - 1 >= 0; }
     }
 
-    public bool GetIsHasHistoryNext    // 是否有历史之前
+    public bool GetIsHasHistoryNext       // 是否有历史之前
     {
-        get { return m_iCursor+1 < m_pHistory.Count; }
+        get { return m_iCursor + 1 < m_pHistory.Count; }
     }
 
     public void GoToPrevious()             // 回到历史
@@ -398,9 +393,90 @@ public class FileBrowser
         }
     }
 
+    public bool IsSearchComplete()
+    {
+        if (m_bSearchCompleted)
+        {
+            m_bSearchCompleted = false;
+            return true;
+        }
+
+        return false;
+    }
+
+    //———————————————— 修饰符 ————————————————————
+
+    public void SetHistoryLength(int iLength)
+    {
+        iLength = Mathf.Max(iLength, 0);
+        m_iHistoryLength = iLength;
+    }
+
+    public void SetFilters(string[] filters)
+    {
+        m_pFilters = filters;
+        RetrieveFiles(m_pCurrentDirectory, false);
+    }
+
+    public void SetSortMode(SortingMode mode)
+    {
+        _SortMode = mode;
+        Refresh();
+    }
+
+
+
+
+    //—————————————————— 构造函数 ——————————————————
+
+
+
+    public FileBrowser()
+    {
+        //		SearchThread = new Thread(SearchInStart);
+        //		SearchThread.Name = "Search Thread";
+        //		SearchThread.Start();
+
+        RetrieveFiles(new DirectoryInfo(Directory.GetCurrentDirectory()), true); // Retrieve hierarchy from current directory
+
+        m_pSearchDir = m_pCurrentDirectory;
+    }
+
+
+
+    public FileBrowser(string path)
+    {
+        //		SearchThread = new Thread(SearchInStart);
+        //		SearchThread.Name = "Search Thread";
+        //		SearchThread.Start();
+
+        if (path.Trim() == string.Empty)
+        {
+            Debug.LogError("Invalid Path : string is empty.");
+            GoToRoot(true);
+        }
+        else
+        {
+            DirectoryInfo Dir = new DirectoryInfo(path);
+
+            if (Dir.Exists)
+                RetrieveFiles(new DirectoryInfo(path), true); // Retrieve hierarchy from given path
+            else
+            {
+                Debug.LogError("Invalid Path : " + path);
+                GoToRoot(true);
+            }
+        }
+
+        m_pSearchDir = m_pCurrentDirectory;
+    }
+    #endregion
 
 
     #region 私有
+
+
+
     // Current Hierarchy
 
     private DirectoryInfo m_pCurrentDirectory;
@@ -745,46 +821,33 @@ public class FileBrowser
     #endregion
 
 
+    private readonly List<string> parentFolderPaths = new List<string>();
 
-    public FileBrowser()
-	{
-//		SearchThread = new Thread(SearchInStart);
-//		SearchThread.Name = "Search Thread";
-//		SearchThread.Start();
+    public string GetNextFolderPath()
+    {
+        string currentPath = m_pCurrentDirectory.FullName;
+        for (int i = 0; i < parentFolderPaths.Count; i++)
+        {
+            if (parentFolderPaths[i] == currentPath)
+            {
+                int index = i + 1;
+                if (index>= parentFolderPaths.Count)
+                {
+                    return null;
+                }
+                else
+                {
+                    return parentFolderPaths[index];
+                }
+            }
+        }
+        return null;
 
-		RetrieveFiles (new DirectoryInfo( Directory.GetCurrentDirectory () ), true); // Retrieve hierarchy from current directory
-
-		m_pSearchDir = m_pCurrentDirectory;
-	}
 
 
+    }
 
-	public FileBrowser(string path)
-	{
-//		SearchThread = new Thread(SearchInStart);
-//		SearchThread.Name = "Search Thread";
-//		SearchThread.Start();
 
-		if( path.Trim() == string.Empty )
-		{
-			Debug.LogError( "Invalid Path : string is empty." );
-			GoToRoot(true);
-		}
-		else
-		{
-			DirectoryInfo Dir = new DirectoryInfo (path);
-
-			if( Dir.Exists )
-				RetrieveFiles (new DirectoryInfo( path ), true); // Retrieve hierarchy from given path
-			else
-			{
-				Debug.LogError( "Invalid Path : " + path );
-				GoToRoot(true);
-			}
-		}
-
-		m_pSearchDir = m_pCurrentDirectory;
-	}
 
 
 

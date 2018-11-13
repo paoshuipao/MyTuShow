@@ -50,7 +50,6 @@ public class Game_XuLieTu : SubUI
     private bool isSelect; // 是否之前点击了
     private EXunLieTu mCurrentIndex;
     private GameObject go_CurrentSelect; // 当前选择的对象
-    private ResultBean[] l_CurrentResultBeans; // 当前选择的文件集合
     private const string ITEM_STR1 = "GeShiItem1";
     private const string ITEM_STR2 = "GeShiItem2";
     private const string ITEM_STR3 = "GeShiItem3";
@@ -75,25 +74,6 @@ public class Game_XuLieTu : SubUI
     private ScrollRect mScrollRect;
 
 
-    // 双击显示信息
-    private readonly List<GameObject> l_InfoItems = new List<GameObject>(); // 双击 右边的 Item
-    private float yuanLaiWidth, yuanLaiHidth;
-    private GameObject go_ShowTuInfo;
-
-    // 双击显示信息左边
-    private RectTransform rtAnimTu;
-
-    private UGUI_SpriteAnim anim_Tu;
-    private Slider slider_Width, slider_Height;
-    private Text tx_WidthSize, tx_HeightSize;
-
-
-    // 双击显示信息右边
-    private Text tx_InfoName, tx_InfoNum;
-    private GameObject go_ItemMoBan;
-    private RectTransform rt_ItemContant;
-    private Vector2 TuSize = new Vector2(512, 512);
-
 
     // 改变大小Slider
     private bool isShowSize;
@@ -103,38 +83,6 @@ public class Game_XuLieTu : SubUI
     private Text tx_GridSize;
 
 
-    private void SetTuSize(float width = 0, float height = 0) // 设置图大小
-    {
-        if (width > 0)
-        {
-            if (width < 8)
-            {
-                width = 8;
-            }
-            if (width > 512)
-            {
-                width = 512;
-            }
-            TuSize.x = width;
-            slider_Width.value = width;
-            tx_WidthSize.text = width.ToString();
-        }
-        if (height > 0)
-        {
-            if (height < 8)
-            {
-                height = 8;
-            }
-            if (height > 512)
-            {
-                height = 512;
-            }
-            TuSize.y = height;
-            slider_Height.value = height;
-            tx_HeightSize.text = height.ToString();
-        }
-        rtAnimTu.sizeDelta = TuSize;
-    }
 
 
     public override string GetUIPathForRoot()
@@ -171,20 +119,6 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    IEnumerator LoadInfoItem(ResultBean[] resultBeans)
-    {
-        foreach (ResultBean bean in resultBeans)
-        {
-            Transform t = InstantiateMoBan(go_ItemMoBan, rt_ItemContant);
-            t.Find("Icon").GetComponent<Image>().sprite = bean.SP;
-            t.Find("TextName").GetComponent<Text>().text = bean.SP.name;
-            t.Find("TextSize").GetComponent<Text>().text = bean.Width + " x " + bean.Height;
-            l_InfoItems.Add(t.gameObject);
-            yield return 0;
-        }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(rt_ItemContant);
-    }
-
 
     private RectTransform GetParentRT(EXunLieTu tuType)
     {
@@ -219,7 +153,7 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    private void InitMoBan(Transform t, ResultBean[] resultBeans, EXunLieTu tuType) // 初始化模版
+    private void InitMoBan(Transform t, ResultBean[] resultBeans) // 初始化模版
     {
         GameObject go = t.gameObject;
         t.Find("Tu").GetComponent<UGUI_SpriteAnim>().ChangeAnim(GetSpriteList(resultBeans));
@@ -227,9 +161,10 @@ public class Game_XuLieTu : SubUI
         {
             if (go.Equals(go_CurrentSelect) && isSelect) // 双击
             {
-                mCurrentIndex = tuType;
-                l_CurrentResultBeans = resultBeans;
-                Btn_OnDoubleItemClick(resultBeans);
+                go_Top.SetActive(false);
+                go_Bottom.SetActive(false);
+                MyEventCenter.SendEvent(E_GameEvent.ShowDuoTuInfo, EGameType.XunLieTu, resultBeans);
+
             }
             else // 单击
             {
@@ -256,11 +191,17 @@ public class Game_XuLieTu : SubUI
 
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener<EXunLieTu, List<FileInfo>, bool>(E_GameEvent.DaoRu_XunLieTu, E_OnDaoRu);
-        MyEventCenter.AddListener<EXunLieTu, List<ResultBean>>(E_GameEvent.ResultDaoRu_XunLieTu, E_ResultDaoRu);
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
-        MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
-        MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);
+
+        MyEventCenter.AddListener<EXunLieTu, List<FileInfo>, bool>(E_GameEvent.DaoRu_XunLieTu, E_OnDaoRu);        // 导入
+        MyEventCenter.AddListener<EXunLieTu, List<ResultBean>>(E_GameEvent.ResultDaoRu_XunLieTu, E_ResultDaoRu);  // 结果导入
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);                                 // 确定删除
+        MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);                                             // 删除全部
+        MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);                    // 显示可以改变大小
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseDuoTuInfo, E_CloseDuoTuInfo);                       // 关闭多图信息
+        MyEventCenter.AddListener<EGameType,string[]>(E_GameEvent.OnClickNoSaveThisDuoTu, E_DeleteOne);           // 多图信息中删除一个
+
+
+
         // 模版
         go_MoBan = GetGameObject("Top/Contant/MoBan");
 
@@ -283,54 +224,6 @@ public class Game_XuLieTu : SubUI
         go_Bottom = GetGameObject("Bottom");
         tg_BottomContrl = Get<UGUI_ToggleGroup>("Bottom/Contant");
         tg_BottomContrl.OnChangeValue += E_OnBottomContrlChange;
-
-        #region 双击显示信息
-
-        go_ShowTuInfo = GetGameObject("ShowTuInfo");
-        AddButtOnClick("ShowTuInfo/Contant/BtnClose", Btn_OnCloseShowInfo);
-
-        //  左边
-        rtAnimTu = Get<RectTransform>("ShowTuInfo/Contant/Left/Contant/Tu/AnimTu");
-        anim_Tu = Get<UGUI_SpriteAnim>("ShowTuInfo/Contant/Left/Contant/Tu/AnimTu/Anim");
-        tx_WidthSize = Get<Text>("ShowTuInfo/Contant/Left/Contant/SliderWidth/TxValue");
-        tx_HeightSize = Get<Text>("ShowTuInfo/Contant/Left/Contant/SliderHeight/TxValue");
-        slider_Width = Get<Slider>("ShowTuInfo/Contant/Left/Contant/SliderWidth/Slider");
-        slider_Height = Get<Slider>("ShowTuInfo/Contant/Left/Contant/SliderHeight/Slider");
-        AddButtOnClick("ShowTuInfo/Contant/Left/Contant/Tu/AnimTu", Btn_OnAnimTuClick);
-        AddSliderOnValueChanged(slider_Width, (value) =>
-        {
-            SetTuSize(value);
-        });
-        AddSliderOnValueChanged(slider_Height, (value) =>
-        {
-            SetTuSize(0, value);
-        });
-        AddButtOnClick("ShowTuInfo/Contant/Left/Contant/BtnSize/BtnFirst", () =>
-        {
-            SetTuSize(yuanLaiWidth, yuanLaiHidth);
-        });
-        AddButtOnClick("ShowTuInfo/Contant/Left/Contant/BtnSize/BtnPlusHalf", () =>
-        {
-            SetTuSize(yuanLaiWidth * 0.5f, yuanLaiHidth * 0.5f);
-        });
-        AddButtOnClick("ShowTuInfo/Contant/Left/Contant/BtnSize/BtnAddHalf", () =>
-        {
-            SetTuSize(yuanLaiWidth * 1.5f, yuanLaiHidth * 1.5f);
-        });
-        AddButtOnClick("ShowTuInfo/Contant/Left/Contant/BtnSize/BtnAddTwo", () =>
-        {
-            SetTuSize(yuanLaiWidth * 2f, yuanLaiHidth * 2f);
-        });
-
-        // 右边
-        tx_InfoName = Get<Text>("ShowTuInfo/Contant/Right/InfoName/Name");
-        tx_InfoNum = Get<Text>("ShowTuInfo/Contant/Right/InfoNum/TxNum");
-        go_ItemMoBan = GetGameObject("ShowTuInfo/Contant/Right/Item/ScrollRect/Contant/MoBan");
-        rt_ItemContant = Get<RectTransform>("ShowTuInfo/Contant/Right/Item/ScrollRect/Contant");
-        AddButtOnClick("ShowTuInfo/Contant/Right/BtnOpenFolder/Btn", Btn_OnOpenFolder);
-        AddButtOnClick("ShowTuInfo/Contant/Right/BtnDelete/Btn", Btn_OnNoSaveThis);
-
-        #endregion
 
 
 
@@ -411,7 +304,7 @@ public class Game_XuLieTu : SubUI
 
 
 
-    private void E_OnBottomContrlChange(string changeName) // 总控制，底下的切换
+    private void E_OnBottomContrlChange(string changeName)     // 总控制，底下的切换
     {
         switch (changeName)
         {
@@ -480,69 +373,6 @@ public class Game_XuLieTu : SubUI
 
 
 
-
-    //—————————————————— 双击显示信息 ——————————————————
-
-    private void Btn_OnDoubleItemClick(ResultBean[] resultBeans) // 双击其一一个 Item 了
-    {
-        go_ShowTuInfo.SetActive(true);
-        go_Top.SetActive(false);
-        go_Bottom.SetActive(false);
-        tx_InfoName.text = resultBeans[0].SP.name;
-        tx_InfoNum.text = resultBeans.Length.ToString();
-        anim_Tu.ChangeAnim(GetSpriteList(resultBeans));
-        yuanLaiWidth = resultBeans[0].Width;
-        yuanLaiHidth = resultBeans[0].Height;
-        SetTuSize(yuanLaiWidth, yuanLaiHidth);
-        Ctrl_Coroutine.Instance.StartCoroutine(LoadInfoItem(resultBeans));
-    }
-
-
-    private void Btn_OnCloseShowInfo() // 关闭打开的信息
-    {
-        go_ShowTuInfo.SetActive(false);
-        go_Top.SetActive(true);
-        go_Bottom.SetActive(true);
-        Ctrl_Coroutine.Instance.StopAllCoroutines();
-        for (int i = 0; i < l_InfoItems.Count; i++)
-        {
-            UnityEngine.Object.Destroy(l_InfoItems[i]);
-        }
-        l_InfoItems.Clear();
-    }
-
-
-    private void Btn_OnAnimTuClick() // 点击头像
-    {
-        string path = l_CurrentResultBeans[0].File.FullName;
-        Application.OpenURL(path);
-    }
-
-
-    private void Btn_OnOpenFolder() // 点击打开文件夹
-    {
-        DirectoryInfo directoryInfo = l_CurrentResultBeans[0].File.Directory;
-        if (directoryInfo != null)
-        {
-            string path = directoryInfo.FullName;
-            Application.OpenURL(path);
-        }
-    }
-
-
-    private void Btn_OnNoSaveThis() // 点击不保存这个
-    {
-        string[] paths = new string[l_CurrentResultBeans.Length];
-        for (int i = 0; i < l_CurrentResultBeans.Length; i++)
-        {
-            paths[i] = l_CurrentResultBeans[i].File.FullName;
-        }
-        Ctrl_TextureInfo.Instance.DeleteXuLieTuSave(mCurrentIndex, paths);
-        UnityEngine.Object.Destroy(go_CurrentSelect);
-        Btn_OnCloseShowInfo();
-    }
-
-
     //—————————————————— 事件 ——————————————————
 
 
@@ -573,7 +403,7 @@ public class Game_XuLieTu : SubUI
         MyLoadTu.LoadMultipleTu(paths, (resBean) =>
         {
             // 3. 完成后把图集加上去
-            InitMoBan(t, resBean, tuType);
+            InitMoBan(t, resBean);
         });
     }
 
@@ -594,16 +424,15 @@ public class Game_XuLieTu : SubUI
             return;
         }
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(tuType), CREATE_FILE_NAME);
-        InitMoBan(t, resultBeans.ToArray(), tuType);
+        InitMoBan(t, resultBeans.ToArray());
     }
-
 
 
 
 
     //————————————————————————————————————
 
-    private void E_DelteTrue(EGameType type)             // 真的删除
+    private void E_DelteTrue(EGameType type)               // 真的删除
     {
         if (type == EGameType.XunLieTu)
         {
@@ -628,10 +457,9 @@ public class Game_XuLieTu : SubUI
 
 
 
-    private void E_DeleteAll()                           // 删除所有
+    private void E_DeleteAll()                             // 删除所有
     {
         go_CurrentSelect = null;
-        l_CurrentResultBeans = null;
         foreach (EXunLieTu type in Enum.GetValues(typeof(EXunLieTu)))
         {
             DeleteOneLine(type);
@@ -640,13 +468,34 @@ public class Game_XuLieTu : SubUI
     }
 
 
-
-    private void E_IsShowChangeSize(bool isOn)          // 是否显示改变大小的Slider
+    private void E_IsShowChangeSize(bool isOn)            // 是否显示改变大小的Slider
     {
         isShowSize = isOn;
         go_ChangeSize.SetActive(isOn);
 
     }
+
+
+
+    private void E_CloseDuoTuInfo(EGameType type)        // 关闭显示多图信息
+    {
+        if (type == EGameType.XunLieTu)
+        {
+            go_Top.SetActive(true);
+            go_Bottom.SetActive(true);
+        }
+    }
+
+
+    private void E_DeleteOne(EGameType type, string[] paths)               // 多图信息中删除一个 
+    {
+        if (type == EGameType.XunLieTu)
+        {
+            Ctrl_TextureInfo.Instance.DeleteXuLieTuSave(mCurrentIndex, paths);
+            UnityEngine.Object.Destroy(go_CurrentSelect);
+        }
+    }
+
 
 
 

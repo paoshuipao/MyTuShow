@@ -66,6 +66,11 @@ public enum E_GameEvent                           // 这里写事件
     ResultDaoRu_XunLieTu,              // （已加载）导入序列图(EXunLieTu 类，List<ResultBean> 结果集合)
 
 
+    DaoRu_XunLieTu222,                    // 导入 序列图222（EXunLieTu 类型 ，List<FileInfo> 文件集合 , bool 是否保存)
+    ResultDaoRu_XunLieTu222,              //（已加载）导入序列图222(EXunLieTu 类，List<ResultBean> 结果集合)
+
+
+
     DaoRu_JiHeXuLieTu,                   // 导入 集合序列图 (EJiHeXuLieTuType 类型, List<FileInfo> 多文件，bool 是否保存)
     ResultDaoRu_JiHeXuLieTu,             // （已加载）导入 集合序列图（EJiHeXuLieTuType 类型 ， List<ResultBean> 结果集合）
 
@@ -101,9 +106,15 @@ public enum E_GameEvent                           // 这里写事件
     ClickFalse,            // 点击取消(EGameType)
 
 
-    ShowNormalTuInfo,      // 显示单图信息（EGameType 标记，ResultBean 文件）
-    CloseNormalTuInfo,     // 关闭（EGameType 标记）
+    ShowSingleTuInfo,      // 显示单图信息（EGameType 标记，ResultBean 文件）
+    CloseSingleTuInfo,     // 关闭（EGameType 标记）
     OnClickNoSaveThis,     // 点击了 不保存这个（EGameType 标记）
+
+
+
+    ShowDuoTuInfo,           // 显示多图信息(EGameType 标记，ResultBean[] 文件集合)
+    CloseDuoTuInfo,          // 关闭（EGameType 标记）
+    OnClickNoSaveThisDuoTu,  // 点击了 不保存这个多图（EGameType 标记,string[] 删除路径）
 
 
 

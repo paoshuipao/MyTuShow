@@ -85,10 +85,6 @@ public class Game_JiHeTu : SubUI
 
 
 
-    public override void OnEnable()
-    {
-    }
-
     public override void OnDisable()
     {
     }
@@ -166,8 +162,8 @@ public class Game_JiHeTu : SubUI
         MyEventCenter.AddListener<EJiHeType, List<FileInfo>, bool>(E_GameEvent.DaoRu_JiHeTu, E_OnDaoRu);
         MyEventCenter.AddListener<EJiHeType, List<ResultBean>>(E_GameEvent.ResultDaoRu_JiHeTu, E_ResultDaoRu);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
-        MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowNormalTuInfo, E_ShowNormalTuInfo);
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseNormalTuInfo, E_CloseNormalTuInfo);
+        MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowSingleTuInfo, E_ShowNormalTuInfo);
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseSingleTuInfo, E_CloseNormalTuInfo);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.OnClickNoSaveThis, E_OnClickNoSaveThis);
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
         MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);
@@ -222,6 +218,18 @@ public class Game_JiHeTu : SubUI
 
 
     }
+
+
+    public override void OnEnable()
+    {
+
+        tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+        tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+        tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+        tx_BottomName4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+        tx_BottomName5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+    }
+
 
 
     //————————————————————————————————————
@@ -330,7 +338,7 @@ public class Game_JiHeTu : SubUI
     private void Btn_OnDoubleItemClick(ResultBean resultBean) // 双击显示信息
     {
         mCurrentSelectFile = resultBean.File;
-        MyEventCenter.SendEvent(E_GameEvent.ShowNormalTuInfo, EGameType.JiHeTu, resultBean);
+        MyEventCenter.SendEvent(E_GameEvent.ShowSingleTuInfo, EGameType.JiHeTu, resultBean);
     }
 
 
