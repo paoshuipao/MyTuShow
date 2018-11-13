@@ -72,11 +72,10 @@ public class Game_XuLieTu : SubUI
     private GameObject go_Bottom;
     private UGUI_ToggleGroup tg_BottomContrl;
     private ScrollRect mScrollRect;
-
+    private Text tx_BottomName1, tx_BottomName2, tx_BottomName3;
 
 
     // 改变大小Slider
-    private bool isShowSize;
     private GameObject go_ChangeSize;
     private UGUI_Grid[] l_Grids;
     private Slider slider_ChangeSize;
@@ -91,9 +90,6 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    public override void OnEnable()
-    {
-    }
 
 
     public override void OnDisable()
@@ -224,7 +220,9 @@ public class Game_XuLieTu : SubUI
         go_Bottom = GetGameObject("Bottom");
         tg_BottomContrl = Get<UGUI_ToggleGroup>("Bottom/Contant");
         tg_BottomContrl.OnChangeValue += E_OnBottomContrlChange;
-
+        tx_BottomName1 = Get<Text>("Bottom/Contant/GeShiItem1/Text");
+        tx_BottomName2 = Get<Text>("Bottom/Contant/GeShiItem2/Text");
+        tx_BottomName3 = Get<Text>("Bottom/Contant/GeShiItem3/Text");
 
 
         // 右边
@@ -235,20 +233,28 @@ public class Game_XuLieTu : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/Contant/ScrollView");
+        tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
+        go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
+        slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
+        AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
+    }
+
+
+
+    public override void OnEnable()
+    {
         for (int i = 0; i < l_Grids.Length; i++)
         {
             l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[i].CurrentSize;
         }
-        tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
-
-        go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
-        isShowSize = Ctrl_UserInfo.Instance.IsCanChangeSize;
-        go_ChangeSize.SetActive(isShowSize);
-
-        slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
-        AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
+        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[0].ChangeValue;
+
+        tx_BottomName1.text = Ctrl_UserInfo.BottomXuLieTuName[0];
+        tx_BottomName2.text = Ctrl_UserInfo.BottomXuLieTuName[1];
+        tx_BottomName3.text = Ctrl_UserInfo.BottomXuLieTuName[2];
     }
+
 
 
     //——————————————————— UI —————————————————
@@ -339,7 +345,7 @@ public class Game_XuLieTu : SubUI
                 mScrollRect.content = rt_Grid5_Shu;
                 break;
         }
-        if (isShowSize)
+        if (Ctrl_UserInfo.Instance.IsCanChangeSize)
         {
             if (mCurrentIndex == EXunLieTu.G1Zheng || mCurrentIndex == EXunLieTu.G2Zheng_XiTong || mCurrentIndex == EXunLieTu.G3Zheng_Big)
             {
@@ -470,9 +476,7 @@ public class Game_XuLieTu : SubUI
 
     private void E_IsShowChangeSize(bool isOn)            // 是否显示改变大小的Slider
     {
-        isShowSize = isOn;
         go_ChangeSize.SetActive(isOn);
-
     }
 
 

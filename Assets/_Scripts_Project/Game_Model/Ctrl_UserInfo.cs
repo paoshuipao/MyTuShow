@@ -38,12 +38,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     //——————————————————— 大小 —————————————————
     public bool IsCanChangeSize { get; set; }                       // 是否可改大小
-
-
     public GridSizeBean[] L_XuLieTuSize { get; private set; }                 // 序列图 Grid 大小
-
     public GridSizeBean[] L_XuLieTu222Size { get; private set; }               // 序列图222 Grid 大小
-
 
     public GridSizeBean[] L_JiHeXuLieTuSize { get; private set; }             // 集合序列图 Grid 大小
 
@@ -55,8 +51,10 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
     //—————————————————— 底下名称 ——————————————————
-    public string[] BottomXuLeTu222Name { get; private set; }            // 底下序列图222名称
 
+
+
+    public string[] BottomXuLeTu222Name { get; private set; }            // 底下序列图222名称
 
     public string[] BottomJiHeXLTName { get; private set; }              // 底下集合序列图名称
 
@@ -71,7 +69,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     //—————————————————— 标记 ——————————————————
 
 
-    public bool GetIsBiaoJi(string path ,ref MyEnumColor color)
+    public bool GetIsBiaoJi(string path ,ref MyEnumColor color)        // 获得标记
     {
         foreach (string key in pathK_ColorV.Keys)
         {
@@ -85,7 +83,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     }
 
 
-    public void AddBiaoJi(string path,MyEnumColor color)         // 添加标记
+    public void AddBiaoJi(string path,MyEnumColor color)               // 添加标记
     {
         if (pathK_ColorV.ContainsKey(path))
         {
@@ -97,7 +95,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         }
     }
 
-    public void RemoveBiaoJi(string path)                      // 移除标记
+    public void RemoveBiaoJi(string path)                              // 移除标记
     {
         if (pathK_ColorV.ContainsKey(path))
         {
@@ -108,9 +106,9 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
 
-    private Dictionary<string, ushort> pathK_ColorV;
 
     #region 私有
+    private Dictionary<string, ushort> pathK_ColorV;
 
 
     private const string PP_DAORU_PATH = "PP_DAORU_PATH";
@@ -306,7 +304,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ES3.Save<string>(PP_SHOW_FIRST_PATH, ShowFirstPath);
         ES3.Save<bool>(PP_IS_XLT_SHOW_TIP, IsXuLieTuShowTip);
         // 大小
-        ES3.Save<bool>(PP_XU_LIE_TU_SIZE, IsCanChangeSize);
+        ES3.Save<bool>(PP_IS_CHANGE_SIZE, IsCanChangeSize);
         ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU_SIZE, L_XuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU222_SIZE, L_XuLieTu222Size);
         ES3.Save<GridSizeBean[]>(PP_JIHE_XLT_SIZES, L_JiHeXuLieTuSize);
@@ -333,6 +331,11 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     //——————————————————  不保存的 ——————————————————
 
 
-    public static float DoubleClickTime = 0.25f;                  // 双击的控制时间（少于这个时间就算是双击）
+    public const float DoubleClickTime = 0.25f;                  // 双击的控制时间（少于这个时间就算是双击）
+
+
+    public static readonly string[] BottomXuLieTuName = { "64 等边","128 等边","192 等边" };
+
+
 
 }

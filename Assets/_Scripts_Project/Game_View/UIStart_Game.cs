@@ -360,9 +360,9 @@ public class UIStart_Game : BaseUI
         {
             List<string> list = Ctrl_TextureInfo.Instance.GetJiHeXuLieTuPaths(type);
             List<FileInfo> tmpFileInfos = new List<FileInfo>();
-            foreach (string path in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                FileInfo fileInfo = new FileInfo(path);
+                FileInfo fileInfo = new FileInfo(list[i]);
                 if (fileInfo.Exists)       // 存在就加载
                 {
                     tmpFileInfos.Add(fileInfo);
@@ -370,7 +370,7 @@ public class UIStart_Game : BaseUI
                 }
                 else                       // 不存在删除
                 {
-                    Ctrl_TextureInfo.Instance.DeleteJiHeXuLieSave(type, path);
+                    Ctrl_TextureInfo.Instance.DeleteJiHeXuLieSave(type, list[i]);
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeXuLieTu, type, tmpFileInfos, false);
@@ -389,16 +389,16 @@ public class UIStart_Game : BaseUI
 
             List<string> list = Ctrl_TextureInfo.Instance.GetTaoMingTuPaths(type);
             List<FileInfo> tmpFileInfos = new List<FileInfo>();
-            foreach (string path in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                FileInfo fileInfo = new FileInfo(path);
+                FileInfo fileInfo = new FileInfo(list[i]);
                 if (fileInfo.Exists)       // 存在就加载
                 {
                     tmpFileInfos.Add(fileInfo);
                 }
                 else                       // 不存在删除
                 {
-                    Ctrl_TextureInfo.Instance.DeleteTaoMingSave(type, path);
+                    Ctrl_TextureInfo.Instance.DeleteTaoMingSave(type, list[i]);
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_TaoMingTu, type, tmpFileInfos, false);
@@ -416,16 +416,17 @@ public class UIStart_Game : BaseUI
 
             List<string> list = Ctrl_TextureInfo.Instance.GetJpgTuPaths(type);
             List<FileInfo> tmpFileInfos = new List<FileInfo>();
-            foreach (string path in list)
+
+            for (int i = 0; i < list.Count; i++)
             {
-                FileInfo fileInfo = new FileInfo(path);
+                FileInfo fileInfo = new FileInfo(list[i]);
                 if (fileInfo.Exists)       // 存在就加载
                 {
                     tmpFileInfos.Add(fileInfo);
                 }
                 else                       // 不存在删除
                 {
-                    Ctrl_TextureInfo.Instance.DeleteJpgSave(type, path);
+                    Ctrl_TextureInfo.Instance.DeleteJpgSave(type, list[i]);
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_NormalTu, type, tmpFileInfos, false);
@@ -442,16 +443,16 @@ public class UIStart_Game : BaseUI
         {
             List<string> list = Ctrl_TextureInfo.Instance.GetJiHeTuPaths(type);
             List<FileInfo> tmpFileInfos = new List<FileInfo>();
-            foreach (string path in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                FileInfo fileInfo = new FileInfo(path);
+                FileInfo fileInfo = new FileInfo(list[i]);
                 if (fileInfo.Exists)       // 存在就加载
                 {
                     tmpFileInfos.Add(fileInfo);
                 }
                 else                       // 不存在删除
                 {
-                    Ctrl_TextureInfo.Instance.DeleteJiHeSave(type, path);
+                    Ctrl_TextureInfo.Instance.DeleteJiHeSave(type, list[i]);
                 }
             }
             MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeTu, type, tmpFileInfos, false);
@@ -459,26 +460,35 @@ public class UIStart_Game : BaseUI
         }
         #endregion
 
+        yield return 0;
+
+
+        #region 音频
+
         foreach (EAudioType type in Enum.GetValues(typeof(EAudioType)))
         {
             List<string> paths = Ctrl_TextureInfo.Instance.GetAudioPaths(type);
             List<FileInfo> tmpFileInfos = new List<FileInfo>();
-            foreach (string path in paths)
+            for (int i = 0; i < paths.Count; i++)
             {
-                FileInfo fileInfo = new FileInfo(path);
+                FileInfo fileInfo = new FileInfo(paths[i]);
                 if (fileInfo.Exists)       // 存在就加载
                 {
                     tmpFileInfos.Add(fileInfo);
                 }
                 else                       // 不存在删除
                 {
-                    Ctrl_TextureInfo.Instance.DeleteAudioSave(type, path);
+                    Ctrl_TextureInfo.Instance.DeleteAudioSave(type, paths[i]);
                 }
             }
 
             yield return sub_Audio.DaoRuFromFile(type, tmpFileInfos,false);
 
         }
+
+
+        #endregion
+
 
         go_Loading.SetActive(false);
 
@@ -548,8 +558,8 @@ public class UIStart_Game : BaseUI
 
     private void Toggle_IsCanChangeSize(bool isOn)               // 是否显示改变大小
     {
-        MyEventCenter.SendEvent(E_GameEvent.ShowChangeSizeSlider,isOn);
         Ctrl_UserInfo.Instance.IsCanChangeSize = isOn;
+        MyEventCenter.SendEvent(E_GameEvent.ShowChangeSizeSlider,isOn);
     }
 
 

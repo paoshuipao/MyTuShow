@@ -476,7 +476,6 @@ public class Game_JiHeTu : SubUI
     private void E_IsShowChangeSize(bool isOn)          // 是否显示改变大小的Slider
     {
         go_ChangeSize.SetActive(isOn);
-
     }
 
 
