@@ -117,12 +117,15 @@ public enum E_GameEvent                           // 这里写事件
     OnClickNoSaveThisDuoTu,  // 点击了 不保存这个多图（EGameType 标记,string[] 删除路径）
 
 
+    ShowDuoTuDaoRu,         // 显示多图导入(ResultBean[] 结果集合,string 文件夹路径)
+    OnClickDuoTuDaoRu,      // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
+
 
     DelteAll,               // 所有重置
 
 
 
-    ShowChangeSizeSlider,                // 显示能改变大小的Slider
+    ShowChangeSizeSlider,         // 显示能改变大小的Slider
 
     ShowGeiMingUI,               // 显示改名UI(EGameType,string 原名)
     SureGeiMing,                 // 确定改名（EGameType，string 修改后的名称）

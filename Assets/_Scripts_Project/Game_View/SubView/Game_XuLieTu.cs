@@ -243,11 +243,11 @@ public class Game_XuLieTu : SubUI
 
     public override void OnEnable()
     {
+        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
         for (int i = 0; i < l_Grids.Length; i++)
         {
             l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[i].CurrentSize;
         }
-        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[0].ChangeValue;
 
         tx_BottomName1.text = Ctrl_UserInfo.BottomXuLieTuName[0];

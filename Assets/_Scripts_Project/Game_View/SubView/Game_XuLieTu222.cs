@@ -62,7 +62,6 @@ public class Game_XuLieTu222 : SubUI
     private GameObject go_Top;
     private DTToggle5_Fade dt5_Contrl;
     private ScrollRect m_SrollView;
-//    private RectTransform rt_Grid1, rt_Grid2, rt_Grid3, rt_Grid4, rt_Grid5;
 
 
     // 底下
@@ -196,11 +195,6 @@ public class Game_XuLieTu222 : SubUI
         dt5_Contrl = Get<DTToggle5_Fade>("Top/SrcollRect");
         m_SrollView = Get<ScrollRect>("Top/SrcollRect");
 
-//        rt_Grid1 = Get<RectTransform>("Top/SrcollRect/FenLie1");
-//        rt_Grid2 = Get<RectTransform>("Top/SrcollRect/FenLie2");
-//        rt_Grid3 = Get<RectTransform>("Top/SrcollRect/FenLie3");
-//        rt_Grid4 = Get<RectTransform>("Top/SrcollRect/FenLie4");
-//        rt_Grid5 = Get<RectTransform>("Top/SrcollRect/FenLie5");
 
         // 底下
         go_Bottom = GetGameObject("Bottom");
@@ -223,17 +217,10 @@ public class Game_XuLieTu222 : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/SrcollRect");
-        for (int i = 0; i < l_Grids.Length; i++)
-        {
-            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[i].CurrentSize;
-        }
         tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
-        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
-
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
         AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
-        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTu222Size[0].ChangeValue;
 
 
     }
@@ -241,6 +228,13 @@ public class Game_XuLieTu222 : SubUI
 
     public override void OnEnable()
     {
+        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+        for (int i = 0; i < l_Grids.Length; i++)
+        {
+            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[i].CurrentSize;
+        }
+        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTu222Size[0].ChangeValue;
+
         tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
         tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
         tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];

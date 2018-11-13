@@ -224,11 +224,17 @@ public class UIStart_Game : BaseUI
     private readonly Game_MusicInfo sub_MusicInfo = new Game_MusicInfo();    // 音乐信息
     private readonly Game_GaiMing sub_GaiMing = new Game_GaiMing();          // 改名
     private readonly Game_SingleTuInfo sub_SingleTuInfo = new Game_SingleTuInfo(); // 单张图片信息
-    private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();          // 多疑图片信息
+    private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();          // 多张图片信息
+    private readonly Game_DuoTuDaoRu sub_DuoTuDaoRu = new Game_DuoTuDaoRu();       // 多张图片 导入
+
+
 
     protected override SubUI[] GetSubUI()
     {
-        return new SubUI[] { sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio, sub_MusicInfo, sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu , sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo };
+        return new SubUI[] 
+        {
+            sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio,sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu ,
+            sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu };
     }
 
 

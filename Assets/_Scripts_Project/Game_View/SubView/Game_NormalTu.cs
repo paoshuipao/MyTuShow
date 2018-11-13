@@ -204,21 +204,22 @@ public class Game_NormalTu : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/SrcollRect");
-        for (int i = 0; i < l_Grids.Length; i++)
-        {
-            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_JPGTuSize[i].CurrentSize;
-        }
         tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
-        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
         AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
-        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JPGTuSize[0].ChangeValue;
     }
 
 
     public override void OnEnable()
     {
+        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+        for (int i = 0; i < l_Grids.Length; i++)
+        {
+            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_JPGTuSize[i].CurrentSize;
+        }
+        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JPGTuSize[0].ChangeValue;
+
         tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
         tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
         tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
