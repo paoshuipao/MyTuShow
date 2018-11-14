@@ -25,7 +25,7 @@ public enum E_GameEvent                           // 这里写事件
 
     ChangGameToggleType,            // 切换左边总的选项 （EGameType,int）
     DaoRuResult,                    // 返回导入结果（EGameType 导入那一个, bool 是否成功,List<FileInfo> 错误集合）
-
+    GoToNextFolderDaoRu,            // 去一个文件夹导入
 
 
 

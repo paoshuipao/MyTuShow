@@ -11,7 +11,7 @@ public class Game_SingleTuDaoRu : SubUI
     {
 
         MyEventCenter.AddListener<ResultBean>(E_GameEvent.ShowSingleTuDaoRu, E_Show);
-
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
 
         AddButtOnClick("BtnClose", Btn_OnCloseThis);
 
@@ -174,6 +174,34 @@ public class Game_SingleTuDaoRu : SubUI
     }
 
 
+    public override void OnEnable()
+    {
+        tx_DRJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
+        tx_DRJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
+        tx_DRJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
+        tx_DRJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
+        tx_DRJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
+
+        tx_DRTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
+        tx_DRTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
+        tx_DRTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
+        tx_DRTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
+        tx_DRTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
+
+        tx_DRJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+        tx_DRJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+        tx_DRJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+        tx_DRJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+        tx_DRJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+
+        tx_DRJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+        tx_DRJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+        tx_DRJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+        tx_DRJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+        tx_DRJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+    }
+
+
 
     #region 私有
 
@@ -204,9 +232,7 @@ public class Game_SingleTuDaoRu : SubUI
 
 
 
-    public override void OnEnable()
-    {
-    }
+
 
     public override void OnDisable()
     {
@@ -329,7 +355,7 @@ public class Game_SingleTuDaoRu : SubUI
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_Show(ResultBean bean) 
+    private void E_Show(ResultBean bean)                                  // 显示
     {
         mCurrentBean = bean;
         tx_FileName.text = Path.GetFileNameWithoutExtension(bean.File.FullName);
@@ -344,30 +370,44 @@ public class Game_SingleTuDaoRu : SubUI
         tx_TuSize.text = yuanLaiWidth + " x " + yuanLaiHidth;
         SetTuSize(yuanLaiWidth, yuanLaiHidth);
 
-        tx_DRJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
-        tx_DRJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
-        tx_DRJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
-        tx_DRJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
-        tx_DRJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
-
-        tx_DRTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
-        tx_DRTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
-        tx_DRTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
-        tx_DRTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
-        tx_DRTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
-
-        tx_DRJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
-        tx_DRJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
-        tx_DRJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
-        tx_DRJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
-        tx_DRJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
-
-        tx_DRJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
-        tx_DRJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
-        tx_DRJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
-        tx_DRJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
-        tx_DRJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
     }
+
+    private void E_OnSureGaiMing(EGameType type, string changeNamne)     // 确定改名
+    {
+        switch (type)
+        {
+            case EGameType.JiHeXuLieTu:
+                tx_DRJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
+                tx_DRJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
+                tx_DRJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
+                tx_DRJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
+                tx_DRJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
+                break;
+            case EGameType.TaoMingTu:
+                tx_DRTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
+                tx_DRTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
+                tx_DRTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
+                tx_DRTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
+                tx_DRTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
+                break;
+            case EGameType.NormalTu:
+                tx_DRJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+                tx_DRJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+                tx_DRJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+                tx_DRJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+                tx_DRJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+                break;
+            case EGameType.JiHeTu:
+                tx_DRJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+                tx_DRJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+                tx_DRJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+                tx_DRJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+                tx_DRJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+                break;
+        }
+    }
+
+
 
 
 

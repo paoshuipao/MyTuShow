@@ -229,6 +229,7 @@ public class UIStart_Game : BaseUI
     private readonly Game_DuoTuInfo sub_DuoTuInfo = new Game_DuoTuInfo();            // 多张图片信息
     private readonly Game_DuoTuDaoRu sub_DuoTuDaoRu = new Game_DuoTuDaoRu();         // 多张图片 导入
     private readonly Game_SingleTuDaoRu sub_SingleTuDaoRu = new Game_SingleTuDaoRu();// 单张图片 导入
+    private readonly Game_DaoRuResult sub_DaoRuResult = new Game_DaoRuResult();      // 导入结果
 
 
     protected override SubUI[] GetSubUI()
@@ -236,7 +237,7 @@ public class UIStart_Game : BaseUI
         return new SubUI[] 
         {
             sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio,sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu ,
-            sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu,sub_SingleTuDaoRu };
+            sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu,sub_SingleTuDaoRu,sub_DaoRuResult };
     }
 
 

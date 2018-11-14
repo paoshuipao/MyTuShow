@@ -180,11 +180,14 @@ public class Game_XuLieTu222 : SubUI
     {
         MyEventCenter.AddListener<EXuLieTu222, List<FileInfo>, bool>(E_GameEvent.DaoRu_XunLieTu222, E_OnDaoRu);
         MyEventCenter.AddListener<EXuLieTu222, List<ResultBean>>(E_GameEvent.ResultDaoRu_XunLieTu222, E_ResultDaoRu);
-        MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);
+        MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);                    // 是否显示改大小
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);                                 // 确定删除
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);                                             // 删除全部
         MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseDuoTuInfo, E_CloseDuoTuInfo);                       // 关闭多图信息
         MyEventCenter.AddListener<EGameType, string[]>(E_GameEvent.OnClickNoSaveThisDuoTu, E_DeleteOne);          // 多图信息中删除一个
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
+
+
 
         // 模版
         go_MoBan = GetGameObject("Top/SrcollRect/MoBan");
@@ -246,6 +249,12 @@ public class Game_XuLieTu222 : SubUI
 
     //————————————————————————————————————
 
+    private void E_OnBottomDoubleClick()                            // 底下 双击 改名
+    {
+        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.XunLieTu222, Ctrl_UserInfo.Instance.BottomXuLeTu222Name[(int)mCurrentIndex]);
+    }
+
+
     private void Btn_OnDaoRu()                 // 点击导入
     {
         MyOpenFileOrFolder.OpenFile(Ctrl_UserInfo.Instance.DaoRuFirstPath, "选择多个文件（序列图）", EFileFilter.TuAndAll,
@@ -294,12 +303,6 @@ public class Game_XuLieTu222 : SubUI
         MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.XunLieTu222, tittle);
     }
 
-
-
-    private void E_OnBottomDoubleClick()                            // 底下 双击 改名
-    {
-        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.XunLieTu222, Ctrl_UserInfo.Instance.BottomXuLeTu222Name[(int)mCurrentIndex]);
-    }
 
 
 
@@ -409,13 +412,13 @@ public class Game_XuLieTu222 : SubUI
 
     //————————————————————————————————————
 
-    private void E_IsShowChangeSize(bool isOn)          // 是否显示改变大小的Slider
+    private void E_IsShowChangeSize(bool isOn)                      // 是否显示改变大小的Slider
     {
         go_ChangeSize.SetActive(isOn);
 
     }
 
-    private void E_CloseDuoTuInfo(EGameType type)        // 关闭显示多图信息
+    private void E_CloseDuoTuInfo(EGameType type)                   // 关闭显示多图信息
     {
         if (type == EGameType.XunLieTu222)
         {
@@ -425,7 +428,7 @@ public class Game_XuLieTu222 : SubUI
     }
 
 
-    private void E_DeleteOne(EGameType type, string[] paths)               // 多图信息中删除一个
+    private void E_DeleteOne(EGameType type, string[] paths)       // 多图信息中删除一个
     {
         if (type == EGameType.XunLieTu222)
         {
@@ -436,7 +439,7 @@ public class Game_XuLieTu222 : SubUI
 
 
 
-    private void E_DelteTrue(EGameType type)               // 真的删除
+    private void E_DelteTrue(EGameType type)                       // 真的删除
     {
         if (type == EGameType.XunLieTu222)
         {
@@ -445,7 +448,7 @@ public class Game_XuLieTu222 : SubUI
     }
 
 
-    private void E_DeleteAll()                             // 删除所有
+    private void E_DeleteAll()                                     // 删除所有
     {
         go_CurrentSelect = null;
         foreach (EXuLieTu222 type in Enum.GetValues(typeof(EXuLieTu222)))
@@ -453,6 +456,32 @@ public class Game_XuLieTu222 : SubUI
             DeleteOneLine(type);
         }
 
+    }
+
+    private void E_OnSureGaiMing(EGameType type, string changeNamne)           // 确定改名
+    {
+        if (type == EGameType.XunLieTu222)
+        {
+            switch (mCurrentIndex)
+            {
+                case EXuLieTu222.XLT222_1:
+                    tx_BottomName1.text = changeNamne;
+                    break;
+                case EXuLieTu222.XLT222_2:
+                    tx_BottomName2.text = changeNamne;
+                    break;
+                case EXuLieTu222.XLT222_3:
+                    tx_BottomName3.text = changeNamne;
+                    break;
+                case EXuLieTu222.XLT222_4:
+                    tx_BottomName4.text = changeNamne;
+                    break;
+                case EXuLieTu222.XLT222_5:
+                    tx_BottomName5.text = changeNamne;
+                    break;
+            }
+            Ctrl_UserInfo.Instance.BottomXuLeTu222Name[(int)mCurrentIndex] = changeNamne;
+        }
     }
 
 

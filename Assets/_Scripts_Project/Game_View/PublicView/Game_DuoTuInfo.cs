@@ -9,10 +9,14 @@ using UnityEngine.UI;
 public class Game_DuoTuInfo : SubUI
 {
 
-
     protected override void OnStart(Transform root)
     {
         MyEventCenter.AddListener<EGameType, ResultBean[]>(E_GameEvent.ShowDuoTuInfo, E_Show);
+        MyEventCenter.AddListener<EGameType,bool,List<FileInfo>>(E_GameEvent.DaoRuResult, E_DaoRuResult);
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
+
+
+
         AddButtOnClick("Contant/BtnClose", Btn_OnCloseShowInfo);
 
         //  左边
@@ -53,26 +57,92 @@ public class Game_DuoTuInfo : SubUI
         tx_InfoNum = Get<Text>("Contant/Right/InfoNum/TxNum");
         go_ItemMoBan = GetGameObject("Contant/Right/Item/ScrollRect/Contant/MoBan");
         rt_ItemContant = Get<RectTransform>("Contant/Right/Item/ScrollRect/Contant");
-        AddButtOnClick("Contant/Right/BtnOpenFolder/Btn", Btn_OnOpenFolder);
-        AddButtOnClick("Contant/Right/BtnDelete/Btn", Btn_OnNoSaveThis);
 
+        tx_DuoXLT222_1 = Get<Text>("Contant/Right/DaoRuOther/XuLieTu222/Btn1/BtnMDR/ItemDaoRu");
+        tx_DuoXLT222_2 = Get<Text>("Contant/Right/DaoRuOther/XuLieTu222/Btn2/BtnMDR/ItemDaoRu");
+        tx_DuoXLT222_3 = Get<Text>("Contant/Right/DaoRuOther/XuLieTu222/Btn3/BtnMDR/ItemDaoRu");
+        tx_DuoXLT222_4 = Get<Text>("Contant/Right/DaoRuOther/XuLieTu222/Btn4/BtnMDR/ItemDaoRu");
+        tx_DuoXLT222_5 = Get<Text>("Contant/Right/DaoRuOther/XuLieTu222/Btn5/BtnMDR/ItemDaoRu");
 
+        AddButtOnClick("Contant/Right/Btn/OpenFolder", Btn_OnOpenFolder);
+        AddButtOnClick("Contant/Right/Btn/DeleteThis", Btn_OnNoSaveThis);
+
+        // 导入其他序列图
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item1/Btn", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G1Zheng, 0);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item2/Btn", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G2Zheng_XiTong, 1);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item3/Btn", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G3Zheng_Big, 2);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item4/BtnHeng", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Heng, 3);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item4/BtnShu", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Shu, 3);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item5/BtnHeng", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Heng, 4);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item5/BtnShu", () =>
+        {
+            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Shu, 4);
+        });
+
+        // 序列图222
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn1/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_1);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn2/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_2);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn3/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_3);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn4/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_4);
+        });
+        AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn5/BtnMDR", () =>
+        {
+            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_5);
+        });
     }
 
 
+    public override void OnEnable()
+    {
+        Get<Text>("Contant/Right/DaoRuOther/XuLieTu/Item1/Btn/ItemDaoRu").text = Ctrl_UserInfo.BottomXuLieTuName[0];
+        Get<Text>("Contant/Right/DaoRuOther/XuLieTu/Item2/Btn/ItemDaoRu").text = Ctrl_UserInfo.BottomXuLieTuName[1];
+        Get<Text>("Contant/Right/DaoRuOther/XuLieTu/Item3/Btn/ItemDaoRu").text = Ctrl_UserInfo.BottomXuLieTuName[2];
+        tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
+        tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
+        tx_DuoXLT222_3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];
+        tx_DuoXLT222_4.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[3];
+        tx_DuoXLT222_5.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[4];
+
+    }
 
 
     #region 私有
 
     private EGameType mCurrentType;
     private ResultBean[] l_CurrentResultBeans; // 当前选择的文件集合
-
-
-    // 双击显示信息
     private readonly List<GameObject> l_InfoItems = new List<GameObject>(); // 双击 右边的 Item
     private float yuanLaiWidth, yuanLaiHidth;
 
-    // 双击显示信息左边
+    // 左边
     private RectTransform rtAnimTu;
     private UGUI_SpriteAnim anim_Tu;
     private Slider slider_Width, slider_Height;
@@ -80,10 +150,15 @@ public class Game_DuoTuInfo : SubUI
     private Vector2 TuSize = new Vector2(512, 512);
 
 
-    // 双击显示信息右边
+    // 右边
     private Text tx_InfoName, tx_InfoNum;
     private GameObject go_ItemMoBan;
     private RectTransform rt_ItemContant;
+    private Text tx_DuoXLT222_1, tx_DuoXLT222_2, tx_DuoXLT222_3, tx_DuoXLT222_4, tx_DuoXLT222_5;
+
+
+
+
 
 
     public override string GetUIPathForRoot()
@@ -93,10 +168,6 @@ public class Game_DuoTuInfo : SubUI
 
 
 
-    public override void OnEnable()
-    {
-
-    }
 
     public override void OnDisable()
     {
@@ -200,10 +271,64 @@ public class Game_DuoTuInfo : SubUI
 
 
 
+
+
+    //—————————————————— 导入到其他处 ——————————————————
+
+    private bool isDaoRuOther = false;
+
+    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)                                 // 点击了序列图的导入
+    {
+        isDaoRuOther = true;
+        List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
+        //  发送导入的事件
+        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu, tuType, resultBeans);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, index);
+
+        Btn_OnCloseShowInfo();
+
+
+    }
+
+
+    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                 // 点击导入 集合序列图
+    {
+        isDaoRuOther = true;
+        List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
+        // 1. 发送导入的事件
+        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu222, type, resultBeans);
+        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
+
+        Btn_OnCloseShowInfo();
+    }
+
+
+    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList)             // 是否导入其他成功
+    {
+        if (isDaoRuOther)
+        {
+            isDaoRuOther = false;
+            if (isSaveOk)
+            {
+                // 导入其他成功，相当于删除这个罗
+                string[] paths = new string[l_CurrentResultBeans.Length];
+                for (int i = 0; i < l_CurrentResultBeans.Length; i++)
+                {
+                    paths[i] = l_CurrentResultBeans[i].File.FullName;
+                }
+                MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThisDuoTu, mCurrentType, paths);
+            }
+        }
+    }
+
+
+
+
+
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_Show(EGameType type, ResultBean[] resultBeans)
+    private void E_Show(EGameType type, ResultBean[] resultBeans)               // 显示
     {
         mCurrentType = type;
         l_CurrentResultBeans = resultBeans;
@@ -239,5 +364,19 @@ public class Game_DuoTuInfo : SubUI
     }
 
 
+
+
+    private void E_OnSureGaiMing(EGameType type, string changeNamne)                   // 确定改名
+    {
+        if (type == EGameType.XunLieTu222)
+        {
+            tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
+            tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
+            tx_DuoXLT222_3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];
+            tx_DuoXLT222_4.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[3];
+            tx_DuoXLT222_5.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[4];
+        }
+
+    }
 
 }

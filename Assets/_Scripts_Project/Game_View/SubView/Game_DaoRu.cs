@@ -38,7 +38,6 @@ public class Game_DaoRu : SubUI
     }
 
 
-
     #region 私有
 
     private bool isFirstShow = true;      // 是否第一次Show
@@ -179,19 +178,6 @@ public class Game_DaoRu : SubUI
 
     #endregion
 
-
-    #region 导入结果
-
-    private GameObject go_Result,go_TittleOK,go_TittleError,go_ErrorInfo;
-    private Text tx_GoTo;
-    private RectTransform rt_ErrorContant;
-    private GameObject go_ErrorMoBan;
-
-
-
-    #endregion
-
-
     #region 鼠标右键
 
     private GameObject go_MouseLeftClick;
@@ -227,22 +213,20 @@ public class Game_DaoRu : SubUI
 
     protected override void OnStart(Transform root)
     {
-
-        MyEventCenter.AddListener<EAudioType,AudioResBean> (E_GameEvent.ResultDaoRu_Audio, E_DaoRuAudio);
-        MyEventCenter.AddListener<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, ShowResult);
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_SureGeiMing);
-        MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftDown, E_OnMouseLeftClick);
-        MyEventCenter.AddListener<List<ResultBean>,int>(E_GameEvent.OnClickDaoRu, E_OnDuoTuDaoRu);
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_SureGeiMing);                 // 确定文件改名
+        MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftDown, E_OnMouseLeftClick);            // 鼠标右键点击
+        MyEventCenter.AddListener<List<ResultBean>,int>(E_GameEvent.OnClickDaoRu, E_OnDuoTuDaoRu);  // 确定导入图片
+        MyEventCenter.AddListener(E_GameEvent.GoToNextFolderDaoRu, E_GoToNextFolderDaoRu);          // 导入后 到一个文件夹
 
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
 
         l_AddressPaths[0] = Ctrl_UserInfo.Instance.ShowFirstPath;
-        l_AddressPaths[1] = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-        l_AddressPaths[2] = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-        l_AddressPaths[3] = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
-        l_AddressPaths[4] = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Desktop);
+        l_AddressPaths[1] = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        l_AddressPaths[2] = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        l_AddressPaths[3] = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        l_AddressPaths[4] = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         mFileBrowser = string.IsNullOrEmpty(l_AddressPaths[0]) ? new FileBrowser() : new FileBrowser(l_AddressPaths[0]);
 
         #region 书签
@@ -422,28 +406,6 @@ public class Game_DaoRu : SubUI
             Btn_ChooseColor(MyEnumColor.Hui,true);
         });
         #endregion
-
-
-        #region 导入结果
-
-
-        go_Result = GetGameObject("Result");
-        tx_GoTo = Get<Text>("Result/Contant/BottomBtn/BtnGoTo/Text");
-        go_TittleOK = GetGameObject("Result/Contant/OK");
-        go_TittleError = GetGameObject("Result/Contant/Error");
-        rt_ErrorContant = Get<RectTransform>("Result/Contant/Error/Contant");
-        go_ErrorMoBan = GetGameObject("Result/Contant/Error/Contant/MoBan");
-        go_ErrorInfo = GetGameObject("Result/Contant/ErrorInfo");
-
-
-        AddButtOnClick("Result/Contant/BottomBtn/BtnGoTo", Btn_GoToDaoRuWhere);
-        AddButtOnClick("Result/Contant/BottomBtn/BtnFanHui", Btn_JiXuDaoRu);
-        AddButtOnClick("Result/Contant/BottomBtn/BtnNext", Btn_OnNextFolder);
-
-
-
-        #endregion
-
 
 
     }
@@ -1424,11 +1386,8 @@ public class Game_DaoRu : SubUI
     #endregion
 
 
-
     private void E_OnDuoTuDaoRu(List<ResultBean> resultBeans,int index)       // 点击了信息页的导入
     {
-        // 选择第几个
-        mSelectIndex = index;
         // 把导入的都变成绿色字体
         foreach (ResultBean resultBean in resultBeans)
         {
@@ -1444,6 +1403,22 @@ public class Game_DaoRu : SubUI
 
         // 清空选择
         ClearAllChooseZhong();
+    }
+
+
+    private void E_GoToNextFolderDaoRu()                                     // 导入后 到下个文件兲
+    {
+        string nextPath = mFileBrowser.GetNextFolderPath();
+        if (string.IsNullOrEmpty(nextPath))
+        {
+            MyLog.Red("没有下个文件夹了");
+        }
+        else
+        {
+            mFileBrowser.Relocate(nextPath);
+            RefreshMiddleContent();
+        }
+
     }
 
 
@@ -1466,120 +1441,6 @@ public class Game_DaoRu : SubUI
         }
         return sortList;
     }
-
-
-
-    #region 导入结果
-
-    private EGameType mSelectType;
-    private int mSelectIndex = 0;
-    private readonly List<GameObject> errorList = new List<GameObject>();
-
-    private void ShowResult(EGameType gameType, bool isOk,List<FileInfo> errorInfos)            // 显示导入结果
-    {
-        if (errorList.Count>0)
-        {
-            for (int i = 0; i < errorList.Count; i++)
-            {
-                Object.Destroy(errorList[i]);
-            }
-            errorList.Clear();
-        }
-        mSelectType = gameType;
-        go_Result.SetActive(true);
-        go_TittleOK.SetActive(isOk);
-        go_TittleError.SetActive(!isOk);
-        go_ErrorInfo.SetActive(false);
-        string str = "";
-        switch (gameType)
-        {
-            case EGameType.JiHeXuLieTu:
-                str = "去集合序列图页";
-                break;
-            case EGameType.XunLieTu222:
-                str = "去序列图(自定)页";
-                break;
-            case EGameType.XunLieTu:
-                str = "去序列图页";
-                break;
-            case EGameType.TaoMingTu:
-                str = "去透明图页";
-                break;
-            case EGameType.NormalTu:
-                str = "去普通图页";
-                break;
-            case EGameType.JiHeTu:
-                str = "去集合图页";
-                break;
-            case EGameType.Audio:
-                str = "去音频页";
-                break;
-            default:
-                throw new Exception("未定义");
-        }
-        tx_GoTo.text = str;
-
-        if (!isOk)
-        {
-            if (null != errorInfos)
-            {
-                foreach (FileInfo errorInfo in errorInfos)
-                {
-                    Transform t = InstantiateMoBan(go_ErrorMoBan, rt_ErrorContant);
-                    t.Find("TxName").GetComponent<Text>().text = errorInfo.Name;
-                }
-            }
-            else
-            {
-                go_ErrorInfo.SetActive(true);
-            }
-
-        }
-
-    }
-
-
-    private void Btn_GoToDaoRuWhere()                                  // 点击 去到刚刚导入的地方
-    {
-        go_Result.SetActive(false);
-        MyEventCenter.SendEvent<EGameType,int>(E_GameEvent.ChangGameToggleType, mSelectType, mSelectIndex);
-    }
-
-
-
-    private void Btn_JiXuDaoRu()                                       // 点击 继续导入
-    {
-        go_Result.SetActive(false);
-
-    }
-
-
-    private void Btn_OnNextFolder()                                    // 点击 到下个文件夹
-    {
-        go_Result.SetActive(false);
-
-        string nextPath = mFileBrowser.GetNextFolderPath();
-        if (string.IsNullOrEmpty(nextPath))
-        {
-            MyLog.Red("没有下个文件夹了");
-        }
-        else
-        {
-            mFileBrowser.Relocate(nextPath);
-            RefreshMiddleContent(); 
-        }
-
-
-    }
-
-
-    private void E_DaoRuAudio(EAudioType type, AudioResBean bean)      // 导入音频的事件
-    {
-        mSelectIndex = (int)type;
-    }
-
-    #endregion
-
 
 
 

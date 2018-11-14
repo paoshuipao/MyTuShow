@@ -244,7 +244,7 @@ public class Game_TaoMingTu : SubUI
 
 
 
-    private void E_OnBottomValueChange(string changeName) // 底下的切换
+    private void E_OnBottomValueChange(string changeName)                  // 底下的切换
     {
         switch (changeName)
         {
