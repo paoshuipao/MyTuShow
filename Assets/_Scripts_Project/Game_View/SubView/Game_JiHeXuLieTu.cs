@@ -74,7 +74,7 @@ public class Game_JiHeXuLieTu : SubUI
     private GameObject go_ChangeSize;
     private UGUI_Grid[] l_Grids;
     private Slider slider_ChangeSize;
-    private Text tx_GridSize;
+    private InputField input_GridSize;
 
 
 
@@ -204,7 +204,7 @@ public class Game_JiHeXuLieTu : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/SrcollRect");
-        tx_GridSize = Get<Text>("Top/Left/ChangeSize/TxValue");
+        input_GridSize = Get<InputField>("Top/Left/ChangeSize/InputField");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
         AddSliderOnValueChanged(slider_ChangeSize,Slider_OnGridSizeChange);
@@ -265,7 +265,7 @@ public class Game_JiHeXuLieTu : SubUI
                 break;
         }
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[(int) mCurrentIndex].ChangeValue;
-        tx_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
+        input_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
         m_SrollView.content = GetParent(mCurrentIndex);
     }
 
@@ -332,7 +332,7 @@ public class Game_JiHeXuLieTu : SubUI
         Vector2 yuanSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].YuanSize;
         Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
         l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize;
-        tx_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
+        input_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
 
 
     }

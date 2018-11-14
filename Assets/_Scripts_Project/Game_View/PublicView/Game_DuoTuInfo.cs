@@ -277,7 +277,7 @@ public class Game_DuoTuInfo : SubUI
 
     private bool isDaoRuOther = false;
 
-    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)                                 // 点击了序列图的导入
+    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)                             // 点击导入其他处的 序列图
     {
         isDaoRuOther = true;
         List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
@@ -291,7 +291,7 @@ public class Game_DuoTuInfo : SubUI
     }
 
 
-    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                 // 点击导入 集合序列图
+    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                                        // 点击导入其他处的 集合序列图
     {
         isDaoRuOther = true;
         List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
@@ -303,7 +303,7 @@ public class Game_DuoTuInfo : SubUI
     }
 
 
-    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList)             // 是否导入其他成功
+    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList)        // 是否导入其他成功
     {
         if (isDaoRuOther)
         {
@@ -316,7 +316,7 @@ public class Game_DuoTuInfo : SubUI
                 {
                     paths[i] = l_CurrentResultBeans[i].File.FullName;
                 }
-                MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThisDuoTu, mCurrentType, paths);
+                MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThisDuoTu, type, paths);
             }
         }
     }

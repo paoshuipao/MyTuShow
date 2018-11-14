@@ -195,11 +195,11 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         if (!ES3.KeyExists(PP_XU_LIE_TU222_SIZE))
         {
             L_XuLieTu222Size = new GridSizeBean[5];
-            L_XuLieTu222Size[0] = GetGridSizeBean(150, 150);
-            L_XuLieTu222Size[1] = GetGridSizeBean(150, 150);
-            L_XuLieTu222Size[2] = GetGridSizeBean(150, 150);
-            L_XuLieTu222Size[3] = GetGridSizeBean(150, 150);
-            L_XuLieTu222Size[4] = GetGridSizeBean(150, 150);
+            L_XuLieTu222Size[0] = GetGridSizeBean(160, 160);
+            L_XuLieTu222Size[1] = GetGridSizeBean(160, 160);
+            L_XuLieTu222Size[2] = GetGridSizeBean(160, 160);
+            L_XuLieTu222Size[3] = GetGridSizeBean(160, 160);
+            L_XuLieTu222Size[4] = GetGridSizeBean(160, 160);
         }
         else
         {

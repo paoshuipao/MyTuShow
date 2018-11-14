@@ -5,6 +5,7 @@ using System.IO;
 using DG.Tweening;
 using PSPUtil;
 using PSPUtil.Control;
+using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -132,7 +133,6 @@ public class UIStart_Game : BaseUI
     protected override void OnEnable()
     {
         E_OnToggleChange(EGameType.XunLieTu,0);
-        go_Loading.SetActive(true);
     }
 
     protected override void OnAddListener()
@@ -282,6 +282,7 @@ public class UIStart_Game : BaseUI
 
     IEnumerator StartFirst()                                      // 一开始显示调用这里加载原来存储的
     {
+        go_Loading.SetActive(true);
 
         while (!Ctrl_TextureInfo.Instance.IsInitFinish)
         {

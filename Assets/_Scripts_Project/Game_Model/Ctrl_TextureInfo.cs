@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using PSPUtil.Singleton;
+using PSPUtil.StaticUtil;
 
 [Serializable]
-public class XunLieSaveBean
+public class XuLieSaveBean
 {
     public ushort TuType;
     public string KName;
@@ -55,7 +56,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     public List<string[]> GetXunLieTuPaths(EXunLieTu index)                // 获取
     {
         List<string[]> paths = new List<string[]>();
-        foreach (XunLieSaveBean bean in l_XunLieTuBean)
+        foreach (XuLieSaveBean bean in l_XunLieTuBean)
         {
             if (bean.TuType == (ushort)index)
             {
@@ -75,21 +76,25 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     /// <returns>true： 保存成功   false:之前已有，保存失败</returns>
     public bool SaveXunLieTu(EXunLieTu index,string[] paths)               // 保存
     {
-
         string kName = Path.GetFileNameWithoutExtension(paths[0]);
         if (!string.IsNullOrEmpty(kName))
         {
             kName = kName.Trim();
         }
+        else
+        {
+            return false;
+        }
+        ushort typeIndex = (ushort) index;
         for (int i = 0; i < l_XunLieTuBean.Count; i++)
         {
-            if (l_XunLieTuBean[i].KName == kName)
+            if (l_XunLieTuBean[i].KName == kName && l_XunLieTuBean[i].TuType == typeIndex)
             {
                 return false;
             }
         }
-        XunLieSaveBean newBean = new XunLieSaveBean();
-        newBean.TuType = (ushort)index;
+        XuLieSaveBean newBean = new XuLieSaveBean();
+        newBean.TuType = typeIndex;
         newBean.KName = kName;
         newBean.Paths = paths;
         l_XunLieTuBean.Add(newBean);
@@ -106,7 +111,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         }
         for (int i = 0; i < l_XunLieTuBean.Count; i++)
         {
-            XunLieSaveBean bean = l_XunLieTuBean[i];
+            XuLieSaveBean bean = l_XunLieTuBean[i];
             if (bean.KName == kName && bean.TuType == (ushort)index)
             {
                 l_XunLieTuBean.RemoveAt(i);
@@ -136,7 +141,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     public List<string[]> GetXunLieTu222Paths(EXuLieTu222 index)                // 获取
     {
         List<string[]> paths = new List<string[]>();
-        foreach (XunLieSaveBean bean in l_XunLieTu222Bean)
+        foreach (XuLieSaveBean bean in l_XunLieTu222Bean)
         {
             if (bean.TuType == (ushort)index)
             {
@@ -162,15 +167,17 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         {
             kName = kName.Trim();
         }
+        ushort typeIndex = (ushort)index;
+
         for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
         {
-            if (l_XunLieTu222Bean[i].KName == kName)
+            if (l_XunLieTu222Bean[i].KName == kName && l_XunLieTu222Bean[i].TuType == typeIndex)
             {
                 return false;
             }
         }
-        XunLieSaveBean newBean = new XunLieSaveBean();
-        newBean.TuType = (ushort)index;
+        XuLieSaveBean newBean = new XuLieSaveBean();
+        newBean.TuType = typeIndex;
         newBean.KName = kName;
         newBean.Paths = paths;
         l_XunLieTu222Bean.Add(newBean);
@@ -187,7 +194,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         }
         for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
         {
-            XunLieSaveBean bean = l_XunLieTu222Bean[i];
+            XuLieSaveBean bean = l_XunLieTu222Bean[i];
             if (bean.KName == kName && bean.TuType == (ushort)index)
             {
                 l_XunLieTu222Bean.RemoveAt(i);
@@ -412,13 +419,13 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     #region 私有
 
     // 序列图
-    private List<XunLieSaveBean> l_XunLieTuBean { get; set; }
+    private List<XuLieSaveBean> l_XunLieTuBean { get; set; }
     private const string PP_XUN_LIE_TU = "PP_XUN_LIE_TU";
     private const string XunLieTuFile = "XunLieTu.es3";
 
 
     // 序列图222
-    private List<XunLieSaveBean> l_XunLieTu222Bean { get; set; }
+    private List<XuLieSaveBean> l_XunLieTu222Bean { get; set; }
     private const string PP_XUN_LIE_TU222 = "PP_XUN_LIE_TU222";
     private const string XunLieTuFile222 = "XunLieTu222.es3";
 
@@ -460,10 +467,10 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     public void OnInitData()
     {
         // 序列图
-        l_XunLieTuBean = ES3.Load(PP_XUN_LIE_TU, XunLieTuFile, new List<XunLieSaveBean>());
+        l_XunLieTuBean = ES3.Load(PP_XUN_LIE_TU, XunLieTuFile, new List<XuLieSaveBean>());
 
         // 序列图222
-        l_XunLieTu222Bean = ES3.Load(PP_XUN_LIE_TU222, XunLieTuFile222, new List<XunLieSaveBean>());
+        l_XunLieTu222Bean = ES3.Load(PP_XUN_LIE_TU222, XunLieTuFile222, new List<XuLieSaveBean>());
 
 
         #region 集合序列图
@@ -555,8 +562,8 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     void OnApplicationQuit()
     {
         // 退出时保存
-        ES3.Save<List<XunLieSaveBean>>(PP_XUN_LIE_TU, l_XunLieTuBean, XunLieTuFile);
-        ES3.Save<List<XunLieSaveBean>>(PP_XUN_LIE_TU222, l_XunLieTu222Bean, XunLieTuFile222);
+        ES3.Save<List<XuLieSaveBean>>(PP_XUN_LIE_TU, l_XunLieTuBean, XunLieTuFile);
+        ES3.Save<List<XuLieSaveBean>>(PP_XUN_LIE_TU222, l_XunLieTu222Bean, XunLieTuFile222);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_JIHE_XULIE_TU, jiHeXuLieTypeK_PathV, JiHeXuLieTuFile);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_TAO_MING_TU, taoMingTypeK_PathV, TaoMingTuFile);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_JPG_TU, normalTypeK_PathV, JpgTuFile);
