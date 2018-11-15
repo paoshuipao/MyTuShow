@@ -12,7 +12,7 @@ public class Game_DuoTuInfo : SubUI
     protected override void OnStart(Transform root)
     {
         MyEventCenter.AddListener<EGameType, ResultBean[]>(E_GameEvent.ShowDuoTuInfo, E_Show);
-//        MyEventCenter.AddListener<EGameType,bool,List<FileInfo>,bool>(E_GameEvent.DaoRuTuFromResult, E_DaoRuResult);
+        MyEventCenter.AddListener(E_GameEvent.ZhuangOtherDRSuccess, E_DaoRuResult);
         MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
 
 
@@ -290,22 +290,12 @@ public class Game_DuoTuInfo : SubUI
 
 
 
-    // TODO 错左！！！ 这里不知道是否成功
-    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList,bool isFromDaoRu)        // 是否导入其他成功
+    private void E_DaoRuResult()        // 是否导入其他成功
     {
-        if (isDaoRuOther && !isFromDaoRu)
+        if (isDaoRuOther)
         {
+            Btn_OnNoSaveThis();
             isDaoRuOther = false;
-            if (isSaveOk)
-            {
-                // 导入其他成功，相当于删除这个罗
-                string[] paths = new string[l_CurrentResultBeans.Length];
-                for (int i = 0; i < l_CurrentResultBeans.Length; i++)
-                {
-                    paths[i] = l_CurrentResultBeans[i].File.FullName;
-                }
-                MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThisDuoTu, type, paths);
-            }
         }
     }
 

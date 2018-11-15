@@ -502,8 +502,8 @@ public class UIStart_Game : BaseUI
                     Ctrl_TextureInfo.Instance.DeleteAudioSave(type, paths[i]);
                 }
             }
-
-            yield return sub_Audio.DaoRuFromFile(type, tmpFileInfos,false);
+            MyEventCenter.SendEvent(E_GameEvent.DaoRuAudioFromFiles,type, tmpFileInfos,false);
+            yield return 0;
 
         }
 

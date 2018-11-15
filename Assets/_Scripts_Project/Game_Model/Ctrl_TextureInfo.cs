@@ -384,12 +384,12 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         return audioTypeK_PathV[(ushort)index];
     }
 
-    public bool SaveAudio(EAudioType index, string savePath)                       // 保存
+    public bool SaveAudio(ushort index, string savePath)                       // 保存
     {
         savePath = savePath.Replace("\\", "/");
-        if (!audioTypeK_PathV[(ushort)index].Contains(savePath))
+        if (!audioTypeK_PathV[index].Contains(savePath))
         {
-            audioTypeK_PathV[(ushort)index].Add(savePath);
+            audioTypeK_PathV[index].Add(savePath);
             return true;
         }
         else

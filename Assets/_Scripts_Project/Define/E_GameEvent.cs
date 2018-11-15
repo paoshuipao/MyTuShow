@@ -68,8 +68,14 @@ public enum E_GameEvent                           // 这里写事件
 
 
     //——————————————————— 导入 —————————————————
+
+
     DaoRuTuFromFile,                //导入图片通过文件(EGameType 大类型，ushort 小类型,List<FileInfo> 文件集合，bool 是否保存)
     DaoRuTuFromResult,              //导入图片通过已加载的结果(EGameType 大类型,ushort 小类型,List<ResultBean> 结果集合,bool 是否从直接导入处导入)
+
+    DaoRuAudioFromFiles,            // 从快速导入处 导入音频（EAudioType 类型,List<FileInfo> 文件集合，bool 是否保存）
+    DaoRuAudioFromResult,            // 从快速导入处 导入音频（EAudioType 类型,AudioResBean 结果）
+
 
 
 
@@ -98,7 +104,13 @@ public enum E_GameEvent                           // 这里写事件
     DaoRu_JiHe_FromFile,              // 导入 集合图 (EJiHeType 类型, List<FileInfo> 多文件)
     DaoRu_JiHe_FromResult,            // （已加载）导入 集合图（EJiHeType 类型 ， List<ResultBean> 结果集合）
 
-    ResultDaoRu_Audio,                 // 导入音频（EAudioType 类型,AudioResBean 结果 ）
+
+
+    DaoRu_Audio,                      // 真正 导入音频(EAudioType 类型,AudioResBean 结果)
+
+
+
+    ZhuangOtherDRSuccess,           // 转到其他导入成功
 
 
 
@@ -130,7 +142,6 @@ public enum E_GameEvent                           // 这里写事件
 
     ShowDuoTuDaoRu,         // 显示多图导入(ResultBean[] 结果集合,string 文件夹路径)
     ShowSingleTuDaoRu,      // 显示单张图片导入（ResultBean 结果）
-//    OnClickDaoRu,          // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
 
 
 

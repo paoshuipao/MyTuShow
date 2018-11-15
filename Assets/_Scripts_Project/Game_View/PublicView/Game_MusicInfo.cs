@@ -198,7 +198,8 @@ public class Game_MusicInfo : SubUI
     private void ManyBtn_DaoRu(EAudioType type)             // 点击导入
     {
         mCurrentAudioResBean.IsDaoRu = true;
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_Audio, type, mCurrentAudioResBean);
+
+        MyEventCenter.SendEvent(E_GameEvent.DaoRuAudioFromResult, type, mCurrentAudioResBean);
         if (null!= tx_Name)
         {
             tx_Name.color = Color.green;

@@ -24,17 +24,6 @@ public enum EAudioType
 public class Game_Audio : SubUI
 {
 
-    public IEnumerator DaoRuFromFile(EAudioType type, List<FileInfo> files, bool isSave)
-    {
-        foreach (FileInfo file in files)
-        {
-            Ctrl_LoadAudioClip.Instance.StartLoadAudioClip(file, (resBean) =>
-            {
-                E_DaoRu(type, resBean, isSave);
-            });
-            yield return new WaitForEndOfFrame();
-        }
-    }
 
     public void ChangeOtherPage()
     {
@@ -209,18 +198,13 @@ public class Game_Audio : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EAudioType, AudioResBean>(E_GameEvent.ResultDaoRu_Audio, (type, resBean) =>
-        {
-            bool isSaveOk = E_DaoRu(type,resBean,true);
-//            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>,bool>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null,true);
+        MyEventCenter.AddListener<EAudioType, AudioResBean>(E_GameEvent.DaoRu_Audio, E_DaoRu_Audio);      // 从导入
+        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);                         // 确定删除
+        MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);                                     // 删除所有
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);           // 确定改名
 
-
-        });
-        MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
-        MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);
-        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
-        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeing, E_OnChangeAudioVolume);
-        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeEnd, E_OnChangeAudioVolumeEnd);
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeing, E_OnChangeAudioVolume);        // 改变音量
+        MyEventCenter.AddListener<float>(E_GameEvent.ChangeAudioVolumeEnd, E_OnChangeAudioVolumeEnd);     // 结束改变音量
 
 
 
@@ -386,8 +370,11 @@ public class Game_Audio : SubUI
                         t.Find("TxName").GetComponent<Text>().text = fileInfo.Name;
                     }
                 }
+                else
+                {
+                    MyEventCenter.SendEvent(E_GameEvent.DaoRuAudioFromFiles, mCurrentIndex, fileInfos,true);
+                }
 
-                Ctrl_Coroutine.Instance.StartCoroutine(DaoRuFromFile(mCurrentIndex, fileInfos, true));    //每个 FileInfo 分开来发送信息
             });
     }
 
@@ -431,21 +418,8 @@ public class Game_Audio : SubUI
 
     //———————————————————— 事件 ————————————————
 
-
-
-    private bool E_DaoRu(EAudioType type, AudioResBean resBean, bool isSave)             // 导入事件 true 是保存成功 false 保存失败
+    private void E_DaoRu_Audio(EAudioType type, AudioResBean resBean)
     {
-
-        // 1.保存一下信息
-        if (isSave)
-        {
-            bool isSaveOk = Ctrl_TextureInfo.Instance.SaveAudio(type, resBean.SavePath);
-            if (!isSaveOk)
-            {
-                return false;
-            }
-        }
-        // 2.创建一个实例
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(type), CREATE_FILE_NAME);
         t.Find("Top/TxName").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(resBean.YuanPath);
         Text tx_ZhongTime = t.Find("Top/TxZhongTime").GetComponent<Text>();
@@ -489,7 +463,7 @@ public class Game_Audio : SubUI
             {
                 isSelect = false;
                 StopAudio();
-                MyEventCenter.SendEvent<Text,FileInfo,bool>(E_GameEvent.ShowMusicInfo,null, new FileInfo(resBean.SavePath), false);
+                MyEventCenter.SendEvent<Text, FileInfo, bool>(E_GameEvent.ShowMusicInfo, null, new FileInfo(resBean.SavePath), false);
             }
             else
             {
@@ -509,9 +483,9 @@ public class Game_Audio : SubUI
             UnityEngine.Object.Destroy(t.gameObject);
             Ctrl_TextureInfo.Instance.DeleteAudioSave(type, resBean.SavePath);
         });
-        return true;
-
     }
+
+
 
 
 
