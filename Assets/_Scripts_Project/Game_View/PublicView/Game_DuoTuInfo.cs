@@ -11,10 +11,10 @@ public class Game_DuoTuInfo : SubUI
 
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener<EGameType, ResultBean[]>(E_GameEvent.ShowDuoTuInfo, E_Show);
-        MyEventCenter.AddListener(E_GameEvent.ZhuangOtherDRSuccess, E_DaoRuResult);
-        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
-
+        MyEventCenter.AddListener<EGameType, ResultBean[]>(E_GameEvent.ShowDuoTuInfo, E_Show);    // 显示
+        MyEventCenter.AddListener(E_GameEvent.ZhuangOtherDRSuccess, E_DaoRuResult);               // 成功转到其他处
+        MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);   // 确定改名
+        MyEventCenter.AddListener<EGameType,int>(E_GameEvent.ChangGameToggleType, E_ChangGameToggleType);  // 当前切换左边时关闭
 
 
         AddButtOnClick("Contant/BtnClose", Btn_OnCloseShowInfo);
@@ -306,7 +306,7 @@ public class Game_DuoTuInfo : SubUI
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_Show(EGameType type, ResultBean[] resultBeans)               // 显示
+    private void E_Show(EGameType type, ResultBean[] resultBeans)                     // 显示
     {
         mCurrentType = type;
         l_CurrentResultBeans = resultBeans;
@@ -326,7 +326,7 @@ public class Game_DuoTuInfo : SubUI
     }
 
 
-
+    // 显示加载每个 Item
     IEnumerator LoadInfoItem(ResultBean[] resultBeans)
     {
         foreach (ResultBean bean in resultBeans)
@@ -356,5 +356,16 @@ public class Game_DuoTuInfo : SubUI
         }
 
     }
+
+
+    private void E_ChangGameToggleType(EGameType type, int index)                     // 当前切换左边时，要关闭
+    {
+        if (mUIGameObject.activeSelf)
+        {
+            Btn_OnCloseShowInfo();
+        }
+    }
+
+
 
 }

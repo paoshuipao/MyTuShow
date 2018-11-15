@@ -217,7 +217,7 @@ public class Game_DaoRu : SubUI
         MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftDown, E_OnMouseLeftClick);            // 鼠标右键点击
         MyEventCenter.AddListener<EGameType,ushort, List<ResultBean>, bool>(E_GameEvent.DaoRuTuFromResult, E_OnDuoTuDaoRu);  // 确定导入图片
         MyEventCenter.AddListener(E_GameEvent.GoToNextFolderDaoRu, E_GoToNextFolderDaoRu);          // 导入后 到一个文件夹
-
+        MyEventCenter.AddListener(E_GameEvent.OnClickCtrlAndA, E_OnClickCtrlAndA);                  // 按下 Ctrl + A
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
@@ -766,29 +766,11 @@ public class Game_DaoRu : SubUI
                         int maxIndex = Mathf.Max(index1, index2);
                         for (int i = minIndex + 1; i < maxIndex; i++)
                         {
-                            GameObject tmpGo = l_MiddleItems[i];
-                            GameObject tmpGoBG = tmpGo.transform.Find("Bg").gameObject;
-
-                            if (!chooseGOK_BgV.ContainsKey(tmpGo) && !tmpGoBG.activeSelf)
-                            {
-                                tmpGoBG.SetActive(true);
-                                chooseGOK_BgV.Add(tmpGo, tmpGoBG);
-                            }
+                            AddChoose(l_MiddleItems[i]);
                         }
-
                     }
-
-                    GameObject goBg = t.Find("Bg").gameObject;
-                    if (!chooseGOK_BgV.ContainsKey(go_CurrentSelect) && !goBg.activeSelf)
-                    {
-                        goBg.SetActive(true);
-                        chooseGOK_BgV.Add(go_CurrentSelect, goBg);
-                    }
-
-                    tx_TipZhang.text = chooseGOK_BgV.Count.ToString();
-                    btnDaoRu.interactable = true;
-                    btnGeiMing.interactable = true;
-                    input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name;
+                    AddChoose(go_CurrentSelect);
+                    input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name; 
                     Ctrl_Coroutine.Instance.StartCoroutine(CheckoubleClick());
                 }
             });
@@ -798,11 +780,8 @@ public class Game_DaoRu : SubUI
 
 
 
-
-
-
-
     #endregion
+
 
 
     #region 书签
@@ -1077,6 +1056,11 @@ public class Game_DaoRu : SubUI
 
     private void Foreach2Do()
     {
+        string newFileName = input_GeiMing.text;
+        if (string.IsNullOrEmpty(input_GeiMing.text))
+        {
+            newFileName = "未定义名称";
+        }
         if (chooseGOK_BgV.Count > 1)               // 选择了 多张
         {
 
@@ -1090,7 +1074,7 @@ public class Game_DaoRu : SubUI
                 string newFolderPath = path.Substring(0, tmpCount + 1);    // 前路径
 
 
-                string newPath = newFolderPath + input_GeiMing.text;
+                string newPath = newFolderPath + newFileName;
                 string tmpPath = newPath + "_" + i.ToString("D2");
                 int index = i;
                 while (File.Exists(tmpPath + fileInfo.Extension))
@@ -1105,7 +1089,7 @@ public class Game_DaoRu : SubUI
         {
             foreach (GameObject go in chooseGOK_BgV.Keys)
             {
-                MyIO.FileRename(allGoK_ResultBeanV[go].File, input_GeiMing.text);
+                MyIO.FileRename(allGoK_ResultBeanV[go].File, newFileName);
                 break;
             }
         }
@@ -1271,8 +1255,25 @@ public class Game_DaoRu : SubUI
 
     #region  框选  选中
 
+    private void AddChoose(GameObject go)                 // 添加进选中
+    {
+        GameObject goBg = go.transform.Find("Bg").gameObject;
+        if (!chooseGOK_BgV.ContainsKey(go) && !goBg.activeSelf)
+        {
+            goBg.SetActive(true);
+            chooseGOK_BgV.Add(go, goBg);
+        }
 
-    private void ClearAllChooseZhong()              // 清除所有选中的
+        tx_TipZhang.text = chooseGOK_BgV.Count.ToString();   // 多少张
+        btnDaoRu.interactable = true;   //可以导入了
+        btnGeiMing.interactable = true;// 可以改名了
+
+    }
+
+
+
+
+    private void ClearAllChooseZhong()                                    // 清除所有选中的
     {
         rt_Kuang.sizeDelta = Vector2.one;
 
@@ -1340,6 +1341,10 @@ public class Game_DaoRu : SubUI
 
     private void E_OnMouseLeftClick()                   // 点击了鼠标右键
     {
+        if (!mUIGameObject.activeSelf)
+        {
+            return;
+        }
         if (isShowLeftTip)
         {
             go_MouseLeftClick.SetActive(false);
@@ -1411,6 +1416,10 @@ public class Game_DaoRu : SubUI
 
     private void E_GoToNextFolderDaoRu()                                     // 导入后 到下个文件兲
     {
+        if (!mUIGameObject.activeSelf)
+        {
+            return;
+        }
         string nextPath = mFileBrowser.GetNextFolderPath();
         if (string.IsNullOrEmpty(nextPath))
         {
@@ -1423,6 +1432,21 @@ public class Game_DaoRu : SubUI
         }
 
     }
+
+
+    private void E_OnClickCtrlAndA()                          // 按下了 Ctrl + A
+    {
+        if (!mUIGameObject.activeSelf)
+        {
+            return;
+        }
+        foreach (GameObject allGo in allGoK_ResultBeanV.Keys)
+        {
+            AddChoose(allGo);
+        }
+
+    }
+
 
 
     private List<GameObject> GetSortChoose()   // 排序

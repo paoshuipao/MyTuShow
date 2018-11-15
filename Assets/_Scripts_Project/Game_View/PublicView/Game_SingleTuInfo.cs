@@ -10,6 +10,7 @@ public class Game_SingleTuInfo : SubUI
     {
 
         MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowSingleTuInfo, E_Show);
+        MyEventCenter.AddListener<EGameType, int>(E_GameEvent.ChangGameToggleType, E_ChangGameToggleType);  // 当前切换左边时关闭
 
 
         tx_InfoName = Get<Text>("Right/InfoName/Name");
@@ -129,8 +130,7 @@ public class Game_SingleTuInfo : SubUI
 
 
 
-
-    private void Btn_OnDelete()                   // 点击 不保存这个
+    private void Btn_OnDelete()                 // 点击 不保存这个
     {
         MyEventCenter.SendEvent(E_GameEvent.OnClickNoSaveThis, mCurrentGameType);
         mUIGameObject.SetActive(false);
@@ -138,8 +138,7 @@ public class Game_SingleTuInfo : SubUI
     }
 
 
-
-    private void Btn_OnCloseInfo()              // 点击 关闭信息
+    private void Btn_OnCloseInfo()             // 点击 关闭信息
     {
         MyEventCenter.SendEvent(E_GameEvent.CloseSingleTuInfo, mCurrentGameType);
         mUIGameObject.SetActive(false);
@@ -147,7 +146,7 @@ public class Game_SingleTuInfo : SubUI
     }
 
 
-    private void Btn_OpenFile()               // 点击 打开文件
+    private void Btn_OpenFile()                // 点击 打开文件
     {
         if (null == mCurrentFile)
         {
@@ -159,7 +158,7 @@ public class Game_SingleTuInfo : SubUI
     }
 
 
-    private void Btn_OpenFolder()            // 点击 打开文件夹
+    private void Btn_OpenFolder()             // 点击 打开文件夹
     {
         if (null == mCurrentFile)
         {
@@ -180,7 +179,7 @@ public class Game_SingleTuInfo : SubUI
 
 
 
-    private void E_Show(EGameType type, ResultBean resultBean)  // 显示单图信息
+    private void E_Show(EGameType type, ResultBean resultBean)           // 显示单图信息
     {
         mCurrentGameType = type;
         mCurrentFile = resultBean.File;
@@ -195,6 +194,18 @@ public class Game_SingleTuInfo : SubUI
 
 
     }
+
+
+
+    private void E_ChangGameToggleType(EGameType type, int index)       // 当前切换左边时，要关闭
+    {
+        if (mUIGameObject.activeSelf)
+        {
+            Btn_OnCloseInfo();
+        }
+    }
+
+
 
 
 }

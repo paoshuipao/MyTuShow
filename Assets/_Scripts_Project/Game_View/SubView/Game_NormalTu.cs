@@ -444,7 +444,7 @@ public class Game_NormalTu : SubUI
 
 
 
-    private void E_CloseNormalTuInfo(EGameType type)                        // 关闭意图信息
+    private void E_CloseNormalTuInfo(EGameType type)                        // 关闭单图信息
     {
         if (type == EGameType.NormalTu)
         {

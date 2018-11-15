@@ -235,7 +235,7 @@ public class UIStart_Game : BaseUI
     private readonly Game_JiHeTu sub_JiHeTu = new Game_JiHeTu();                // 集合图
     private readonly Game_Audio sub_Audio = new Game_Audio();                   // 音频
     private readonly Game_DaoRu sub_DaoRu1 = new Game_DaoRu();                  // 导入
-
+    private readonly Game_Search sub_Search = new Game_Search();                // 搜索
 
 
     // 其他子UI
@@ -252,7 +252,7 @@ public class UIStart_Game : BaseUI
     {
         return new SubUI[] 
         {
-            sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio,sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu ,
+            sub_XuLieTu1, sub_XuLieTu222, sub_DaoRu1, sub_TaoMing ,sub_Audio,sub_JiHeXuLieTu, sub_Jpg, sub_JiHeTu ,sub_Search,
             sub_MusicInfo,  sub_GaiMing , sub_SingleTuInfo, sub_DuoTuInfo,sub_DuoTuDaoRu,sub_SingleTuDaoRu,sub_DaoRuResult };
     }
 

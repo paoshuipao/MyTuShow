@@ -37,44 +37,32 @@ public static class MyLoadTu
 {
 
 
-    private static float GetShouFan(int width,int height)
+    private static void GetShouFan(ref int width,ref int height)          // 设置范围（每个不能超过340）
     {
-        float plus;
+        if (width == height && width >= 340)         // 等边且比较大
+        {
+            width = 335;
+            height = 335;
+        }
+        else if (width > height && width >= 340)     // 宽大于高且比较大
+        {
 
-        if (width >= 2500 || height >= 2500)
-        {
-            plus = 6;
-        }
-        if (width >= 2000 || height >= 2000)
-        {
-            plus = 5;
-        }
-        if (width >= 1500 || height >= 1500)
-        {
-            plus = 4;
-        }
-        else if (width >= 1024 || height >= 1024)
-        {
-            plus = 3;
-        }
-        else if (width >= 750 || height >= 750)
-        {
-            plus = 2;
-        }
-        else if (width >= 512 || height >= 512)
-        {
-            plus = 1.6f;
-        }
-        else if (width >= 400 || height >= 400)
-        {
-            plus = 1.3f;
-        }
-        else
-        {
-            plus = 1.1f;
+            height = height / (width / 335);
+            width = 335;
 
         }
-        return plus;
+        else if (height > width && height >= 340)    // 高大于宽且比较大
+        {
+
+            width = width / (height / 335);
+            height = 335;
+        }
+        else         // 不大于 340 的情况，全部缩小 1.1 倍吧
+        {
+            width = (int)(width / 1.1f);
+            height = (int)(height / 1.1f);
+        }
+
     }
 
 
@@ -94,8 +82,10 @@ public static class MyLoadTu
         new Thread(() =>
         {
             image = System.Drawing.Image.FromFile(fileInfo.FullName);
-            float plus = GetShouFan(image.Width, image.Height);
-            image_Gai = image.GetThumbnailImage((int)(image.Width / plus), (int)(image.Height / plus), () => false, System.IntPtr.Zero);
+            int saveWidth = image.Width;
+            int saveHeight = image.Height;
+            GetShouFan(ref saveWidth,ref saveHeight);
+            image_Gai = image.GetThumbnailImage(saveWidth, saveHeight, () => false, System.IntPtr.Zero);
 
         }).Start();
         while (null == image)
@@ -165,8 +155,8 @@ public static class MyLoadTu
 
                 int width = yuanImage.Width;
                 int height = yuanImage.Height;
-                float plus = GetShouFan(width, height);
-                System.Drawing.Image useImage = yuanImage.GetThumbnailImage((int)(width / plus), (int)(height / plus), () => false, System.IntPtr.Zero);
+                GetShouFan(ref width, ref height);
+                System.Drawing.Image useImage = yuanImage.GetThumbnailImage(width, height, () => false, System.IntPtr.Zero);
                 ResultBean bean = new ResultBean();
                 bean.Width = width;
                 bean.Height = height;

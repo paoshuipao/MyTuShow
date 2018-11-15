@@ -13,18 +13,19 @@ public enum E_GameEvent                           // 这里写事件
     HideLog,                    // 隐藏
 
 
-
+   
     OnClickDown_Shift,              // 按下 Shift
     OnClickUp_Shift,               //  松开 Shift
 
     OnClickDown_Ctrl,              // 按下 Ctrl
     OnClickUp_Ctrl,                // 松开 Ctrl
 
+    OnClickCtrlAndA,               // 按下 Ctrl + A
+
     OnClickMouseLeftDown,          // 按下鼠标右键
 
 
     ChangGameToggleType,            // 切换左边总的选项 （EGameType,int）
-//    DaoRuResult,                    // 返回导入结果（EGameType 导入那一个, bool 是否成功,List<FileInfo> 错误集合,bool true 结果导入,false File导入）
     GoToNextFolderDaoRu,            // 去一个文件夹导入
 
 

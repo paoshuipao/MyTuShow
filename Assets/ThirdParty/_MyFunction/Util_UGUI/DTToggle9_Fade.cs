@@ -267,6 +267,13 @@ public class DTToggle9_Fade : MonoBehaviour
                         GO_Eight.SetActive(false);
                     });
                     break;
+                case GroupState.Nine:
+                    Tweener t9 = mNineGroup.DOFade(0, FadeDuration);
+                    t9.OnComplete(() =>
+                    {
+                        GO_Nine.SetActive(false);
+                    });
+                    break;
             }
         }
         else
@@ -304,6 +311,10 @@ public class DTToggle9_Fade : MonoBehaviour
                 case GroupState.Eight:
                     mEightGroup.alpha = 0;
                     GO_Eight.SetActive(false);
+                    break;
+                case GroupState.Nine:
+                    mNineGroup.alpha = 0;
+                    GO_Nine.SetActive(false);
                     break;
             }
         }
