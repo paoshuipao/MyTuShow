@@ -12,7 +12,7 @@ public class Game_DuoTuInfo : SubUI
     protected override void OnStart(Transform root)
     {
         MyEventCenter.AddListener<EGameType, ResultBean[]>(E_GameEvent.ShowDuoTuInfo, E_Show);
-        MyEventCenter.AddListener<EGameType,bool,List<FileInfo>>(E_GameEvent.DaoRuResult, E_DaoRuResult);
+//        MyEventCenter.AddListener<EGameType,bool,List<FileInfo>,bool>(E_GameEvent.DaoRuTuFromResult, E_DaoRuResult);
         MyEventCenter.AddListener<EGameType, string>(E_GameEvent.SureGeiMing, E_OnSureGaiMing);
 
 
@@ -70,53 +70,53 @@ public class Game_DuoTuInfo : SubUI
         // 导入其他序列图
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item1/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G1Zheng, 0);
+            ManyBtn_DaoRu(EGameType.XuLieTu,(ushort)EXuLieTu.G1Zheng);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item2/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G2Zheng_XiTong, 1);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G2Zheng_XiTong);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item3/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G3Zheng_Big, 2);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G3Zheng_Big);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item4/BtnHeng", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Heng, 3);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G4Two_Heng);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item4/BtnShu", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Shu, 3);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G4Two_Shu);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item5/BtnHeng", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Heng, 4);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G5Three_Heng);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu/Item5/BtnShu", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Shu, 4);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G5Three_Shu);
         });
 
         // 序列图222
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_1);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_1);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_2);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_2);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_3);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_3);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_4);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_4);
         });
         AddButtOnClick("Contant/Right/DaoRuOther/XuLieTu222/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_5);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_5);
         });
     }
 
@@ -277,35 +277,23 @@ public class Game_DuoTuInfo : SubUI
 
     private bool isDaoRuOther = false;
 
-    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)                             // 点击导入其他处的 序列图
+
+    private void ManyBtn_DaoRu(EGameType type, ushort index)
     {
         isDaoRuOther = true;
         List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
-        //  发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu, tuType, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, index);
+        MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromResult, type, index, resultBeans,false);
 
         Btn_OnCloseShowInfo();
-
 
     }
 
 
-    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                                        // 点击导入其他处的 集合序列图
+
+    // TODO 错左！！！ 这里不知道是否成功
+    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList,bool isFromDaoRu)        // 是否导入其他成功
     {
-        isDaoRuOther = true;
-        List<ResultBean> resultBeans = new List<ResultBean>(l_CurrentResultBeans);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu222, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-
-        Btn_OnCloseShowInfo();
-    }
-
-
-    private void E_DaoRuResult(EGameType type, bool isSaveOk, List<FileInfo> errorList)        // 是否导入其他成功
-    {
-        if (isDaoRuOther)
+        if (isDaoRuOther && !isFromDaoRu)
         {
             isDaoRuOther = false;
             if (isSaveOk)
@@ -368,7 +356,7 @@ public class Game_DuoTuInfo : SubUI
 
     private void E_OnSureGaiMing(EGameType type, string changeNamne)                   // 确定改名
     {
-        if (type == EGameType.XunLieTu222)
+        if (type == EGameType.XuLieTu222)
         {
             tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
             tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];

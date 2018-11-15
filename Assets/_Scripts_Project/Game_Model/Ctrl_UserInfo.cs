@@ -21,7 +21,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 {
 
 
-
     public string DaoRuFirstPath { get; set; }                     // 导入时 打开的路径（导入框）
 
     public List<string> L_FavoritesPath { get; set; }              // 收藏的路径集合
@@ -30,15 +29,12 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     public string ShowFirstPath { get; set; }                     // 点击导入的大项，一开始显示的路径
 
 
-
     public bool IsXuLieTuShowTip { get; set; }                   // 序列图是否需要提示
-
 
 
 
     //——————————————————— 大小 —————————————————
     public bool IsCanChangeSize { get; set; }                       // 是否可改大小
-    public GridSizeBean[] L_XuLieTuSize { get; private set; }                 // 序列图 Grid 大小
     public GridSizeBean[] L_XuLieTu222Size { get; private set; }               // 序列图222 Grid 大小
 
     public GridSizeBean[] L_JiHeXuLieTuSize { get; private set; }             // 集合序列图 Grid 大小
@@ -55,9 +51,7 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
     public string[] BottomXuLeTu222Name { get; private set; }            // 底下序列图222名称
-
     public string[] BottomJiHeXLTName { get; private set; }              // 底下集合序列图名称
-
     public string[] BottomTaoMingName { get; private set; }              // 底下透明图名称
     public string[] BottomJpgName { get; private set; }                  // 底下Jpg名称
     public string[] BottomJiHeName { get; private set; }                 // 底下集合名称
@@ -119,7 +113,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     // 大小
     private const string PP_IS_CHANGE_SIZE = "PP_IS_CHANGE_SIZE";
-    private const string PP_XU_LIE_TU_SIZE = "PP_XU_LIE_TU_SIZE";
     private const string PP_XU_LIE_TU222_SIZE = "PP_XU_LIE_TU222_SIZE";
     private const string PP_JIHE_XLT_SIZES = "PP_JIHE_XLT_SIZES";
     private const string PP_TAO_MING_SIZE = "PP_TAO_MING_SIZE";
@@ -173,23 +166,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
 
-
     private void InitSize()               // 初始化大小
     {
-        // 序列图
-        if (!ES3.KeyExists(PP_XU_LIE_TU_SIZE))
-        {
-            L_XuLieTuSize = new GridSizeBean[5];
-            L_XuLieTuSize[0] = GetGridSizeBean(64, 64);
-            L_XuLieTuSize[1] = GetGridSizeBean(128, 128);
-            L_XuLieTuSize[2] = GetGridSizeBean(192, 192);
-        }
-        else
-        {
-            L_XuLieTuSize = ES3.Load<GridSizeBean[]>(PP_XU_LIE_TU_SIZE);
-        }
-
-
 
         // 序列图222
         if (!ES3.KeyExists(PP_XU_LIE_TU222_SIZE))
@@ -305,7 +283,6 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
         ES3.Save<bool>(PP_IS_XLT_SHOW_TIP, IsXuLieTuShowTip);
         // 大小
         ES3.Save<bool>(PP_IS_CHANGE_SIZE, IsCanChangeSize);
-        ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU_SIZE, L_XuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_XU_LIE_TU222_SIZE, L_XuLieTu222Size);
         ES3.Save<GridSizeBean[]>(PP_JIHE_XLT_SIZES, L_JiHeXuLieTuSize);
         ES3.Save<GridSizeBean[]>(PP_TAO_MING_SIZE, L_TaoMingTuSize);
@@ -333,8 +310,35 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
     public const float DoubleClickTime = 0.25f;                  // 双击的控制时间（少于这个时间就算是双击）
 
+    // 序列图
+    public static readonly string[] BottomXuLieTuName = { "64等边","128等边","大长方体" };
+    public static readonly Vector2 XLTSize1 = new Vector2(64,64);
+    public static readonly Vector2 XLTSize2 = new Vector2(128,128);
+    public static readonly Vector2 XLTSize3 = new Vector2(300, 150);
 
-    public static readonly string[] BottomXuLieTuName = { "64 等边","128 等边","192 等边" };
+
+
+    // 每个大小的 上下幅度范围
+    public static Vector2 XuLieTu222MinMax = new Vector2(-64, 128);   // 序列图222 
+    public static Vector2 JiHeXuLieTuMinMax = new Vector2(-64, 64);   // 集合序列图
+    public static Vector2 TaoMingTuMinMax = new Vector2(-32, 64);     // 透明图
+    public static Vector2 JpgTuMinMax = new Vector2(-32, 64);         // 普通图
+    public static Vector2 JiHeTuMinMax = new Vector2(-64, 64);        // 集合图    
+
+
+
+    // 左边的名称
+    public const string XuLieTu_LeftStr = "<color=#00ff00ff>序列图</color>（固定）";
+    public const string XuLieTu222_LeftStr = "<color=#00ff00ff>序列图</color>（自定）";
+    public const string JiHeXuLieTu_LeftStr = "<color=#008000ff>合集序列图</color>";
+    public const string TaoMingTu_LeftStr = "<color=#00ffffff>透明图</color>（.png）";
+    public const string JpgTu_LeftStr = "<color=#008080ff>普通图</color>（.jpg）";
+    public const string JiHeTu_LeftStr = "<color=#add8e6ff>整套合集图</color>";
+    public const string Aduio_LeftStr = "音频播放";
+
+
+
+
 
 
 

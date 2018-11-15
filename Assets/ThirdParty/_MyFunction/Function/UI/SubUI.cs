@@ -154,6 +154,17 @@ public abstract class SubUI        // 每个大 UI 下的 子UI
     }
 
 
+
+    protected void AddInputOnEndEdit(InputField input, UnityAction<string> action)
+    {
+        if (null != action)
+        {
+            input.onEndEdit.AddListener(action);
+        }
+    }
+
+
+
     protected void AddInputOnEndEdit(string path, UnityAction<string> action)
     {
         if (null != action)

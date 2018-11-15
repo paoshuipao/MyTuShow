@@ -8,7 +8,7 @@ using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum EXunLieTu
+public enum EXuLieTu
 {
     G1Zheng,
     G2Zheng_XiTong,
@@ -48,7 +48,7 @@ public class Game_XuLieTu : SubUI
     #region 私有
 
     private bool isSelect; // 是否之前点击了
-    private EXunLieTu mCurrentIndex;
+    private EXuLieTu mCurrentIndex;
     private GameObject go_CurrentSelect; // 当前选择的对象
     private const string ITEM_STR1 = "GeShiItem1";
     private const string ITEM_STR2 = "GeShiItem2";
@@ -74,12 +74,6 @@ public class Game_XuLieTu : SubUI
     private ScrollRect mScrollRect;
     private Text tx_BottomName1, tx_BottomName2, tx_BottomName3;
 
-
-    // 改变大小Slider
-    private GameObject go_ChangeSize;
-    private UGUI_Grid[] l_Grids;
-    private Slider slider_ChangeSize;
-    private InputField input_GridSize;
 
 
 
@@ -116,30 +110,30 @@ public class Game_XuLieTu : SubUI
 
 
 
-    private RectTransform GetParentRT(EXunLieTu tuType)
+    private RectTransform GetParentRT(EXuLieTu tuType)
     {
         RectTransform rt = null; // 放在那里
         switch (tuType)
         {
-            case EXunLieTu.G1Zheng:
+            case EXuLieTu.G1Zheng:
                 rt = rt_Grid1;
                 break;
-            case EXunLieTu.G2Zheng_XiTong:
+            case EXuLieTu.G2Zheng_XiTong:
                 rt = rt_Grid2;
                 break;
-            case EXunLieTu.G3Zheng_Big:
+            case EXuLieTu.G3Zheng_Big:
                 rt = rt_Grid3;
                 break;
-            case EXunLieTu.G4Two_Heng:
+            case EXuLieTu.G4Two_Heng:
                 rt = rt_Grid4_Heng;
                 break;
-            case EXunLieTu.G4Two_Shu:
+            case EXuLieTu.G4Two_Shu:
                 rt = rt_Grid4_Shu;
                 break;
-            case EXunLieTu.G5Three_Heng:
+            case EXuLieTu.G5Three_Heng:
                 rt = rt_Grid5_Heng;
                 break;
-            case EXunLieTu.G5Three_Shu:
+            case EXuLieTu.G5Three_Shu:
                 rt = rt_Grid5_Shu;
                 break;
             default:
@@ -159,7 +153,7 @@ public class Game_XuLieTu : SubUI
             {
                 go_Top.SetActive(false);
                 go_Bottom.SetActive(false);
-                MyEventCenter.SendEvent(E_GameEvent.ShowDuoTuInfo, EGameType.XunLieTu, resultBeans);
+                MyEventCenter.SendEvent(E_GameEvent.ShowDuoTuInfo, EGameType.XuLieTu, resultBeans);
 
             }
             else // 单击
@@ -171,7 +165,7 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    private void DeleteOneLine(EXunLieTu type)           // 删除整行
+    private void DeleteOneLine(EXuLieTu type)           // 删除整行
     {
         Ctrl_TextureInfo.Instance.DeleteXuLieTuOneLine(type);
         RectTransform rt = GetParentRT(type);
@@ -188,11 +182,10 @@ public class Game_XuLieTu : SubUI
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EXunLieTu, List<FileInfo>, bool>(E_GameEvent.DaoRu_XunLieTu, E_OnDaoRu);        // 导入
-        MyEventCenter.AddListener<EXunLieTu, List<ResultBean>>(E_GameEvent.ResultDaoRu_XunLieTu, E_ResultDaoRu);  // 结果导入
+        MyEventCenter.AddListener<EXuLieTu, List<FileInfo>>(E_GameEvent.DaoRu_XLT_FromFile, E_OnDaoRu);        // 导入
+        MyEventCenter.AddListener<EXuLieTu, List<ResultBean>>(E_GameEvent.DaoRu_XLT_FromResult, E_ResultDaoRu);  // 结果导入
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);                                 // 确定删除
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);                                             // 删除全部
-        MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);                    // 显示可以改变大小
         MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseDuoTuInfo, E_CloseDuoTuInfo);                       // 关闭多图信息
         MyEventCenter.AddListener<EGameType,string[]>(E_GameEvent.OnClickNoSaveThisDuoTu, E_DeleteOne);           // 多图信息中删除一个
 
@@ -231,28 +224,25 @@ public class Game_XuLieTu : SubUI
         AddButtOnClick("Top/Left/DeleteAll", Btn_DeleteOneLine);
 
 
-        //改变 Grid 大小
-        l_Grids = Gets<UGUI_Grid>("Top/Contant/ScrollView");
-        input_GridSize = Get<InputField>("Top/Left/ChangeSize/InputField");
-        go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
-        slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
-        AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
+
+
     }
 
 
 
     public override void OnEnable()
     {
-        go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
-        for (int i = 0; i < l_Grids.Length; i++)
-        {
-            l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[i].CurrentSize;
-        }
-        slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[0].ChangeValue;
 
+        Get<UGUI_Grid>("Top/Contant/ScrollView/Item1").CallSize = Ctrl_UserInfo.XLTSize1;
+        Get<UGUI_Grid>("Top/Contant/ScrollView/Item2").CallSize = Ctrl_UserInfo.XLTSize2;
+        Get<UGUI_Grid>("Top/Contant/ScrollView/Item3").CallSize = Ctrl_UserInfo.XLTSize3;
+
+
+        // 底下的文字
         tx_BottomName1.text = Ctrl_UserInfo.BottomXuLieTuName[0];
         tx_BottomName2.text = Ctrl_UserInfo.BottomXuLieTuName[1];
         tx_BottomName3.text = Ctrl_UserInfo.BottomXuLieTuName[2];
+
     }
 
 
@@ -278,7 +268,7 @@ public class Game_XuLieTu : SubUI
                         MyLog.Red("选择了其他的格式文件 —— " + fileInfo.Name);
                     }
                 }
-                MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu, mCurrentIndex, fileInfos, true);
+                MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile,EGameType.XuLieTu, (ushort)mCurrentIndex, fileInfos, true);
             });
     }
 
@@ -289,23 +279,23 @@ public class Game_XuLieTu : SubUI
         string tittle = "删除";
         switch (mCurrentIndex)
         {
-            case EXunLieTu.G1Zheng:
+            case EXuLieTu.G1Zheng:
                 tittle += " 小等边 的所有序列图片？";
                 break;
-            case EXunLieTu.G2Zheng_XiTong:
+            case EXuLieTu.G2Zheng_XiTong:
                 tittle += " 系统等边 的所有序列图片？";
                 break;
-            case EXunLieTu.G3Zheng_Big:
+            case EXuLieTu.G3Zheng_Big:
                 tittle += " 大等边 的所有序列图片？";
                 break;
-            case EXunLieTu.G4Two_Heng:
+            case EXuLieTu.G4Two_Heng:
                 tittle += " 2倍 的所有序列图片？";
                 break;
-            case EXunLieTu.G5Three_Heng:
+            case EXuLieTu.G5Three_Heng:
                 tittle += " 3倍 的所有序列图片？";
                 break;
         }
-        MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.XunLieTu, tittle);
+        MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.XuLieTu, tittle);
     }
 
 
@@ -316,64 +306,35 @@ public class Game_XuLieTu : SubUI
         {
             case ITEM_STR1:
                 toggle5_Contant.Change2One();
-                mCurrentIndex = EXunLieTu.G1Zheng;
+                mCurrentIndex = EXuLieTu.G1Zheng;
                 btn_DaoRu.interactable = true;
                 mScrollRect.content = rt_Grid1;
                 break;
             case ITEM_STR2:
                 toggle5_Contant.Change2Two();
-                mCurrentIndex = EXunLieTu.G2Zheng_XiTong;
+                mCurrentIndex = EXuLieTu.G2Zheng_XiTong;
                 btn_DaoRu.interactable = true;
                 mScrollRect.content = rt_Grid2;
                 break;
             case ITEM_STR3:
                 toggle5_Contant.Change2Three();
-                mCurrentIndex = EXunLieTu.G3Zheng_Big;
+                mCurrentIndex = EXuLieTu.G3Zheng_Big;
                 btn_DaoRu.interactable = true;
                 mScrollRect.content = rt_Grid3;
                 break;
             case ITEM_STR4:
                 toggle5_Contant.Change2Four();
-                mCurrentIndex = EXunLieTu.G4Two_Heng;
+                mCurrentIndex = EXuLieTu.G4Two_Heng;
                 btn_DaoRu.interactable = false;
                 mScrollRect.content = rt_Grid4_Shu;
                 break;
             case ITEM_STR5:
                 toggle5_Contant.Change2Five();
-                mCurrentIndex = EXunLieTu.G5Three_Heng;
+                mCurrentIndex = EXuLieTu.G5Three_Heng;
                 btn_DaoRu.interactable = false;
                 mScrollRect.content = rt_Grid5_Shu;
                 break;
         }
-        if (Ctrl_UserInfo.Instance.IsCanChangeSize)
-        {
-            if (mCurrentIndex == EXunLieTu.G1Zheng || mCurrentIndex == EXunLieTu.G2Zheng_XiTong || mCurrentIndex == EXunLieTu.G3Zheng_Big)
-            {
-                go_ChangeSize.SetActive(true);
-                slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTuSize[(int)mCurrentIndex].ChangeValue;
-                input_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
-            }
-            else
-            {
-                go_ChangeSize.SetActive(false);
-
-            }
-        }
-
-
-    }
-
-    private void Slider_OnGridSizeChange(float value)          // 改变 Grid 大小
-    {
-        int gridIndex = (int)mCurrentIndex;
-        int tmpValue = (int)value;
-        Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].ChangeValue = tmpValue;
-        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].YuanSize;
-        Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
-        l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_XuLieTuSize[gridIndex].CurrentSize;
-        input_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
-
-
     }
 
 
@@ -382,31 +343,14 @@ public class Game_XuLieTu : SubUI
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_OnDaoRu(EXunLieTu tuType, List<FileInfo> fileInfos, bool isSave) // 接收导入事件 ，创建一个序列图
+    private void E_OnDaoRu(EXuLieTu tuType, List<FileInfo> fileInfos) // 接收导入事件 ，创建一个序列图
     {
-        string[] paths = new string[fileInfos.Count];
-        ;
-        for (int i = 0; i < fileInfos.Count; i++)
-        {
-            paths[i] = fileInfos[i].FullName;
-        }
-
-        // 保存一下信息
-        if (isSave)
-        {
-            bool isOk = Ctrl_TextureInfo.Instance.SaveXunLieTu(tuType, paths);
-            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.XunLieTu, isOk,null);
-            if (!isOk)
-            {
-                return;
-            }
-        }
 
         // 1. 创建一个实例
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(tuType), CREATE_FILE_NAME);
 
         // 2. 加载图片
-        MyLoadTu.LoadMultipleTu(paths, (resBean) =>
+        MyLoadTu.LoadMultipleTu(fileInfos, (resBean) =>
         {
             // 3. 完成后把图集加上去
             InitMoBan(t, resBean);
@@ -414,21 +358,8 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    private void E_ResultDaoRu(EXunLieTu tuType, List<ResultBean> resultBeans)
+    private void E_ResultDaoRu(EXuLieTu tuType, List<ResultBean> resultBeans)
     {
-        string[] paths = new string[resultBeans.Count];
-        ;
-        for (int i = 0; i < resultBeans.Count; i++)
-        {
-            paths[i] = resultBeans[i].File.FullName;
-        }
-        // 保存一下信息
-        bool isOk = Ctrl_TextureInfo.Instance.SaveXunLieTu(tuType, paths);
-        MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.XunLieTu, isOk,null);
-        if (!isOk)
-        {
-            return;
-        }
         Transform t = InstantiateMoBan(go_MoBan, GetParentRT(tuType), CREATE_FILE_NAME);
         InitMoBan(t, resultBeans.ToArray());
     }
@@ -440,19 +371,19 @@ public class Game_XuLieTu : SubUI
 
     private void E_DelteTrue(EGameType type)               // 真的删除
     {
-        if (type == EGameType.XunLieTu)
+        if (type == EGameType.XuLieTu)
         {
             switch (mCurrentIndex)
             {
-                case EXunLieTu.G4Two_Heng:
-                case EXunLieTu.G4Two_Shu:
-                    DeleteOneLine(EXunLieTu.G4Two_Heng);
-                    DeleteOneLine(EXunLieTu.G4Two_Shu);
+                case EXuLieTu.G4Two_Heng:
+                case EXuLieTu.G4Two_Shu:
+                    DeleteOneLine(EXuLieTu.G4Two_Heng);
+                    DeleteOneLine(EXuLieTu.G4Two_Shu);
                     break;
-                case EXunLieTu.G5Three_Heng:
-                case EXunLieTu.G5Three_Shu:
-                    DeleteOneLine(EXunLieTu.G5Three_Heng);
-                    DeleteOneLine(EXunLieTu.G5Three_Shu);
+                case EXuLieTu.G5Three_Heng:
+                case EXuLieTu.G5Three_Shu:
+                    DeleteOneLine(EXuLieTu.G5Three_Heng);
+                    DeleteOneLine(EXuLieTu.G5Three_Shu);
                     break;
                 default:
                     DeleteOneLine(mCurrentIndex);
@@ -466,7 +397,7 @@ public class Game_XuLieTu : SubUI
     private void E_DeleteAll()                             // 删除所有
     {
         go_CurrentSelect = null;
-        foreach (EXunLieTu type in Enum.GetValues(typeof(EXunLieTu)))
+        foreach (EXuLieTu type in Enum.GetValues(typeof(EXuLieTu)))
         {
             DeleteOneLine(type);
         }
@@ -474,16 +405,11 @@ public class Game_XuLieTu : SubUI
     }
 
 
-    private void E_IsShowChangeSize(bool isOn)            // 是否显示改变大小的Slider
-    {
-        go_ChangeSize.SetActive(isOn);
-    }
-
 
 
     private void E_CloseDuoTuInfo(EGameType type)        // 关闭显示多图信息
     {
-        if (type == EGameType.XunLieTu)
+        if (type == EGameType.XuLieTu)
         {
             go_Top.SetActive(true);
             go_Bottom.SetActive(true);
@@ -493,7 +419,7 @@ public class Game_XuLieTu : SubUI
 
     private void E_DeleteOne(EGameType type, string[] paths)               // 多图信息中删除一个 
     {
-        if (type == EGameType.XunLieTu)
+        if (type == EGameType.XuLieTu)
         {
             Ctrl_TextureInfo.Instance.DeleteXuLieTuSave(mCurrentIndex, paths);
             UnityEngine.Object.Destroy(go_CurrentSelect);

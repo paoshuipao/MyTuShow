@@ -212,7 +212,7 @@ public class Game_Audio : SubUI
         MyEventCenter.AddListener<EAudioType, AudioResBean>(E_GameEvent.ResultDaoRu_Audio, (type, resBean) =>
         {
             bool isSaveOk = E_DaoRu(type,resBean,true);
-            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null);
+//            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>,bool>(E_GameEvent.DaoRuResult, EGameType.Audio, isSaveOk, null,true);
 
 
         });

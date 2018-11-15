@@ -45,7 +45,6 @@ public class Game_XuLieTu222 : SubUI
     }
 
 
-
     #region 私有
 
     private EXuLieTu222 mCurrentIndex = EXuLieTu222.XLT222_1;
@@ -80,7 +79,8 @@ public class Game_XuLieTu222 : SubUI
     private GameObject go_ChangeSize;
     private UGUI_Grid[] l_Grids;
     private Slider slider_ChangeSize;
-    private InputField input_GridSize;
+    private Text tx_Size;
+    private InputField input_Size;
 
 
 
@@ -153,7 +153,7 @@ public class Game_XuLieTu222 : SubUI
             {
                 go_Top.SetActive(false);
                 go_Bottom.SetActive(false);
-                MyEventCenter.SendEvent(E_GameEvent.ShowDuoTuInfo, EGameType.XunLieTu222, resultBeans);
+                MyEventCenter.SendEvent(E_GameEvent.ShowDuoTuInfo, EGameType.XuLieTu222, resultBeans);
 
             }
             else // 单击
@@ -178,8 +178,8 @@ public class Game_XuLieTu222 : SubUI
 
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener<EXuLieTu222, List<FileInfo>, bool>(E_GameEvent.DaoRu_XunLieTu222, E_OnDaoRu);
-        MyEventCenter.AddListener<EXuLieTu222, List<ResultBean>>(E_GameEvent.ResultDaoRu_XunLieTu222, E_ResultDaoRu);
+        MyEventCenter.AddListener<EXuLieTu222, List<FileInfo>>(E_GameEvent.DaoRu_XLT222_FromFile, E_OnDaoRu);
+        MyEventCenter.AddListener<EXuLieTu222, List<ResultBean>>(E_GameEvent.DaoRu_XLT222_FromResult, E_ResultDaoRu);
         MyEventCenter.AddListener<bool>(E_GameEvent.ShowChangeSizeSlider, E_IsShowChangeSize);                    // 是否显示改大小
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);                                 // 确定删除
         MyEventCenter.AddListener(E_GameEvent.DelteAll, E_DeleteAll);                                             // 删除全部
@@ -220,24 +220,34 @@ public class Game_XuLieTu222 : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/SrcollRect");
-        input_GridSize = Get<InputField>("Top/Left/ChangeSize/InputField");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
+        tx_Size = Get<Text>("Top/Left/ChangeSize/TxSize");
         AddSliderOnValueChanged(slider_ChangeSize, Slider_OnGridSizeChange);
-
+        input_Size = Get<InputField>("Top/Left/ChangeSize/InputSize");
+        AddInputOnEndEdit(input_Size, Input_SizeEdit);
 
     }
 
 
     public override void OnEnable()
     {
+        // 是否显示 改变大小
         go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+        // 每个 Grid 的大小设置一下
         for (int i = 0; i < l_Grids.Length; i++)
         {
             l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[i].CurrentSize;
         }
+        // Slider 设置一下
+        slider_ChangeSize.minValue = Ctrl_UserInfo.XuLieTu222MinMax.x;
+        slider_ChangeSize.maxValue = Ctrl_UserInfo.XuLieTu222MinMax.y;
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTu222Size[0].ChangeValue;
+        tx_Size.text = Ctrl_UserInfo.Instance.L_XuLieTu222Size[0].CurrentSize.x.ToString();
 
+
+
+        // 底下的文字
         tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
         tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
         tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];
@@ -251,7 +261,7 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_OnBottomDoubleClick()                            // 底下 双击 改名
     {
-        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.XunLieTu222, Ctrl_UserInfo.Instance.BottomXuLeTu222Name[(int)mCurrentIndex]);
+        MyEventCenter.SendEvent(E_GameEvent.ShowGeiMingUI, EGameType.XuLieTu222, Ctrl_UserInfo.Instance.BottomXuLeTu222Name[(int)mCurrentIndex]);
     }
 
 
@@ -273,7 +283,7 @@ public class Game_XuLieTu222 : SubUI
                         MyLog.Red("选择了其他的格式文件 —— " + fileInfo.Name);
                     }
                 }
-                MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu222, mCurrentIndex, fileInfos, true);
+                MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile,EGameType.XuLieTu222, (ushort)mCurrentIndex, fileInfos, true);
             });
     }
 
@@ -300,7 +310,7 @@ public class Game_XuLieTu222 : SubUI
                 tittle += " 序图5 的所有序列图片？";
                 break;
         }
-        MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.XunLieTu222, tittle);
+        MyEventCenter.SendEvent(E_GameEvent.ShowIsSure, EGameType.XuLieTu222, tittle);
     }
 
 
@@ -332,7 +342,7 @@ public class Game_XuLieTu222 : SubUI
                 break;
         }
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_XuLieTu222Size[(int)mCurrentIndex].ChangeValue;
-        input_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
+        tx_Size.text = Ctrl_UserInfo.Instance.L_XuLieTu222Size[(int) mCurrentIndex].CurrentSize.x.ToString();
         m_SrollView.content = GetParent(mCurrentIndex);
     }
 
@@ -342,14 +352,38 @@ public class Game_XuLieTu222 : SubUI
         int gridIndex = (int)mCurrentIndex;
         int tmpValue = (int)value;
         Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].ChangeValue = tmpValue;
-        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].YuanSize;
+        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].YuanSize;    // 原大小
         Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
+        tx_Size.text = Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].CurrentSize.x.ToString();
         l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[gridIndex].CurrentSize;
-        input_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
 
 
     }
 
+
+    private void Input_SizeEdit(string value)                      // Input 改大小
+    { 
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+        int intValue = Convert.ToInt32(value);
+        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_XuLieTu222Size[(int)mCurrentIndex].YuanSize;   // 原大小
+
+        intValue = intValue - (int)yuanSize.x;
+
+        if (intValue< Ctrl_UserInfo.XuLieTu222MinMax.x)
+        {
+            intValue = (int)Ctrl_UserInfo.XuLieTu222MinMax.x;
+        }
+        if (intValue > Ctrl_UserInfo.XuLieTu222MinMax.y)
+        {
+            intValue = (int)Ctrl_UserInfo.XuLieTu222MinMax.y;
+        }
+        slider_ChangeSize.value = intValue;
+        input_Size.text = "";
+
+    }
 
 
 
@@ -357,31 +391,13 @@ public class Game_XuLieTu222 : SubUI
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_OnDaoRu(EXuLieTu222 tuType, List<FileInfo> fileInfos, bool isSave) // 接收导入事件 ，创建一个序列图
+    private void E_OnDaoRu(EXuLieTu222 tuType, List<FileInfo> fileInfos) // 接收导入事件 ，创建一个序列图
     {
-        string[] paths = new string[fileInfos.Count];
-        ;
-        for (int i = 0; i < fileInfos.Count; i++)
-        {
-            paths[i] = fileInfos[i].FullName;
-        }
-
-        // 保存一下信息
-        if (isSave)
-        {
-            bool isOk = Ctrl_TextureInfo.Instance.SaveXunLieTu222(tuType, paths);
-            MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.XunLieTu222, isOk, null);
-            if (!isOk)
-            {
-                return;
-            }
-        }
-
         // 1. 创建一个实例
         Transform t = InstantiateMoBan(go_MoBan, GetParent(tuType), CREATE_FILE_NAME);
 
         // 2. 加载图片
-        MyLoadTu.LoadMultipleTu(paths, (resBean) =>
+        MyLoadTu.LoadMultipleTu(fileInfos, (resBean) =>
         {
             // 3. 完成后把图集加上去
             InitMoBan(t, resBean);
@@ -392,19 +408,6 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_ResultDaoRu(EXuLieTu222 tuType, List<ResultBean> resultBeans)
     {
-        string[] paths = new string[resultBeans.Count];
-        ;
-        for (int i = 0; i < resultBeans.Count; i++)
-        {
-            paths[i] = resultBeans[i].File.FullName;
-        }
-        // 保存一下信息
-        bool isOk = Ctrl_TextureInfo.Instance.SaveXunLieTu222(tuType, paths);
-        MyEventCenter.SendEvent<EGameType, bool, List<FileInfo>>(E_GameEvent.DaoRuResult, EGameType.XunLieTu222, isOk, null);
-        if (!isOk)
-        {
-            return;
-        }
         Transform t = InstantiateMoBan(go_MoBan, GetParent(tuType), CREATE_FILE_NAME);
         InitMoBan(t, resultBeans.ToArray());
     }
@@ -420,7 +423,7 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_CloseDuoTuInfo(EGameType type)                   // 关闭显示多图信息
     {
-        if (type == EGameType.XunLieTu222)
+        if (type == EGameType.XuLieTu222)
         {
             go_Top.SetActive(true);
             go_Bottom.SetActive(true);
@@ -430,7 +433,7 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_DeleteOne(EGameType type, string[] paths)       // 多图信息中删除一个
     {
-        if (type == EGameType.XunLieTu222)
+        if (type == EGameType.XuLieTu222)
         {
             Ctrl_TextureInfo.Instance.DeleteXuLieTu222Save(mCurrentIndex, paths);
             UnityEngine.Object.Destroy(go_CurrentSelect);
@@ -441,7 +444,7 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_DelteTrue(EGameType type)                       // 真的删除
     {
-        if (type == EGameType.XunLieTu222)
+        if (type == EGameType.XuLieTu222)
         {
             DeleteOneLine(mCurrentIndex);
         }
@@ -460,7 +463,7 @@ public class Game_XuLieTu222 : SubUI
 
     private void E_OnSureGaiMing(EGameType type, string changeNamne)           // 确定改名
     {
-        if (type == EGameType.XunLieTu222)
+        if (type == EGameType.XuLieTu222)
         {
             switch (mCurrentIndex)
             {

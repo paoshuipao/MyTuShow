@@ -11,8 +11,8 @@ using UnityEngine.UI;
 
 public enum EGameType
 {
-    XunLieTu,
-    XunLieTu222,
+    XuLieTu,
+    XuLieTu222,
     JiHeXuLieTu,
     TaoMingTu,
     NormalTu,
@@ -53,11 +53,11 @@ public class UIStart_Game : BaseUI
 
         AddButtOnClick("Left/Contant/Group/XuLieTu", () =>
         {
-            Btn_OnLeftClick(EGameType.XunLieTu);
+            Btn_OnLeftClick(EGameType.XuLieTu);
         });
         AddButtOnClick("Left/Contant/Group/XuLieTu222", () =>
         {
-            Btn_OnLeftClick(EGameType.XunLieTu222);
+            Btn_OnLeftClick(EGameType.XuLieTu222);
         });
         AddButtOnClick("Left/Contant/Group/JiHeXuLieTu", () =>
         {
@@ -132,7 +132,17 @@ public class UIStart_Game : BaseUI
 
     protected override void OnEnable()
     {
-        E_OnToggleChange(EGameType.XunLieTu,0);
+        E_OnToggleChange(EGameType.XuLieTu,0);
+
+        Get<Text>("Left/Contant/Group/XuLieTu/Kuang/Text").text = Ctrl_UserInfo.XuLieTu_LeftStr;
+        Get<Text>("Left/Contant/Group/XuLieTu222/Kuang/Text").text = Ctrl_UserInfo.XuLieTu222_LeftStr;
+        Get<Text>("Left/Contant/Group/JiHeXuLieTu/Kuang/Text").text = Ctrl_UserInfo.JiHeXuLieTu_LeftStr;
+        Get<Text>("Left/Contant/Group/TaoMingTu/Kuang/Text").text = Ctrl_UserInfo.TaoMingTu_LeftStr;
+        Get<Text>("Left/Contant/Group/NormalTu/Kuang/Text").text = Ctrl_UserInfo.JpgTu_LeftStr;
+        Get<Text>("Left/Contant/Group/JiHeTu/Kuang/Text").text = Ctrl_UserInfo.JiHeTu_LeftStr;
+
+
+
     }
 
     protected override void OnAddListener()
@@ -291,7 +301,7 @@ public class UIStart_Game : BaseUI
 
         #region 序列图
 
-        foreach (EXunLieTu type in Enum.GetValues(typeof(EXunLieTu)))
+        foreach (EXuLieTu type in Enum.GetValues(typeof(EXuLieTu)))
         {
             List<string[]> list = Ctrl_TextureInfo.Instance.GetXunLieTuPaths(type); // 获得这一页的所有数据
             for (int i = 0; i < list.Count; i++) // 加载每一个
@@ -311,7 +321,7 @@ public class UIStart_Game : BaseUI
                 }
                 if (isChuZai) // 存在就导入进来
                 {
-                    MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu, type, fileInfos, false);
+                    MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.XuLieTu,(ushort)type, fileInfos, false);
                     yield return 0;
                 }
                 else // 不存在就删除存储的
@@ -322,6 +332,7 @@ public class UIStart_Game : BaseUI
             yield return 0;
         }
         #endregion
+
         Get<Button>("Left/Contant/Group/XuLieTu").interactable = true;
         yield return 0;
 
@@ -349,7 +360,7 @@ public class UIStart_Game : BaseUI
                 }
                 if (isChuZai) // 存在就导入进来
                 {
-                    MyEventCenter.SendEvent(E_GameEvent.DaoRu_XunLieTu222, type, fileInfos, false);
+                    MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.XuLieTu222, (ushort)type, fileInfos, false);
                     yield return 0;
                 }
                 else // 不存在就删除存储的
@@ -383,7 +394,7 @@ public class UIStart_Game : BaseUI
                     Ctrl_TextureInfo.Instance.DeleteJiHeXuLieSave(type, list[i]);
                 }
             }
-            MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeXuLieTu, type, tmpFileInfos, false);
+            MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.JiHeXuLieTu, (ushort)type, tmpFileInfos, false);
             yield return 0;
 
         }
@@ -411,7 +422,7 @@ public class UIStart_Game : BaseUI
                     Ctrl_TextureInfo.Instance.DeleteTaoMingSave(type, list[i]);
                 }
             }
-            MyEventCenter.SendEvent(E_GameEvent.DaoRu_TaoMingTu, type, tmpFileInfos, false);
+            MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.TaoMingTu, (ushort)type, tmpFileInfos, false);
             yield return 0;
         }
         #endregion
@@ -439,7 +450,7 @@ public class UIStart_Game : BaseUI
                     Ctrl_TextureInfo.Instance.DeleteJpgSave(type, list[i]);
                 }
             }
-            MyEventCenter.SendEvent(E_GameEvent.DaoRu_NormalTu, type, tmpFileInfos, false);
+            MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.NormalTu, (ushort)type, tmpFileInfos, false);
             yield return 0;
         }
         #endregion
@@ -465,7 +476,7 @@ public class UIStart_Game : BaseUI
                     Ctrl_TextureInfo.Instance.DeleteJiHeSave(type, list[i]);
                 }
             }
-            MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeTu, type, tmpFileInfos, false);
+            MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile, EGameType.JiHeTu, (ushort)type, tmpFileInfos, false);
             yield return 0;
         }
         #endregion
@@ -625,11 +636,11 @@ public class UIStart_Game : BaseUI
     {
         switch (mCurrentType)
         {
-            case EGameType.XunLieTu:
+            case EGameType.XuLieTu:
                 go_XuLieChoose1.SetActive(false);
                 go_XuLieChoose2.SetActive(false);
                 break;
-            case EGameType.XunLieTu222:
+            case EGameType.XuLieTu222:
                 go_XuLie222Choose1.SetActive(false);
                 go_XuLie222Choose2.SetActive(false);
                 break;
@@ -662,13 +673,13 @@ public class UIStart_Game : BaseUI
         sub_Audio.ChangeOtherPage();
         switch (type)
         {
-            case EGameType.XunLieTu:
+            case EGameType.XuLieTu:
                 go_XuLieChoose1.SetActive(true);
                 go_XuLieChoose2.SetActive(true);
                 sub_XuLieTu1.Show(choose);
                 d8_RightContant.Change2One();
                 break;
-            case EGameType.XunLieTu222:
+            case EGameType.XuLieTu222:
                 go_XuLie222Choose1.SetActive(true);
                 go_XuLie222Choose2.SetActive(true);
                 sub_XuLieTu222.Show(choose);

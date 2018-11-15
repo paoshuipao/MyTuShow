@@ -102,53 +102,53 @@ public class Game_DuoTuDaoRu : SubUI
         // 序列图
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item1/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G1Zheng, 0);
+            ManyBtn_DaoRu(EGameType.XuLieTu,(ushort)EXuLieTu.G1Zheng);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item2/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G2Zheng_XiTong, 1);
+            ManyBtn_DaoRu(EGameType.XuLieTu,(ushort)EXuLieTu.G2Zheng_XiTong);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item3/Btn", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G3Zheng_Big, 2);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G3Zheng_Big);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item4/BtnHeng", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Heng, 3);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G4Two_Heng);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item4/BtnShu", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G4Two_Shu, 3);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G4Two_Shu);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item5/BtnHeng", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Heng, 4);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G5Three_Heng);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu/Contant/Item5/BtnShu", () =>
         {
-            ManyBtn_XunLieTuDaoRu(EXunLieTu.G5Three_Shu, 4);
+            ManyBtn_DaoRu(EGameType.XuLieTu, (ushort)EXuLieTu.G5Three_Shu);
         });
 
         // 序列图222
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_1);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_1);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_2);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_2);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_3);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_3);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_4);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_4);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_XunLieTu222/Contant/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoXuLieTu222(EXuLieTu222.XLT222_5);
+            ManyBtn_DaoRu(EGameType.XuLieTu222, (ushort)EXuLieTu222.XLT222_5);
         });
 
 
@@ -157,67 +157,67 @@ public class Game_DuoTuDaoRu : SubUI
         // 集合序列图
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType.JiHeXLT1);
+            ManyBtn_DaoRu(EGameType.JiHeXuLieTu,(ushort)EJiHeXuLieTuType.JiHeXLT1);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType.JiHeXLT2);
+            ManyBtn_DaoRu(EGameType.JiHeXuLieTu, (ushort)EJiHeXuLieTuType.JiHeXLT2);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType.JiHeXLT3);
+            ManyBtn_DaoRu(EGameType.JiHeXuLieTu, (ushort)EJiHeXuLieTuType.JiHeXLT3);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType.JiHeXLT4);
+            ManyBtn_DaoRu(EGameType.JiHeXuLieTu, (ushort)EJiHeXuLieTuType.JiHeXLT4);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/Contant/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType.JiHeXLT4);
+            ManyBtn_DaoRu(EGameType.JiHeXuLieTu, (ushort)EJiHeXuLieTuType.JiHeXLT4);
         });
 
         // 透明图
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Png/Contant/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoRuTaoMingTu(ETaoMingType.XiTong);
+            ManyBtn_DaoRu(EGameType.TaoMingTu,(ushort)ETaoMingType.XiTong);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Png/Contant/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoRuTaoMingTu(ETaoMingType.WenZi);
+            ManyBtn_DaoRu(EGameType.TaoMingTu, (ushort)ETaoMingType.WenZi);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Png/Contant/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoRuTaoMingTu(ETaoMingType.WuQi);
+            ManyBtn_DaoRu(EGameType.TaoMingTu, (ushort)ETaoMingType.WuQi);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Png/Contant/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoRuTaoMingTu(ETaoMingType.DaoJu);
+            ManyBtn_DaoRu(EGameType.TaoMingTu, (ushort)ETaoMingType.DaoJu);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Png/Contant/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoRuTaoMingTu(ETaoMingType.ChengJi);
+            ManyBtn_DaoRu(EGameType.TaoMingTu, (ushort)ETaoMingType.ChengJi);
         });
 
         // Jpg
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Jpg/Contant/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJpgTu(ENormalTuType.Jpg1);
+            ManyBtn_DaoRu(EGameType.NormalTu, (ushort)ENormalTuType.Jpg1);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Jpg/Contant/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJpgTu(ENormalTuType.Jpg2);
+            ManyBtn_DaoRu(EGameType.NormalTu, (ushort)ENormalTuType.Jpg2);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Jpg/Contant/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJpgTu(ENormalTuType.Jpg3);
+            ManyBtn_DaoRu(EGameType.NormalTu, (ushort)ENormalTuType.Jpg3);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Jpg/Contant/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJpgTu(ENormalTuType.Jpg4);
+            ManyBtn_DaoRu(EGameType.NormalTu, (ushort)ENormalTuType.Jpg4);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_Jpg/Contant/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJpgTu(ENormalTuType.Jpg5);
+            ManyBtn_DaoRu(EGameType.NormalTu, (ushort)ENormalTuType.Jpg5);
         });
 
 
@@ -226,23 +226,23 @@ public class Game_DuoTuDaoRu : SubUI
         // 集合图
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHe/Contant/Btn1/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe1);
+            ManyBtn_DaoRu(EGameType.JiHeTu, (ushort)EJiHeType.JiHe1);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHe/Contant/Btn2/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe2);
+            ManyBtn_DaoRu(EGameType.JiHeTu, (ushort)EJiHeType.JiHe2);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHe/Contant/Btn3/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe3);
+            ManyBtn_DaoRu(EGameType.JiHeTu, (ushort)EJiHeType.JiHe3);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHe/Contant/Btn4/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe4);
+            ManyBtn_DaoRu(EGameType.JiHeTu, (ushort)EJiHeType.JiHe4);
         });
         AddButtOnClick("BottomContrl/ScrollView/Contant/Item_JiHe/Contant/Btn5/BtnMDR", () =>
         {
-            ManyBtn_DaoRuJiHeTu(EJiHeType.JiHe5);
+            ManyBtn_DaoRu(EGameType.JiHeTu, (ushort)EJiHeType.JiHe5);
         });
 
 
@@ -497,79 +497,14 @@ public class Game_DuoTuDaoRu : SubUI
     }
 
 
-
-
-    //—————————————————— 导入按钮 ——————————————————
-
-    private void ManyBtn_XunLieTuDaoRu(EXunLieTu tuType, int index)      // 点击了序列图的导入
+    private void ManyBtn_DaoRu(EGameType type, ushort index)       // 点击导入
     {
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu, tuType, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, index);
-
-        // 2.关闭多选信息
-        Btn_OnCloseThis();
-
-    }
-
-    private void ManyBtn_DaoXuLieTu222(EXuLieTu222 type)                 // 点击导入 集合序列图
-    {
-        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_XunLieTu222, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-        // 2.关闭多选信息
+        MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromResult, type, index, resultBeans,true);
         Btn_OnCloseThis();
     }
 
 
-    private void ManyBtn_DaoJiHeXuLieTu(EJiHeXuLieTuType type)           // 点击导入 集合序列图
-    {
-        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_JiHeXuLieTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-        // 2.关闭多选信息
-        Btn_OnCloseThis();
-    }
-
-    private void ManyBtn_DaoRuTaoMingTu(ETaoMingType type)               // 点击导入 透明图
-    {
-
-        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_TaoMingTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-        // 2.关闭多选信息
-        Btn_OnCloseThis();
-    }
-
-    private void ManyBtn_DaoRuJpgTu(ENormalTuType type)                  // 点击导入 Jpg
-    {
-
-        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_NormalTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-        // 2.关闭多选信息
-        Btn_OnCloseThis();
-
-    }
-
-
-    private void ManyBtn_DaoRuJiHeTu(EJiHeType type)                     // 点击导入 集合
-    {
-
-        List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
-        // 1. 发送导入的事件
-        MyEventCenter.SendEvent(E_GameEvent.ResultDaoRu_JiHeTu, type, resultBeans);
-        MyEventCenter.SendEvent(E_GameEvent.OnClickDaoRu, resultBeans, (int)type);
-        // 2.关闭多选信息
-        Btn_OnCloseThis();
-
-    }
 
 
 
@@ -657,7 +592,7 @@ public class Game_DuoTuDaoRu : SubUI
     {
         switch (type)
         {
-            case EGameType.XunLieTu222:
+            case EGameType.XuLieTu222:
                 tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
                 tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
                 tx_DuoXLT222_3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];

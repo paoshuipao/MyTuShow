@@ -131,27 +131,19 @@ public static class MyLoadTu
 
 
 
-    public static void LoadMultipleTu(string[] paths,Action<ResultBean[]> callBack)
+    public static void LoadMultipleTu(List<FileInfo> l_FileInfos, Action<ResultBean[]> callBack)
     {
 
-        List<FileInfo> l_FileInfos = new List<FileInfo>();
-
-        foreach (string path in paths)
+        for (int i = 0; i < l_FileInfos.Count; i++)
         {
-            FileInfo fileInfo = new FileInfo(path);
-            if (fileInfo.Exists)                // 这个文件存在才加进来
+            if (!l_FileInfos[i].Exists)
             {
-                l_FileInfos.Add(fileInfo);
-            }
-            else
-            {
-                MyLog.Red("不可能吧，之前已经判断过了 —— "+ path);
+                MyLog.Red("不可能吧，之前已经判断过了 —— " + l_FileInfos[i].FullName);
+                l_FileInfos.RemoveAt(i);
             }
         }
 
         Ctrl_Coroutine.Instance.StartCoroutine(WaitForImage(l_FileInfos, callBack));
-
-
 
     }
 

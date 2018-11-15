@@ -24,8 +24,16 @@ public enum E_GameEvent                           // 这里写事件
 
 
     ChangGameToggleType,            // 切换左边总的选项 （EGameType,int）
-    DaoRuResult,                    // 返回导入结果（EGameType 导入那一个, bool 是否成功,List<FileInfo> 错误集合）
+//    DaoRuResult,                    // 返回导入结果（EGameType 导入那一个, bool 是否成功,List<FileInfo> 错误集合,bool true 结果导入,false File导入）
     GoToNextFolderDaoRu,            // 去一个文件夹导入
+
+
+
+
+    /*
+        导入过程：   点击导入  -> 发DaoRuTuFromFile/DaoRuTuFromResult  ->（在 Game_DaoRuResult 处理） 合格了才向各大项发送导入事件
+     
+     */
 
 
 
@@ -60,34 +68,37 @@ public enum E_GameEvent                           // 这里写事件
 
 
     //——————————————————— 导入 —————————————————
-
-
-    DaoRu_XunLieTu,                    // 导入 序列图（EXunLieTu 类型 ，List<FileInfo> 文件集合 , bool 是否保存)
-    ResultDaoRu_XunLieTu,              // （已加载）导入序列图(EXunLieTu 类，List<ResultBean> 结果集合)
-
-
-    DaoRu_XunLieTu222,                    // 导入 序列图222（EXunLieTu 类型 ，List<FileInfo> 文件集合 , bool 是否保存)
-    ResultDaoRu_XunLieTu222,              //（已加载）导入序列图222(EXunLieTu 类，List<ResultBean> 结果集合)
+    DaoRuTuFromFile,                //导入图片通过文件(EGameType 大类型，ushort 小类型,List<FileInfo> 文件集合，bool 是否保存)
+    DaoRuTuFromResult,              //导入图片通过已加载的结果(EGameType 大类型,ushort 小类型,List<ResultBean> 结果集合,bool 是否从直接导入处导入)
 
 
 
-    DaoRu_JiHeXuLieTu,                   // 导入 集合序列图 (EJiHeXuLieTuType 类型, List<FileInfo> 多文件，bool 是否保存)
-    ResultDaoRu_JiHeXuLieTu,             // （已加载）导入 集合序列图（EJiHeXuLieTuType 类型 ， List<ResultBean> 结果集合）
+    DaoRu_XLT_FromFile,                // 导入序列图（EXuLieTu222 类型 ，List<FileInfo> 文件集合)
+    DaoRu_XLT_FromResult,              // （已加载）导入序列图(EXuLieTu222 类，List<ResultBean> 结果集合)
+
+
+    DaoRu_XLT222_FromFile,            // 导入 序列图222（EXuLieTu 类型 ，List<FileInfo> 文件集合)
+    DaoRu_XLT222_FromResult,          //（已加载）导入序列图222(EXuLieTu 类，List<ResultBean> 结果集合)
 
 
 
-    DaoRu_TaoMingTu,                   // 导入 透明图 (ETaoMingType 类型, List<FileInfo> 多文件，bool 是否保存)
-    ResultDaoRu_TaoMingTu,             // （已加载）导入 透明图（ETaoMingType 类型 ， List<ResultBean> 结果集合）
+    DaoRu_JiHeXLT_FromFile,           // 导入 集合序列图 (EJiHeXuLieTuType 类型, List<FileInfo> 多文件)
+    DaoRu_JiHeXLT_FromResult,         // （已加载）导入 集合序列图（EJiHeXuLieTuType 类型 ， List<ResultBean> 结果集合）
 
 
-    DaoRu_NormalTu,                   // 导入 Jpg图 (ETaoMingType 类型, List<FileInfo> 多文件，bool 是否保存)
-    ResultDaoRu_NormalTu,             // （已加载）导入 Jpg图（ENormalTuType 类型 ， List<ResultBean> 结果集合）
+
+    DaoRu_TaoMing_FromFile,           // 导入 透明图 (ETaoMingType 类型, List<FileInfo> 多文件)
+    DaoRu_TaoMing_FromResult,         // （已加载）导入 透明图（ETaoMingType 类型 ， List<ResultBean> 结果集合）
 
 
-    DaoRu_JiHeTu,                    // 导入 集合图 (EJiHeType 类型, List<FileInfo> 多文件，bool 是否保存)
-    ResultDaoRu_JiHeTu,              // （已加载）导入 集合图（EJiHeType 类型 ， List<ResultBean> 结果集合）
+    DaoRu_Jpg_FromFile,               // 导入 Jpg图 (ENormalTuType 类型, List<FileInfo> 多文件)
+    DaoRu_Jpg_FromResult,             // （已加载）导入 Jpg图（ENormalTuType 类型 ， List<ResultBean> 结果集合）
 
-    ResultDaoRu_Audio,                    // 导入音频（EAudioType 类型,AudioResBean 结果 ）
+
+    DaoRu_JiHe_FromFile,              // 导入 集合图 (EJiHeType 类型, List<FileInfo> 多文件)
+    DaoRu_JiHe_FromResult,            // （已加载）导入 集合图（EJiHeType 类型 ， List<ResultBean> 结果集合）
+
+    ResultDaoRu_Audio,                 // 导入音频（EAudioType 类型,AudioResBean 结果 ）
 
 
 
@@ -119,7 +130,7 @@ public enum E_GameEvent                           // 这里写事件
 
     ShowDuoTuDaoRu,         // 显示多图导入(ResultBean[] 结果集合,string 文件夹路径)
     ShowSingleTuDaoRu,      // 显示单张图片导入（ResultBean 结果）
-    OnClickDaoRu,          // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
+//    OnClickDaoRu,          // 点击了导入( List<ResultBean> 导入结果集合，int 索引)
 
 
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using PSPUtil;
 using PSPUtil.Control;
+using PSPUtil.StaticUtil;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -74,8 +75,8 @@ public class Game_JiHeXuLieTu : SubUI
     private GameObject go_ChangeSize;
     private UGUI_Grid[] l_Grids;
     private Slider slider_ChangeSize;
-    private InputField input_GridSize;
-
+    private Text tx_Size;
+    private InputField input_Size;
 
 
 
@@ -158,11 +159,12 @@ public class Game_JiHeXuLieTu : SubUI
 
     #endregion
 
+
     protected override void OnStart(Transform root)
     {
 
-        MyEventCenter.AddListener<EJiHeXuLieTuType, List<FileInfo>, bool>(E_GameEvent.DaoRu_JiHeXuLieTu, E_OnDaoRu);
-        MyEventCenter.AddListener<EJiHeXuLieTuType, List<ResultBean>>(E_GameEvent.ResultDaoRu_JiHeXuLieTu, E_ResultDaoRu);
+        MyEventCenter.AddListener<EJiHeXuLieTuType, List<FileInfo>>(E_GameEvent.DaoRu_JiHeXLT_FromFile, E_OnDaoRu);
+        MyEventCenter.AddListener<EJiHeXuLieTuType, List<ResultBean>>(E_GameEvent.DaoRu_JiHeXLT_FromResult, E_ResultDaoRu);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.ClickTrue, E_DelteTrue);
         MyEventCenter.AddListener<EGameType, ResultBean>(E_GameEvent.ShowSingleTuInfo, E_ShowNormalTuInfo);
         MyEventCenter.AddListener<EGameType>(E_GameEvent.CloseSingleTuInfo, E_CloseNormalTuInfo);
@@ -204,23 +206,34 @@ public class Game_JiHeXuLieTu : SubUI
 
         //改变 Grid 大小
         l_Grids = Gets<UGUI_Grid>("Top/SrcollRect");
-        input_GridSize = Get<InputField>("Top/Left/ChangeSize/InputField");
         go_ChangeSize = GetGameObject("Top/Left/ChangeSize");
         slider_ChangeSize = Get<Slider>("Top/Left/ChangeSize/Slider");
+        tx_Size = Get<Text>("Top/Left/ChangeSize/TxSize");
         AddSliderOnValueChanged(slider_ChangeSize,Slider_OnGridSizeChange);
+        input_Size = Get<InputField>("Top/Left/ChangeSize/InputSize");
+        AddInputOnEndEdit(input_Size, Input_SizeEdit);
 
     }
 
+
+
     public override void OnEnable()
     {
+        // 是否显示 改变大小
         go_ChangeSize.SetActive(Ctrl_UserInfo.Instance.IsCanChangeSize);
+        // 每个 Grid 的大小设置一下
         for (int i = 0; i < l_Grids.Length; i++)
         {
             l_Grids[i].CallSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[i].CurrentSize;
         }
+        // Slider 设置一下
+        slider_ChangeSize.minValue = Ctrl_UserInfo.JiHeXuLieTuMinMax.x;
+        slider_ChangeSize.maxValue = Ctrl_UserInfo.JiHeXuLieTuMinMax.y;
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[0].ChangeValue;
+        tx_Size.text = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[0].CurrentSize.x.ToString();
 
 
+        // 底下的文字
         tx_BottomName1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
         tx_BottomName2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
         tx_BottomName3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
@@ -265,7 +278,7 @@ public class Game_JiHeXuLieTu : SubUI
                 break;
         }
         slider_ChangeSize.value = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[(int) mCurrentIndex].ChangeValue;
-        input_GridSize.text = l_Grids[(int)mCurrentIndex].CallSize.x.ToString();
+        tx_Size.text = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[(int)mCurrentIndex].CurrentSize.x.ToString();
         m_SrollView.content = GetParent(mCurrentIndex);
     }
 
@@ -286,7 +299,7 @@ public class Game_JiHeXuLieTu : SubUI
                     }
                     
                 }
-                MyEventCenter.SendEvent(E_GameEvent.DaoRu_JiHeXuLieTu, mCurrentIndex, list, false);
+                MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromFile,EGameType.JiHeXuLieTu, (ushort)mCurrentIndex, list, true);
             });
     }
 
@@ -322,23 +335,6 @@ public class Game_JiHeXuLieTu : SubUI
     }
 
 
-
-
-    private void Slider_OnGridSizeChange(float value)          // 改变 Grid 大小
-    {
-        int gridIndex = (int) mCurrentIndex;
-        int tmpValue = (int)value;
-        Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].ChangeValue = tmpValue;
-        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].YuanSize;
-        Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
-        l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize;
-        input_GridSize.text = l_Grids[gridIndex].CallSize.x.ToString();
-
-
-    }
-
-
-
     private void Btn_OnDoubleItemClick(ResultBean resultBean) // 双击显示信息
     {
         mCurrentSelectFile = resultBean.File;
@@ -346,30 +342,66 @@ public class Game_JiHeXuLieTu : SubUI
     }
 
 
-    //—————————————————— 事件 ——————————————————
 
 
-    private void E_OnDaoRu(EJiHeXuLieTuType type, List<FileInfo> infos, bool isSave) // 需要再次加载的 导入
+    private void Slider_OnGridSizeChange(float value)           // 改变 Grid 大小
     {
-        Ctrl_Coroutine.Instance.StartCoroutine(OnDaoRu(type, infos, isSave));
+        int gridIndex = (int) mCurrentIndex;
+        int tmpValue = (int)value;
+        Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].ChangeValue = tmpValue;
+        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].YuanSize;
+        Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize = new Vector2(yuanSize.x + tmpValue, yuanSize.y + tmpValue);
+        l_Grids[gridIndex].CallSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize;
+        tx_Size.text = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[gridIndex].CurrentSize.x.ToString();
+
+
     }
 
 
-    IEnumerator OnDaoRu(EJiHeXuLieTuType type, List<FileInfo> infos, bool isSave)
+
+
+    private void Input_SizeEdit(string value)                      // Input 改大小
     {
-        List<FileInfo> errorList = new List<FileInfo>();
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+        int intValue = Convert.ToInt32(value);
+        Vector2 yuanSize = Ctrl_UserInfo.Instance.L_JiHeXuLieTuSize[(int)mCurrentIndex].YuanSize;   // 原大小
+
+        intValue = intValue - (int)yuanSize.x;
+
+        if (intValue < Ctrl_UserInfo.JiHeXuLieTuMinMax.x)
+        {
+            intValue = (int)Ctrl_UserInfo.JiHeXuLieTuMinMax.x;
+        }
+        if (intValue > Ctrl_UserInfo.JiHeXuLieTuMinMax.y)
+        {
+            intValue = (int)Ctrl_UserInfo.JiHeXuLieTuMinMax.y;
+        }
+        slider_ChangeSize.value = intValue;
+        input_Size.text = "";
+
+
+    }
+
+
+
+
+
+    //—————————————————— 事件 ——————————————————
+
+
+    private void E_OnDaoRu(EJiHeXuLieTuType type, List<FileInfo> infos) // 需要再次加载的 导入
+    {
+        Ctrl_Coroutine.Instance.StartCoroutine(OnDaoRu(type, infos));
+    }
+
+
+    IEnumerator OnDaoRu(EJiHeXuLieTuType type, List<FileInfo> infos)
+    {
         foreach (FileInfo fileInfo in infos)
         {
-            // 保存一下信息
-            if (isSave)
-            {
-                bool isOk = Ctrl_TextureInfo.Instance.SaveJiHeXuLieTu(type, fileInfo.FullName);
-                if (!isOk)
-                {
-                    errorList.Add(fileInfo);
-                    continue;
-                }
-            }
             // 1. 创建一个实例
             Transform t = InstantiateMoBan(go_MoBan, GetParent(type));
             MyLoadTu.LoadSingleTu(fileInfo, (resBean) =>
@@ -377,10 +409,7 @@ public class Game_JiHeXuLieTu : SubUI
                 InitMoBan(t, resBean);
             });
             yield return 0;
-        }
-        if (isSave)
-        {
-            MyEventCenter.SendEvent(E_GameEvent.DaoRuResult, EGameType.JiHeXuLieTu, errorList.Count == 0, errorList);
+
         }
     }
 
@@ -394,23 +423,13 @@ public class Game_JiHeXuLieTu : SubUI
 
     IEnumerator ResultDaoRu(EJiHeXuLieTuType type, List<ResultBean> resultBeans)
     {
-        List<FileInfo> errorList = new List<FileInfo>();
 
         foreach (ResultBean resultBean in resultBeans)
         {
-            bool isOk = Ctrl_TextureInfo.Instance.SaveJiHeXuLieTu(type, resultBean.File.FullName);
-            if (!isOk)
-            {
-                errorList.Add(resultBean.File);
-                continue;
-            }
             Transform t = InstantiateMoBan(go_MoBan, GetParent(type));
             InitMoBan(t, resultBean);
             yield return 0;
         }
-
-        MyEventCenter.SendEvent(E_GameEvent.DaoRuResult, EGameType.JiHeXuLieTu, errorList.Count == 0, errorList);
-
     }
 
     //————————————————————————————————————
