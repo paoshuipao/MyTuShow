@@ -147,6 +147,7 @@ public class Game_NormalTu : SubUI
 
     private void DeleteOneLine(ENormalTuType type)
     {
+        Ctrl_TextureInfo.Instance.DeleteJpgOneLine(type);
         RectTransform rt = GetParent(type);
         for (int i = 0; i < rt.childCount; i++)
         {
@@ -427,7 +428,6 @@ public class Game_NormalTu : SubUI
     {
         if (type == EGameType.NormalTu)
         {
-            Ctrl_TextureInfo.Instance.DeleteJpgOneLine(mCurrentIndex);
             DeleteOneLine(mCurrentIndex);
         }
     }

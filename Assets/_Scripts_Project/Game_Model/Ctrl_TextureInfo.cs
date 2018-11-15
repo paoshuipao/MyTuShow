@@ -17,40 +17,6 @@ public class XuLieSaveBean
 public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo> 
 {
 
-
-    public void DeleteAlll()                      // 删除所有
-    {
-        l_XunLieTuBean.Clear();
-        l_XunLieTu222Bean.Clear();
-
-
-        foreach (EJiHeXuLieTuType type in Enum.GetValues(typeof(EJiHeXuLieTuType)))
-        {
-            DeleteJiHeXuLieOneLine(type);
-        }
-
-
-        foreach (ETaoMingType type in Enum.GetValues(typeof(ETaoMingType)))
-        {
-            DeleteTaoMingOneLine(type);
-        }
-
-        foreach (ENormalTuType type in Enum.GetValues(typeof(ENormalTuType)))
-        {
-            DeleteJpgOneLine(type);
-        }
-
-        foreach (EJiHeType type in Enum.GetValues(typeof(EJiHeType)))
-        {
-            DeleteJiHeOneLine(type);
-        }
-
-        // TODO 差音频删除
-
-    }
-
-
-
     #region 序列图
 
     public List<string[]> GetXunLieTuPaths(EXuLieTu index)                // 获取
@@ -101,13 +67,15 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     }
 
 
-    public void DeleteXuLieTuSave(EXuLieTu index, string[] paths)         // 删除
+    public void DeleteXuLieTuSave(EXuLieTu index, string[] paths)         // 删除单个
     {
         string kName = Path.GetFileNameWithoutExtension(paths[0]);
-        if (!string.IsNullOrEmpty(kName))
+        if (string.IsNullOrEmpty(kName))
         {
-            kName = kName.Trim();
+            return;
         }
+        kName = kName.Trim();
+        XuLieTuPathV_BeanV.Remove(kName);
         for (int i = 0; i < l_XunLieTuBean.Count; i++)
         {
             XuLieSaveBean bean = l_XunLieTuBean[i];
@@ -127,6 +95,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         {
             if (l_XunLieTuBean[i].TuType == (ushort)index)
             {
+                XuLieTuPathV_BeanV.Remove(l_XunLieTuBean[i].KName);
                 l_XunLieTuBean.RemoveAt(i);
             }
         }
@@ -158,7 +127,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     /// <param name="index"></param>
     /// <param name="paths"></param>
     /// <returns>true： 保存成功   false:之前已有，保存失败</returns>
-    public bool SaveXunLieTu222(ushort index, string[] paths)               // 保存
+    public bool SaveXunLieTu222(ushort index, string[] paths)                   // 保存
     {
 
         string kName = Path.GetFileNameWithoutExtension(paths[0]);
@@ -186,10 +155,12 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
     public void DeleteXuLieTu222Save(EXuLieTu222 index, string[] paths)         // 删除
     {
         string kName = Path.GetFileNameWithoutExtension(paths[0]);
-        if (!string.IsNullOrEmpty(kName))
+        if (string.IsNullOrEmpty(kName))
         {
-            kName = kName.Trim();
+            return;
         }
+        kName = kName.Trim();
+        XuLieTuPathV_BeanV.Remove(kName);
         for (int i = 0; i < l_XunLieTu222Bean.Count; i++)
         {
             XuLieSaveBean bean = l_XunLieTu222Bean[i];
@@ -209,6 +180,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         {
             if (l_XunLieTu222Bean[i].TuType == (ushort)index)
             {
+                XuLieTuPathV_BeanV.Remove(l_XunLieTuBean[i].KName);
                 l_XunLieTu222Bean.RemoveAt(i);
             }
         }
@@ -398,7 +370,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         }
     }
 
-    public void DeleteAudioSave(EAudioType index, string savePath)                 // 删除
+    public void DeleteAudioSave(EAudioType index, string savePath)             // 删除
     {
         savePath = savePath.Replace("\\", "/");
         if (audioTypeK_PathV[(ushort)index].Contains(savePath))
@@ -554,7 +526,9 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         }
 
         IsInitFinish = true;
+
     }
+
 
 
     void OnApplicationQuit()
@@ -568,6 +542,40 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         ES3.Save<Dictionary<ushort, List<string>>>(PP_JI_HE_TU, jiHeTypeK_PathV, JiHeTuFile);
         ES3.Save<Dictionary<ushort, List<string>>>(PP_AUDIO, audioTypeK_PathV, AudioFile);
 
+
+    }
+
+
+
+    //——————————————— 用于搜索—————————————————————
+
+
+    private static readonly Dictionary<string, ResultBean[]> XuLieTuPathV_BeanV = new Dictionary<string, ResultBean[]>();   // 所有的序列图
+
+
+
+    public static List<ResultBean[]> SearchXLT(string inputStr)         // 搜索序列图
+    {
+        List<ResultBean[]> resList = new List<ResultBean[]>();
+        foreach (string kName in XuLieTuPathV_BeanV.Keys)
+        {
+            if (kName.Contains(inputStr))
+            {
+                resList.Add(XuLieTuPathV_BeanV[kName]);
+            }
+        }
+        return resList;
+    }
+
+    
+    public static void AddXuLieTu(ResultBean[] resBeans)        // 添加进来 
+    {
+        string kName = Path.GetFileNameWithoutExtension(resBeans[0].File.FullName);
+        if (!string.IsNullOrEmpty(kName))
+        {
+            kName = kName.Trim();
+            XuLieTuPathV_BeanV.Add(kName, resBeans);
+        }
 
     }
 

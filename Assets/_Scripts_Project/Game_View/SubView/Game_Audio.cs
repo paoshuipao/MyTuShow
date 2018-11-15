@@ -184,6 +184,7 @@ public class Game_Audio : SubUI
 
     private void DeleteOneLine(EAudioType type)
     {
+        Ctrl_TextureInfo.Instance.DeleteAudioOneLine(type);
         RectTransform rt = GetParentRT(type);
         for (int i = 0; i < rt.childCount; i++)
         {
@@ -412,10 +413,6 @@ public class Game_Audio : SubUI
 
 
 
-
-
-
-
     //———————————————————— 事件 ————————————————
 
     private void E_DaoRu_Audio(EAudioType type, AudioResBean resBean)
@@ -493,7 +490,6 @@ public class Game_Audio : SubUI
     {
         if (type == EGameType.Audio)
         {
-            Ctrl_TextureInfo.Instance.DeleteAudioOneLine(mCurrentIndex);
             DeleteOneLine(mCurrentIndex);
         }
     }

@@ -19,6 +19,7 @@ public enum EGameType
     JiHeTu,
     Audio,
     DaoRu,
+    Search,
 }
 
 
@@ -48,6 +49,8 @@ public class UIStart_Game : BaseUI
         go_AudioChoose2 = GetGameObject("Left/Contant/Group/Audio/Kuang/Choose2");
         go_DaoRuChoose1 = GetGameObject("Left/Contant/Group/DaoRu/Choose1");
         go_DaoRuChoose2 = GetGameObject("Left/Contant/Group/DaoRu/Kuang/Choose2");
+        go_SearchChoose1 = GetGameObject("Left/Contant/Group/Search/Kuang/Choose2");
+        go_SearchChoose2 = GetGameObject("Left/Contant/Group/Search/Kuang/Choose2");
         go_JiHeXuLieTuChoose1 = GetGameObject("Left/Contant/Group/JiHeXuLieTu/Choose1");
         go_JiHeXuLieTuChoose2 = GetGameObject("Left/Contant/Group/JiHeXuLieTu/Kuang/Choose2");
 
@@ -83,7 +86,10 @@ public class UIStart_Game : BaseUI
         {
             Btn_OnLeftClick(EGameType.DaoRu);
         });
-
+        AddButtOnClick("Left/Contant/Group/Search", () =>
+        {
+            Btn_OnLeftClick(EGameType.Search);
+        });
 
 
 
@@ -108,7 +114,7 @@ public class UIStart_Game : BaseUI
 
         // 右边
         rt_Right = Get<RectTransform>("Right");
-        d8_RightContant = Get<DTToggle8_Fade>("Right/EachContant");
+        d9_RightContant = Get<DTToggle9_Fade>("Right/EachContant");
 
 
         // 底下的等待UI
@@ -201,6 +207,7 @@ public class UIStart_Game : BaseUI
     private GameObject go_JiHeChoose1, go_JiHeChoose2;
     private GameObject go_AudioChoose1, go_AudioChoose2;
     private GameObject go_DaoRuChoose1,go_DaoRuChoose2;
+    private GameObject go_SearchChoose1,go_SearchChoose2;
     private EGameType mCurrentType;
 
     private GameObject go_Loading;
@@ -210,9 +217,8 @@ public class UIStart_Game : BaseUI
     private DTToggle2_Fade dt2_Setting;
 
 
-
     // 右边
-    private DTToggle8_Fade d8_RightContant;
+    private DTToggle9_Fade d9_RightContant;
     private RectTransform rt_Right;
     private GameObject go_IsSure;
     private Text tx_IsSureTittle;
@@ -514,6 +520,7 @@ public class UIStart_Game : BaseUI
 
 
         Get<Button>("Left/Contant/Group/DaoRu").interactable = true;
+        Get<Button>("Left/Contant/Group/Search").interactable = true;
         go_Loading.SetActive(false);
 
 
@@ -598,7 +605,6 @@ public class UIStart_Game : BaseUI
         if (isClickZhongZhi)
         {
             MyEventCenter.SendEvent(E_GameEvent.DelteAll);
-            Ctrl_TextureInfo.Instance.DeleteAlll();
             go_IsSureTip.SetActive(false);
             isClickZhongZhi = false;
         }
@@ -668,6 +674,10 @@ public class UIStart_Game : BaseUI
                 go_DaoRuChoose1.SetActive(false);
                 go_DaoRuChoose2.SetActive(false);
                 break;
+            case EGameType.Search:
+                go_SearchChoose1.SetActive(false);
+                go_SearchChoose2.SetActive(false);
+                break;
 
         }
         sub_Audio.ChangeOtherPage();
@@ -677,49 +687,54 @@ public class UIStart_Game : BaseUI
                 go_XuLieChoose1.SetActive(true);
                 go_XuLieChoose2.SetActive(true);
                 sub_XuLieTu1.Show(choose);
-                d8_RightContant.Change2One();
+                d9_RightContant.Change2One();
                 break;
             case EGameType.XuLieTu222:
                 go_XuLie222Choose1.SetActive(true);
                 go_XuLie222Choose2.SetActive(true);
                 sub_XuLieTu222.Show(choose);
-                d8_RightContant.Change2Two();
+                d9_RightContant.Change2Two();
                 break;
             case EGameType.JiHeXuLieTu:
                 go_JiHeXuLieTuChoose1.SetActive(true);
                 go_JiHeXuLieTuChoose2.SetActive(true);
                 sub_JiHeXuLieTu.Show(choose);
-                d8_RightContant.Change2Three();
+                d9_RightContant.Change2Three();
                 break;
             case EGameType.TaoMingTu:
                 go_TaoMingChoose1.SetActive(true);
                 go_TaoMingChoose2.SetActive(true);
                 sub_TaoMing.Show(choose);
-                d8_RightContant.Change2Four();
+                d9_RightContant.Change2Four();
                 break;
             case EGameType.NormalTu:
                 go_NormalChoose1.SetActive(true);
                 go_NormalChoose2.SetActive(true);
                 sub_Jpg.Show(choose);
-                d8_RightContant.Change2Five();
+                d9_RightContant.Change2Five();
                 break;
             case EGameType.JiHeTu:
                 go_JiHeChoose1.SetActive(true);
                 go_JiHeChoose2.SetActive(true);
                 sub_JiHeTu.Show(choose);
-                d8_RightContant.Change2Six();
+                d9_RightContant.Change2Six();
                 break;
             case EGameType.Audio:
                 go_AudioChoose1.SetActive(true);
                 go_AudioChoose2.SetActive(true);
                 sub_Audio.Show(choose);
-                d8_RightContant.Change2Seven();
+                d9_RightContant.Change2Seven();
                 break;
             case EGameType.DaoRu:
                 go_DaoRuChoose1.SetActive(true);
                 go_DaoRuChoose2.SetActive(true);
                 sub_DaoRu1.Show();
-                d8_RightContant.Change2Eight();
+                d9_RightContant.Change2Eight();
+                break;
+            case EGameType.Search:
+                go_SearchChoose1.SetActive(true);
+                go_SearchChoose2.SetActive(true);
+                d9_RightContant.Change2Nine();
                 break;
 
         }

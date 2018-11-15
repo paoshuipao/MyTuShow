@@ -245,7 +245,7 @@ public class DTToggle6_Fade : MonoBehaviour
 
     void Awake()
     {
-        if (null == GO_One || null == GO_Two || null == GO_Three || null == GO_Four || null == GO_Five)
+        if (null == GO_One || null == GO_Two || null == GO_Three || null == GO_Four || null == GO_Five || null == GO_Six)
         {
             MyLog.Red("这六个游戏对象有空的情况   " + gameObject);
             return;

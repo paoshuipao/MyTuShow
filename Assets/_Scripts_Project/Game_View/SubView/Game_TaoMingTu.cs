@@ -144,9 +144,9 @@ public class Game_TaoMingTu : SubUI
 
 
 
-
     private void DeleteOneLine(ETaoMingType type)
     {
+        Ctrl_TextureInfo.Instance.DeleteTaoMingOneLine(type);
         RectTransform rt = GetParent(type);
         for (int i = 0; i < rt.childCount; i++)
         {
@@ -433,7 +433,6 @@ public class Game_TaoMingTu : SubUI
     {
         if (type == EGameType.TaoMingTu)
         {
-            Ctrl_TextureInfo.Instance.DeleteTaoMingOneLine(mCurrentIndex);
             DeleteOneLine(mCurrentIndex);
         }
     }

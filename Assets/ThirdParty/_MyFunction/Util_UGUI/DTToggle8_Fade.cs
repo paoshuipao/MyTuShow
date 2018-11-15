@@ -303,7 +303,7 @@ public class DTToggle8_Fade : MonoBehaviour
 
     void Awake()
     {
-        if (null == GO_One || null == GO_Two || null == GO_Three || null == GO_Four || null == GO_Five)
+        if (null == GO_One || null == GO_Two || null == GO_Three || null == GO_Four || null == GO_Five || null == GO_Six || null == GO_Seven || null == GO_Eight)
         {
             MyLog.Red("这八个游戏对象有空的情况   " + gameObject);
             return;

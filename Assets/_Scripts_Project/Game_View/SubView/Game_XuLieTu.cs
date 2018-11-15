@@ -75,20 +75,16 @@ public class Game_XuLieTu : SubUI
     private Text tx_BottomName1, tx_BottomName2, tx_BottomName3;
 
 
-
-
-
     public override string GetUIPathForRoot()
     {
         return "Right/EachContant/XuLieTu";
     }
 
 
-
-
     public override void OnDisable()
     {
     }
+
 
     private IEnumerator CheckoubleClick() // 检测是否双击
     {
@@ -146,6 +142,7 @@ public class Game_XuLieTu : SubUI
     private void InitMoBan(Transform t, ResultBean[] resultBeans) // 初始化模版
     {
         GameObject go = t.gameObject;
+        Ctrl_TextureInfo.AddXuLieTu(resultBeans);
         t.Find("Tu").GetComponent<UGUI_SpriteAnim>().ChangeAnim(GetSpriteList(resultBeans));
         t.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -343,7 +340,7 @@ public class Game_XuLieTu : SubUI
     //—————————————————— 事件 ——————————————————
 
 
-    private void E_OnDaoRu(EXuLieTu tuType, List<FileInfo> fileInfos) // 接收导入事件 ，创建一个序列图
+    private void E_OnDaoRu(EXuLieTu tuType, List<FileInfo> fileInfos)           // 接收导入事件 ，创建一个序列图
     {
 
         // 1. 创建一个实例
@@ -407,7 +404,7 @@ public class Game_XuLieTu : SubUI
 
 
 
-    private void E_CloseDuoTuInfo(EGameType type)        // 关闭显示多图信息
+    private void E_CloseDuoTuInfo(EGameType type)                           // 关闭显示多图信息
     {
         if (type == EGameType.XuLieTu)
         {

@@ -147,6 +147,7 @@ public class Game_JiHeTu : SubUI
 
     private void DeleteOneLine(EJiHeType type)
     {
+        Ctrl_TextureInfo.Instance.DeleteJiHeOneLine(type);
         RectTransform rt = GetParent(type);
         for (int i = 0; i < rt.childCount; i++)
         {
@@ -428,7 +429,6 @@ public class Game_JiHeTu : SubUI
     {
         if (type == EGameType.JiHeTu)
         {
-            Ctrl_TextureInfo.Instance.DeleteJiHeOneLine(mCurrentIndex);
             DeleteOneLine(mCurrentIndex);
         }
     }

@@ -150,6 +150,7 @@ public class Game_JiHeXuLieTu : SubUI
 
     private void DeleteOneLine(EJiHeXuLieTuType type)
     {
+        Ctrl_TextureInfo.Instance.DeleteJiHeXuLieOneLine(type);
         RectTransform rt = GetParent(type);
         for (int i = 0; i < rt.childCount; i++)
         {
@@ -438,7 +439,6 @@ public class Game_JiHeXuLieTu : SubUI
     {
         if (type == EGameType.JiHeXuLieTu)
         {
-            Ctrl_TextureInfo.Instance.DeleteJiHeXuLieOneLine(mCurrentIndex);
             DeleteOneLine(mCurrentIndex);
         }
     }

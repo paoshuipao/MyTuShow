@@ -146,6 +146,7 @@ public class Game_XuLieTu222 : SubUI
     private void InitMoBan(Transform t, ResultBean[] resultBeans) // 初始化模版
     {
         GameObject go = t.gameObject;
+        Ctrl_TextureInfo.AddXuLieTu(resultBeans);
         t.Find("Tu").GetComponent<UGUI_SpriteAnim>().ChangeAnim(GetSpriteList(resultBeans));
         t.GetComponent<Button>().onClick.AddListener(() =>
         {
