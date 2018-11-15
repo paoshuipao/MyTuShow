@@ -336,6 +336,9 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
     public const string JiHeTu_LeftStr = "<color=#add8e6ff>整套合集图</color>";
     public const string Aduio_LeftStr = "音频播放";
 
+    public const string DAO_RU_STR = "导入到 ";
+    public const string ZHUANG_YI_STR = "转移到 ";
+    public const string CHU_STR = " 处";
 
 
 

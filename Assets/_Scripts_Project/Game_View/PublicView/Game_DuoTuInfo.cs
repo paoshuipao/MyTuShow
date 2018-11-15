@@ -159,8 +159,6 @@ public class Game_DuoTuInfo : SubUI
 
 
 
-
-
     public override string GetUIPathForRoot()
     {
         return "Right/DuoTuInfo";

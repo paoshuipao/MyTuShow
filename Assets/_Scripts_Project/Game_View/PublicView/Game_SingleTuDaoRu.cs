@@ -176,6 +176,15 @@ public class Game_SingleTuDaoRu : SubUI
 
     public override void OnEnable()
     {
+
+
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeXuLieTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_Png/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.TaoMingTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_Jpg/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JpgTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_JiHe/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+
+
+
         tx_DRJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
         tx_DRJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
         tx_DRJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
@@ -225,12 +234,14 @@ public class Game_SingleTuDaoRu : SubUI
     private Text tx_DRJiHe1, tx_DRJiHe2, tx_DRJiHe3, tx_DRJiHe4, tx_DRJiHe5;
 
 
+
+
+
+
     public override string GetUIPathForRoot()
     {
         return "Right/SingleTuDaoRu";
     }
-
-
 
 
 

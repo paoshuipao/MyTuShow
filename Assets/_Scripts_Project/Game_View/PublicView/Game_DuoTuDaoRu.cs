@@ -252,6 +252,49 @@ public class Game_DuoTuDaoRu : SubUI
 
     }
 
+    public override void OnEnable()
+    {
+
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_XunLieTu/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.XuLieTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_XunLieTu222/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.XuLieTu222_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_JiHeXuLie/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeXuLieTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_Png/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.TaoMingTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_Jpg/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JpgTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("BottomContrl/ScrollView/Contant/Item_JiHe/TxTittle").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+
+
+
+        tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
+        tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
+        tx_DuoXLT222_3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];
+        tx_DuoXLT222_4.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[3];
+        tx_DuoXLT222_5.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[4];
+
+        tx_DuoJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
+        tx_DuoJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
+        tx_DuoJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
+        tx_DuoJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
+        tx_DuoJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
+
+        tx_DuoTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
+        tx_DuoTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
+        tx_DuoTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
+        tx_DuoTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
+        tx_DuoTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
+
+        tx_DuoJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
+        tx_DuoJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
+        tx_DuoJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
+        tx_DuoJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
+        tx_DuoJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
+
+        tx_DuoJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
+        tx_DuoJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
+        tx_DuoJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
+        tx_DuoJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
+        tx_DuoJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
+    }
+
 
 
     #region 私有
@@ -326,40 +369,6 @@ public class Game_DuoTuDaoRu : SubUI
     }
 
 
-
-    public override void OnEnable()
-    {
-
-        tx_DuoXLT222_1.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[0];
-        tx_DuoXLT222_2.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[1];
-        tx_DuoXLT222_3.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[2];
-        tx_DuoXLT222_4.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[3];
-        tx_DuoXLT222_5.text = Ctrl_UserInfo.Instance.BottomXuLeTu222Name[4];
-
-        tx_DuoJHXuLie1.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[0];
-        tx_DuoJHXuLie2.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[1];
-        tx_DuoJHXuLie3.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[2];
-        tx_DuoJHXuLie4.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[3];
-        tx_DuoJHXuLie5.text = Ctrl_UserInfo.Instance.BottomJiHeXLTName[4];
-
-        tx_DuoTaoMing1.text = Ctrl_UserInfo.Instance.BottomTaoMingName[0];
-        tx_DuoTaoMing2.text = Ctrl_UserInfo.Instance.BottomTaoMingName[1];
-        tx_DuoTaoMing3.text = Ctrl_UserInfo.Instance.BottomTaoMingName[2];
-        tx_DuoTaoMing4.text = Ctrl_UserInfo.Instance.BottomTaoMingName[3];
-        tx_DuoTaoMing5.text = Ctrl_UserInfo.Instance.BottomTaoMingName[4];
-
-        tx_DuoJpg1.text = Ctrl_UserInfo.Instance.BottomJpgName[0];
-        tx_DuoJpg2.text = Ctrl_UserInfo.Instance.BottomJpgName[1];
-        tx_DuoJpg3.text = Ctrl_UserInfo.Instance.BottomJpgName[2];
-        tx_DuoJpg4.text = Ctrl_UserInfo.Instance.BottomJpgName[3];
-        tx_DuoJpg5.text = Ctrl_UserInfo.Instance.BottomJpgName[4];
-
-        tx_DuoJiHe1.text = Ctrl_UserInfo.Instance.BottomJiHeName[0];
-        tx_DuoJiHe2.text = Ctrl_UserInfo.Instance.BottomJiHeName[1];
-        tx_DuoJiHe3.text = Ctrl_UserInfo.Instance.BottomJiHeName[2];
-        tx_DuoJiHe4.text = Ctrl_UserInfo.Instance.BottomJiHeName[3];
-        tx_DuoJiHe5.text = Ctrl_UserInfo.Instance.BottomJiHeName[4];
-    }
 
     public override void OnDisable()
     {

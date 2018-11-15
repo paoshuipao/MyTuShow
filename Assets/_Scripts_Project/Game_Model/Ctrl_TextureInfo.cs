@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using PSPUtil.Singleton;
 using PSPUtil.StaticUtil;
 
@@ -554,17 +555,18 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
 
 
 
-    public static List<ResultBean[]> SearchXLT(string inputStr)         // 搜索序列图
+    public static Dictionary<string, ResultBean[]> SearchXLT(string inputStr)         // 搜索序列图
     {
-        List<ResultBean[]> resList = new List<ResultBean[]>();
+
+        Dictionary<string, ResultBean[]> resDir = new Dictionary<string, ResultBean[]>();
         foreach (string kName in XuLieTuPathV_BeanV.Keys)
         {
             if (kName.Contains(inputStr))
             {
-                resList.Add(XuLieTuPathV_BeanV[kName]);
+                resDir.Add(kName,XuLieTuPathV_BeanV[kName]);
             }
         }
-        return resList;
+        return resDir;
     }
 
     

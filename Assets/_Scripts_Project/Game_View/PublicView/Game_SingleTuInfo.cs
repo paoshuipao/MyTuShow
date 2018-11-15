@@ -56,6 +56,18 @@ public class Game_SingleTuInfo : SubUI
     }
 
 
+    public override void OnEnable()
+    {
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_JiHeXuLie/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeXuLieTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_Png/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.TaoMingTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_Jpg/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JpgTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+        Get<Text>("Right/Item/ScrollRect/Contant/Item_JiHe/Text").text = Ctrl_UserInfo.DAO_RU_STR + Ctrl_UserInfo.JiHeTu_LeftStr + Ctrl_UserInfo.CHU_STR;
+
+
+    }
+
+
+
 
     #region 私有
 
@@ -74,17 +86,11 @@ public class Game_SingleTuInfo : SubUI
 
 
 
-
-
     public override string GetUIPathForRoot()
     {
         return "Right/SingleTuInfo";
     }
 
-
-    public override void OnEnable()
-    {
-    }
 
     public override void OnDisable()
     {
