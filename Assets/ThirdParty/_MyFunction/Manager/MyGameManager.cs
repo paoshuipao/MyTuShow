@@ -54,10 +54,19 @@ public class MyGameManager : Manager
             MyEventCenter.SendEvent(E_GameEvent.OnClickCtrlAndA);
         }
 
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.C) && !isLogo)
+        {
+            MyEventCenter.SendEvent(E_GameEvent.OnClickCtrlAndC);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            MyEventCenter.SendEvent(E_GameEvent.OnClickMouseLeftUp);
+        }
 
         if (Input.GetMouseButtonDown(1))
         {
-            MyEventCenter.SendEvent(E_GameEvent.OnClickMouseLeftDown);
+            MyEventCenter.SendEvent(E_GameEvent.OnClickMouseRightDown);
         }
 
 

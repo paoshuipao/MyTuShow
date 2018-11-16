@@ -29,7 +29,7 @@ namespace UnityEditor
             AddSpace();
 
 
-            bool isYuMa = (type == EType.YuMa || type == EType.YuMa1 || type == EType.YuMa2 || type == EType.YuMa3 || type == EType.YuMa4);
+            bool isYuMa = (type == EType.YuMa || type == EType.YuMa1 || type == EType.YuMa2 || type == EType.YuMa3 || type == EType.YuMa4 || type == EType.YuMa5 || type == EType.YuMa6);
 
             tempLabel = mWindowSettings.sidebarIsExpanded.faded < 0.6f ? "" : "源码 问题";
             if (QUI.Button(tempLabel, EZStyles.GetStyle(isYuMa ? EZStyles.General.SideButtonSelected2 : EZStyles.General.SideButton2), mWindowSettings.SidebarCurrentWidth, mWindowSettings.sidebarButtonHeight))
@@ -62,7 +62,11 @@ namespace UnityEditor
             {
                 SetTheSame(EType.YuMa5);
             }
-
+            tempLabel = mWindowSettings.sidebarIsExpanded.faded < 0.6f ? "" : (type == EType.YuMa6 ? " 复制 粘贴".AddBlue() : " 复制 粘贴");
+            if (QUI.Button(tempLabel, EZStyles.GetStyle(EZStyles.General.SideButtonBlue), mWindowSettings.SidebarCurrentWidth, mWindowSettings.sidebarButtonHeight))
+            {
+                SetTheSame(EType.YuMa6);
+            }
             AddSpace();
 
             tempLabel = mWindowSettings.sidebarIsExpanded.faded < 0.6f ? "" : "普通 问题";
@@ -89,8 +93,9 @@ namespace UnityEditor
                 case EType.YuMa3:       DrawRightPage5(DrawGong);         break;
                 case EType.YuMa4:       DrawRightPage8(DrawYunFu);        break;
                 case EType.YuMa5:       DrawRightPage8(DrawUGUIPosition); break;
+                case EType.YuMa6:       DrawRightPage8(DrawCopy);         break;
                 case EType.Normal:      DrawRightPage6(DrawNormal);       break;
-                case EType.Error:       DrawRightPage7(DrawError);         break;
+                case EType.Error:       DrawRightPage7(DrawError);        break;
             }
         }
 
@@ -112,7 +117,7 @@ namespace UnityEditor
         private enum EType
         {
             ZhongJie,
-            YuMa, YuMa1, YuMa2, YuMa3, YuMa4,YuMa5,
+            YuMa, YuMa1, YuMa2, YuMa3, YuMa4,YuMa5, YuMa6,
             Normal,
             Error,
 
@@ -258,6 +263,17 @@ namespace UnityEditor
                 m_Tools.TextText_HG("rt.anchoredPosition = pos", "// 不是 Postion 哦");
 
             });
+        }
+
+         
+        private void DrawCopy()                                 // 复制 粘贴
+        {
+            m_Tools.BiaoTi_B("相当于 Ctrl + C 和 Ctrl + V");
+            MyCreate.Box_Hei(() =>
+            {
+                m_Tools.TextText_HG("GUIUtility".AddBlue()+".systemCopyBuffer { get ; set }","// 可读可写");
+            });
+
         }
 
 

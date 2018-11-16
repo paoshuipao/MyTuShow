@@ -14,6 +14,7 @@ public enum E_GameEvent                           // 这里写事件
 
 
    
+
     OnClickDown_Shift,              // 按下 Shift
     OnClickUp_Shift,               //  松开 Shift
 
@@ -22,7 +23,10 @@ public enum E_GameEvent                           // 这里写事件
 
     OnClickCtrlAndA,               // 按下 Ctrl + A
 
-    OnClickMouseLeftDown,          // 按下鼠标右键
+    OnClickCtrlAndC,               // 按下 Ctrl + C
+
+    OnClickMouseLeftUp,           // 点击鼠标左键
+    OnClickMouseRightDown,          // 按下鼠标右键
 
 
     ChangGameToggleType,            // 切换左边总的选项 （EGameType,int）

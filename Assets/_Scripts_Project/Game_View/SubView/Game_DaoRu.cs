@@ -218,10 +218,11 @@ public class Game_DaoRu : SubUI
 
     protected override void OnStart(Transform root)
     {
-        MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftDown, E_OnMouseLeftClick);            // 鼠标右键点击
+        MyEventCenter.AddListener(E_GameEvent.OnClickMouseRightDown, E_OnMouseLeftClick);            // 鼠标右键点击
         MyEventCenter.AddListener<EGameType,ushort, List<ResultBean>, bool>(E_GameEvent.DaoRuTuFromResult, E_OnDuoTuDaoRu);  // 确定导入图片
         MyEventCenter.AddListener(E_GameEvent.GoToNextFolderDaoRu, E_GoToNextFolderDaoRu);          // 导入后 到一个文件夹
         MyEventCenter.AddListener(E_GameEvent.OnClickCtrlAndA, E_OnClickCtrlAndA);                  // 按下 Ctrl + A
+        MyEventCenter.AddListener(E_GameEvent.OnClickCtrlAndC, E_OnClickCtrlAndC);                  // 按下 Ctrl + C
 
         // 总
         rt_Right = Get<RectTransform>("Right/Contant");
@@ -1025,7 +1026,7 @@ public class Game_DaoRu : SubUI
     #region 改名
 
     
-    private readonly Dictionary<FileInfo,string> fileK_NewNameV = new Dictionary<FileInfo, string>();
+    private readonly Dictionary<FileInfo,string> fileK_NewFullPathV = new Dictionary<FileInfo, string>();
     private void Btn_GeiMing()                     // 点击 准备改名
     {
         Ctrl_Coroutine.Instance.StartCoroutine(StartSetGeiMingItem(input_GeiMing));
@@ -1033,38 +1034,59 @@ public class Game_DaoRu : SubUI
 
     }
 
-    private void Btn_GeiMing222()                // 点击 再次改名
+    private void Btn_GeiMing222()                 // 点击 再次改名
     {
         Ctrl_Coroutine.Instance.StartCoroutine(StartSetGeiMingItem(input_GeiMing222));
     }
 
-    IEnumerator StartSetGeiMingItem(InputField inputField)
+    private int addIndex;
+
+    IEnumerator StartSetGeiMingItem(InputField inputField)         // 设置名称每个小 Item
     {
+        addIndex = 0;
         if (rt_GeiMing.childCount > 0)
         {
             for (int i = 0; i < rt_GeiMing.childCount; i++)
             {
                 Object.Destroy(rt_GeiMing.GetChild(i).gameObject);
             }
-            fileK_NewNameV.Clear();
+            fileK_NewFullPathV.Clear();
         }
 
-        string newFileName = inputField.text;
-        if (string.IsNullOrEmpty(input_GeiMing.text))
+        string newFileName = inputField.text;              // 要改的名称的前缀
+        if (string.IsNullOrEmpty(newFileName))
         {
             newFileName = "未定义名称";
         }
 
-        List<GameObject> sortList = GetSortChoose();   // 排序
+        List<GameObject> sortList = GetSortChoose();      // 排序
         for (int i = 1; i < sortList.Count + 1; i++)
         {
             FileInfo fileInfo = allGoK_ResultBeanV[sortList[i - 1]].File;
             string yuanName = Path.GetFileNameWithoutExtension(fileInfo.FullName);
-            string changeName = newFileName + "_" + i.ToString("D2");
-            fileK_NewNameV.Add(fileInfo, changeName);
+            string path = fileInfo.FullName.Replace(@"\", "/");        
+            int tmpCount = path.LastIndexOf("/", StringComparison.Ordinal);
+            string folderPath = path.Substring(0, tmpCount + 1);                  // 前路径
+            string fileFullPath;
+            if (addIndex>0)
+            {
+                fileFullPath = folderPath + newFileName + "_" + (i + addIndex-1).ToString("D2") + fileInfo.Extension;
+
+            }
+            else
+            {
+                fileFullPath = folderPath + newFileName + "_" + i.ToString("D2") + fileInfo.Extension;
+            }
+            while (File.Exists(fileFullPath))     // 如果存在的话在上面加1
+            {
+                addIndex++;
+                fileFullPath = folderPath + newFileName + "_" + addIndex.ToString("D2") + fileInfo.Extension;
+            }
+            fileK_NewFullPathV.Add(fileInfo, fileFullPath);
+
             Transform t = InstantiateMoBan(go_MoBanGeiMing, rt_GeiMing);
             t.Find("TxYuanName").GetComponent<Text>().text = yuanName;
-            t.Find("TxGeiMing").GetComponent<Text>().text = changeName;
+            t.Find("TxGeiMing").GetComponent<Text>().text = Path.GetFileNameWithoutExtension(fileFullPath);
             yield return 0;
         }
     }
@@ -1080,28 +1102,7 @@ public class Game_DaoRu : SubUI
         Ctrl_Coroutine.Instance.StartCoroutine(StartGaiMing());
     }
 
-
-    private void Btn_OnFalseGeiMing()          // 取消
-    {
-        CloseIsGetMing();
-    }
-
-
-    private void CloseIsGetMing()           // 关闭
-    {
-        go_IsGaiMing.SetActive(false);
-        go_BottomBtn.SetActive(true);
-        go_BottomWait.SetActive(false);
-        input_GeiMing222.text = "";
-        fileK_NewNameV.Clear();
-        for (int i = 0; i < rt_GeiMing.childCount; i++)
-        {
-            Object.Destroy(rt_GeiMing.GetChild(i).gameObject);
-        }
-    }
-
-
-    IEnumerator StartGaiMing()            // 开始改名
+    IEnumerator StartGaiMing()                 // 开始改名
     {
         bool isWhile2Do = true;
         new Thread(() =>
@@ -1116,8 +1117,6 @@ public class Game_DaoRu : SubUI
         Btn_ShuaiXin();
         CloseIsGetMing();
     }
-
-
     private void Foreach2Do(ref bool isWhile2Do)   // 一直循环改，改到成功为止
     {
 
@@ -1125,12 +1124,9 @@ public class Game_DaoRu : SubUI
         {
             try
             {
-                foreach (FileInfo fileInfo in fileK_NewNameV.Keys)
+                foreach (FileInfo fileInfo in fileK_NewFullPathV.Keys)
                 {
-                    string path = fileInfo.FullName.Replace(@"\", "/");
-                    int tmpCount = path.LastIndexOf("/", StringComparison.Ordinal);
-                    string newFolderPath = path.Substring(0, tmpCount + 1);    // 前路径
-                    string newPath = newFolderPath + fileK_NewNameV[fileInfo] + fileInfo.Extension;
+                    string newPath = fileK_NewFullPathV[fileInfo];
                     if (!File.Exists(newPath))
                     {
                         fileInfo.MoveTo(newPath);
@@ -1145,6 +1141,33 @@ public class Game_DaoRu : SubUI
         }
 
     }
+
+
+
+    private void Btn_OnFalseGeiMing()          // 取消
+    {
+        CloseIsGetMing();
+    }
+
+
+    private void CloseIsGetMing()             // 关闭
+    {
+        go_IsGaiMing.SetActive(false);
+        go_BottomBtn.SetActive(true);
+        go_BottomWait.SetActive(false);
+        input_GeiMing222.text = "";
+        fileK_NewFullPathV.Clear();
+        for (int i = 0; i < rt_GeiMing.childCount; i++)
+        {
+            Object.Destroy(rt_GeiMing.GetChild(i).gameObject);
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -1494,9 +1517,24 @@ public class Game_DaoRu : SubUI
         {
             AddChoose(allGo);
         }
-
     }
 
+
+    private void E_OnClickCtrlAndC()                          // 按下了 Ctrl + C
+    {
+        if (!mUIGameObject.activeSelf || null == m_CurrentSelectFile)
+        {
+            return;
+        }
+        switch (go_CurrentSelect.name)
+        {
+            case FILE_NAME:
+            case FLODER_NAME:
+                GUIUtility.systemCopyBuffer = Path.GetFileNameWithoutExtension(m_CurrentSelectFile.FullName);
+                break;
+        }
+        
+    }
 
 
     private List<GameObject> GetSortChoose()                  // 排序

@@ -12,6 +12,9 @@ public class Game_Search : SubUI
 
     protected override void OnStart(Transform root)
     {
+
+        MyEventCenter.AddListener(E_GameEvent.OnClickMouseLeftUp, E_OnClickMouseLeftUp);
+
         // 上
         mInputField = Get<InputField>("Top/InputField");
         mDropdown = Get<Dropdown>("Top/Dropdown");
@@ -32,7 +35,12 @@ public class Game_Search : SubUI
 
 
 
-
+        // 历史
+        go_Template = GetGameObject("Top/Histroy/Template");
+        go_Template.SetActive(false);
+        go_MoBanHistroy = GetGameObject("Top/Histroy/Template/Viewport/MoBan");
+        rt_HistroyContant = Get<RectTransform>("Top/Histroy/Template/Viewport/Content");
+        AddButtOnClick("Top/Histroy", Btn_Histroy);
     }
 
     
@@ -46,10 +54,19 @@ public class Game_Search : SubUI
     private Dropdown mDropdown;
     private DOTweenAnimation anim_ErrorTip,anim_SearchNull;
 
-    // 模版
+    // 内容模版
     private GameObject go_MoBanDuoTu;
-
     private RectTransform rt_Contant;
+
+
+    // 历史
+    private readonly List<string> l_HistroyName = new List<string>();
+    private readonly List<GameObject> l_HistroyGOItem = new List<GameObject>();
+    private const ushort MaxHistroyCount = 6;
+    private GameObject go_MoBanHistroy;
+    private GameObject go_Template;
+    private RectTransform rt_HistroyContant;
+
 
     public override string GetUIPathForRoot()
     {
@@ -70,7 +87,7 @@ public class Game_Search : SubUI
 
 
 
-    private void Btn_SureSearch(bool isShowNullTip)                     //  点击 确定搜索
+    private void Btn_SureSearch(bool isShowNullTip)   //  点击 确定搜索
     {
 
         // 提示输入少于 2 位数
@@ -99,21 +116,34 @@ public class Game_Search : SubUI
             return;
         }
 
+
+
+        SearchAndShow(kName,true);     // 搜索 And 显示
+
+
+    }
+
+
+    private void SearchAndShow(string kName,bool isAddHisetory)
+    {
         // 先把之前的删除
         for (int i = 0; i < rt_Contant.childCount; i++)
         {
             Object.Destroy(rt_Contant.GetChild(i).gameObject);
         }
         // 搜索 序列图的
-        Dictionary<string,ResultBean[]> dir = Ctrl_TextureInfo.SearchXLT(kName);
+        Dictionary<string, ResultBean[]> dir = Ctrl_TextureInfo.SearchXLT(kName);
         if (dir.Count == 0)
         {
             anim_SearchNull.gameObject.SetActive(true);
             anim_SearchNull.DORestart();
             return;
         }
+        if (isAddHisetory)
+        {
+            AddHistroy(kName);         // 添加到历史
+        }
         Ctrl_Coroutine.Instance.StartCoroutine(CreateXuLieTu(dir));
-
     }
 
 
@@ -145,6 +175,68 @@ public class Game_Search : SubUI
         }
     }
 
+
+
+    //—————————————————— 历史 ——————————————————
+
+    private bool isClickHistroy;
+    private void Btn_Histroy()                        // 点击历史
+    {
+        isClickHistroy = true;
+        go_Template.SetActive(isClickHistroy);
+
+    }
+
+
+
+    private void AddHistroy(string kName)             // 添加到历史
+    {
+        if (!l_HistroyName.Contains(kName))
+        {
+            Transform t = InstantiateMoBan(go_MoBanHistroy, rt_HistroyContant);
+            t.Find("Button/Text").GetComponent<Text>().text = kName;
+            t.Find("Button").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SearchAndShow(kName,false);     // 搜索 And 显示
+            });
+
+            l_HistroyName.Add(kName);
+            l_HistroyGOItem.Add(t.gameObject);
+
+            if (l_HistroyName.Count > MaxHistroyCount)
+            {
+                l_HistroyName.RemoveAt(0);
+                GameObject go = l_HistroyGOItem[0];
+                l_HistroyGOItem.RemoveAt(0);
+                Object.Destroy(go);
+            }
+        }
+
+    }
+
+    //—————————————————— 事件 ——————————————————
+
+
+    private void E_OnClickMouseLeftUp()               // 点击鼠标左键
+    {
+        if (mUIGameObject.activeSelf && go_Template.activeSelf)
+        {
+            if (isClickHistroy)
+            {
+                isClickHistroy = !isClickHistroy;
+            }
+            else
+            {
+                Ctrl_Coroutine.Instance.StartCoroutine(HideGOTemplate());
+            }
+        }
+    }
+
+    IEnumerator HideGOTemplate()
+    {
+        yield return new WaitForEndOfFrame();
+        go_Template.SetActive(false);
+    }
 
 
 }

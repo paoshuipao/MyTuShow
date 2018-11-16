@@ -9,9 +9,9 @@ using UnityEngine;
 [Serializable]
 public class GridSizeBean
 {
-    public Vector2 YuanSize;          // 原来大小
+    public Vector2 YuanSize;           // 原来大小
     public Vector2 CurrentSize;        // 当前大小
-    public int ChangeValue;            // 改变的大小
+    public int ChangeValue;           // 改变的大小
 
 }
 
