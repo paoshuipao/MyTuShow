@@ -576,7 +576,14 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         if (!string.IsNullOrEmpty(kName))
         {
             kName = kName.Trim();
+            ushort addIndex = 0;
+            while (XuLieTuPathV_BeanV.ContainsKey(kName))
+            {
+                addIndex++;
+                kName += addIndex;
+            }
             XuLieTuPathV_BeanV.Add(kName, resBeans);
+
         }
 
     }
