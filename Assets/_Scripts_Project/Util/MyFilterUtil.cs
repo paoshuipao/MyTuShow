@@ -15,7 +15,7 @@ public static class MyFilterUtil
 
 
     private static readonly string[] TuExtension = { ".png", ".jpg", ".jpeg", ".gif", ".bmp" };       // 图片后缀名集合
-    private static readonly string[] AudioExtension = { ".aiff", ".wav", ".mp3", ".ogg" };
+    private static readonly string[] AudioExtension = { ".aiff", ".wav", ".mp3", ".ogg" };                   // 音频后缀名集合
 
 
 

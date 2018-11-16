@@ -11,7 +11,7 @@ public class GridSizeBean
 {
     public Vector2 YuanSize;           // 原来大小
     public Vector2 CurrentSize;        // 当前大小
-    public int ChangeValue;           // 改变的大小
+    public int ChangeValue;            // 改变的大小
 
 }
 
@@ -30,6 +30,8 @@ public class Ctrl_UserInfo : Singleton_Mono<Ctrl_UserInfo>
 
 
     public bool IsXuLieTuShowTip { get; set; }                   // 序列图是否需要提示
+
+
 
 
 

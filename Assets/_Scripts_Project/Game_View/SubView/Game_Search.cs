@@ -29,6 +29,8 @@ public class Game_Search : SubUI
             Btn_SureSearch(false);
         });
 
+        AddButtOnClick("Top/BtnClear", Btn_Clear);
+
         // 内容
         go_MoBanDuoTu = GetGameObject("Bottom/MoBan_DuoTu");
         rt_Contant = Get<RectTransform>("Bottom/Contant");
@@ -87,7 +89,7 @@ public class Game_Search : SubUI
 
 
 
-    private void Btn_SureSearch(bool isShowNullTip)   //  点击 确定搜索
+    private void Btn_SureSearch(bool isShowNullTip)                       //  点击 确定搜索
     {
 
         // 提示输入少于 2 位数
@@ -172,6 +174,18 @@ public class Game_Search : SubUI
 
 
             yield return new WaitForEndOfFrame();
+        }
+    }
+
+
+
+    private void Btn_Clear()
+    {
+
+        mInputField.text = "";
+        for (int i = 0; i < rt_Contant.childCount; i++)
+        {
+            Object.Destroy(rt_Contant.GetChild(i).gameObject);
         }
     }
 

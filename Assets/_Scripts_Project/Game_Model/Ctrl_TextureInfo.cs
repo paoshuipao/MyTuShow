@@ -561,7 +561,7 @@ public class Ctrl_TextureInfo : Singleton_Mono<Ctrl_TextureInfo>
         Dictionary<string, ResultBean[]> resDir = new Dictionary<string, ResultBean[]>();
         foreach (string kName in XuLieTuPathV_BeanV.Keys)
         {
-            if (kName.Contains(inputStr))
+            if (kName.ToLower().Contains(inputStr.ToLower()))
             {
                 resDir.Add(kName,XuLieTuPathV_BeanV[kName]);
             }

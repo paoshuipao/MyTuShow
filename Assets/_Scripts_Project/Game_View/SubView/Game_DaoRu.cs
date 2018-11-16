@@ -351,6 +351,7 @@ public class Game_DaoRu : SubUI
         go_BottomWait = GetGameObject("IsGaiMing/Contant/BottomWait");
         btnGeiMing = Get<Button>("Right/Contant/GeiMing/BtnSure");
         input_GeiMing222 = Get<InputField>("IsGaiMing/Contant/Top/InputField");
+        AddInputOnEndEdit(input_GeiMing222, InputEnd_GeiMing222);
         AddButtOnClick(btnGeiMing, Btn_GeiMing);
         AddButtOnClick("IsGaiMing/Contant/Top/BtnChange", Btn_GeiMing222);
         AddButtOnClick("IsGaiMing/Contant/BottomBtn/BtnSure", Btn_OnSureGaiMing);
@@ -1039,6 +1040,15 @@ public class Game_DaoRu : SubUI
         Ctrl_Coroutine.Instance.StartCoroutine(StartSetGeiMingItem(input_GeiMing222));
     }
 
+    private void InputEnd_GeiMing222(string value)             // 输入完成 再次改名
+    {
+        if (!string.IsNullOrEmpty(value) && value.Length >1)
+        {
+            Ctrl_Coroutine.Instance.StartCoroutine(StartSetGeiMingItem(input_GeiMing222));
+        }
+    }
+
+
     private int addIndex;
 
     IEnumerator StartSetGeiMingItem(InputField inputField)         // 设置名称每个小 Item
@@ -1090,9 +1100,6 @@ public class Game_DaoRu : SubUI
             yield return 0;
         }
     }
-
-
-
 
 
     private void Btn_OnSureGaiMing()           // 确定改名
@@ -1396,7 +1403,10 @@ public class Game_DaoRu : SubUI
                 go_CurrentSelect = tmpGo;
                 break;
             }
-            input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name;
+            if (allGoK_ResultBeanV.ContainsKey(go_CurrentSelect))
+            {
+                input_GeiMing.text = allGoK_ResultBeanV[go_CurrentSelect].SP.name;
+            }
 
         }
 

@@ -323,10 +323,8 @@ public class Game_DuoTuDaoRu : SubUI
 
 
     // 中
-    private bool isShowBigTu = false;
+    private bool isShowBigTu = true;
     private Text tx_ChangeText;
-    private const string ITEM_STR = "切换到大图";
-    private const string BIGT_U_STR = "还原到栏目";
 
 
     // 导入 Text
@@ -376,15 +374,6 @@ public class Game_DuoTuDaoRu : SubUI
 
 
 
-    private void Change2YuanLai()
-    {
-        isShowBigTu = false;
-        dt2_TopContant.Change2One();
-        mScrollRect.content = rt_GridContant;
-        tx_ChangeText.text = ITEM_STR;
-
-    }
-
     #endregion
 
 
@@ -423,21 +412,6 @@ public class Game_DuoTuDaoRu : SubUI
 
 
 
-    private void Btn_OnCloseThis()                                   // 点击关闭
-    {
-        mUIGameObject.SetActive(false);
-        if (itemSelectK_ResutltV.Count > 0)
-        {
-            List<GameObject> list = new List<GameObject>(itemSelectK_ResutltV.Keys);
-            for (int i = 0; i < list.Count; i++)
-            {
-                Object.Destroy(list[i]);
-            }
-            itemSelectK_ResutltV.Clear();
-        }
-    }
-
-
     private void Btn_OnOpenFolder()                                  // 打开文件夹
     {
         Application.OpenURL(mCurrentFolderPath);
@@ -446,32 +420,27 @@ public class Game_DuoTuDaoRu : SubUI
 
     private void Btn_OnChangeBiTu()                                  // 点击切换成大图
     {
-        if (isShowBigTu)
+        ShowWhicContant(!isShowBigTu);
+
+    }
+
+
+    private void ShowWhicContant(bool showBigTu)      // 显示那个 内容
+    {
+        if (showBigTu)        // 显示大图
         {
-            Change2YuanLai();
+            isShowBigTu = true;
+            dt2_TopContant.Change2One();
+            mScrollRect.content = rt_TuContant;
+            tx_ChangeText.text = "切换到栏目";
         }
         else
         {
-            isShowBigTu = true;
+            isShowBigTu = false;
             dt2_TopContant.Change2Two();
-            mScrollRect.content = rt_TuContant;
-            tx_ChangeText.text = BIGT_U_STR;
-
-            // 设置图
-            List<Sprite> sps = new List<Sprite>(itemSelectK_ResutltV.Count);
-
-            foreach (ResultBean bean in itemSelectK_ResutltV.Values)
-            {
-                sps.Add(bean.SP);
-                yuanLaiWidth = bean.Width;
-                yuanLaiHidth = bean.Height;
-            }
-
-            anim_Tu.ChangeAnim(sps.ToArray());
-            SetTuSize(yuanLaiWidth, yuanLaiHidth);
-
+            mScrollRect.content = rt_GridContant;
+            tx_ChangeText.text = "还原到大图";
         }
-
     }
 
 
@@ -506,7 +475,7 @@ public class Game_DuoTuDaoRu : SubUI
     }
 
 
-    private void ManyBtn_DaoRu(EGameType type, ushort index)       // 点击导入
+    private void ManyBtn_DaoRu(EGameType type, ushort index)         // 点击导入
     {
         List<ResultBean> resultBeans = new List<ResultBean>(itemSelectK_ResutltV.Values);
         MyEventCenter.SendEvent(E_GameEvent.DaoRuTuFromResult, type, index, resultBeans,true);
@@ -524,22 +493,48 @@ public class Game_DuoTuDaoRu : SubUI
     {
         mCurrentFolderPath = folderPath;
         mUIGameObject.SetActive(true);
-        if (isShowBigTu)
-        {
-            Change2YuanLai();
-        }
-
-
-
+        ShowWhicContant(true);
         Ctrl_Coroutine.Instance.StartCoroutine(StartLoadDuoTu(resultBeans));
 
     }
 
 
+    private void Btn_OnCloseThis()                                                    // 点击关闭
+    {
+        mUIGameObject.SetActive(false);
+        if (itemSelectK_ResutltV.Count > 0)
+        {
+            List<GameObject> list = new List<GameObject>(itemSelectK_ResutltV.Keys);
+            for (int i = 0; i < list.Count; i++)
+            {
+                Object.Destroy(list[i]);
+            }
+            itemSelectK_ResutltV.Clear();
+        }
+    }
 
-    IEnumerator StartLoadDuoTu(ResultBean[] resultBeans)                                // 用线程 多张图的每个 Item
+
+
+
+    IEnumerator StartLoadDuoTu(ResultBean[] resultBeans)                                // 大图 和 多张图的每个 Item
     {
 
+        // 设置大图
+        Sprite[] sps = new Sprite[resultBeans.Length];
+
+        for (int i = 0; i < resultBeans.Length; i++)
+        {
+            sps[i] = resultBeans[i].SP;
+        }
+        yuanLaiWidth = resultBeans[0].Width;
+        yuanLaiHidth = resultBeans[0].Height;
+        anim_Tu.ChangeAnim(sps);
+        SetTuSize(yuanLaiWidth, yuanLaiHidth);
+
+
+        yield return 0;
+
+        // 多项 Item 
         foreach (ResultBean bean in resultBeans)
         {
             Transform t = InstantiateMoBan(moBan_Item, rt_GridContant);
@@ -587,6 +582,7 @@ public class Game_DuoTuDaoRu : SubUI
             {
                 EachBtn_Down(t.gameObject);
             });
+
             yield return 0;
 
         }

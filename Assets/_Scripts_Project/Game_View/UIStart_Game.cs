@@ -539,7 +539,7 @@ public class UIStart_Game : BaseUI
         {
             return;
         }
-        MyEventCenter.SendEvent(E_GameEvent.ChangGameToggleType, type, 0);
+        MyEventCenter.SendEvent(E_GameEvent.ChangGameToggleType, type, -1);
 
     }
 
@@ -686,43 +686,64 @@ public class UIStart_Game : BaseUI
             case EGameType.XuLieTu:
                 go_XuLieChoose1.SetActive(true);
                 go_XuLieChoose2.SetActive(true);
-                sub_XuLieTu1.Show(choose);
+                if (choose>0)
+                {
+                    sub_XuLieTu1.Show(choose);
+                }
                 d9_RightContant.Change2One();
                 break;
             case EGameType.XuLieTu222:
                 go_XuLie222Choose1.SetActive(true);
                 go_XuLie222Choose2.SetActive(true);
-                sub_XuLieTu222.Show(choose);
+                if (choose > 0)
+                {
+                    sub_XuLieTu222.Show(choose);
+                }
                 d9_RightContant.Change2Two();
                 break;
             case EGameType.JiHeXuLieTu:
                 go_JiHeXuLieTuChoose1.SetActive(true);
                 go_JiHeXuLieTuChoose2.SetActive(true);
-                sub_JiHeXuLieTu.Show(choose);
+                if (choose > 0)
+                {
+                    sub_JiHeXuLieTu.Show(choose);
+                }
                 d9_RightContant.Change2Three();
                 break;
             case EGameType.TaoMingTu:
                 go_TaoMingChoose1.SetActive(true);
                 go_TaoMingChoose2.SetActive(true);
-                sub_TaoMing.Show(choose);
+                if (choose > 0)
+                {
+                    sub_TaoMing.Show(choose);
+                }
                 d9_RightContant.Change2Four();
                 break;
             case EGameType.NormalTu:
                 go_NormalChoose1.SetActive(true);
                 go_NormalChoose2.SetActive(true);
-                sub_Jpg.Show(choose);
+                if (choose > 0)
+                {
+                    sub_Jpg.Show(choose);
+                }
                 d9_RightContant.Change2Five();
                 break;
             case EGameType.JiHeTu:
                 go_JiHeChoose1.SetActive(true);
                 go_JiHeChoose2.SetActive(true);
-                sub_JiHeTu.Show(choose);
+                if (choose > 0)
+                {
+                    sub_JiHeTu.Show(choose);
+                }
                 d9_RightContant.Change2Six();
                 break;
             case EGameType.Audio:
                 go_AudioChoose1.SetActive(true);
                 go_AudioChoose2.SetActive(true);
-                sub_Audio.Show(choose);
+                if (choose > 0)
+                {
+                    sub_Audio.Show(choose);
+                }
                 d9_RightContant.Change2Seven();
                 break;
             case EGameType.DaoRu:
